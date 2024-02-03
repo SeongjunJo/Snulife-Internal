@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import 'app_state.dart';
+import 'login_state.dart';
 import 'router.dart';
 
 void main() async {
@@ -10,7 +10,7 @@ void main() async {
 
   runApp(
     ChangeNotifierProvider(
-      create: (context) => ApplicationState(),
+      create: (context) => LogInState(),
       builder: ((context, child) => const InternalApp()),
     ),
   );
