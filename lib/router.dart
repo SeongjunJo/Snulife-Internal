@@ -1,6 +1,6 @@
 import 'package:go_router/go_router.dart';
-import 'package:snulife_internal/home_screen.dart';
-import 'package:snulife_internal/login_screen.dart';
+import 'package:snulife_internal/ui/screens/home_screen.dart';
+import 'package:snulife_internal/ui/screens/login_screen.dart';
 
 final appRouter = GoRouter(
   routes: [

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import 'login_state.dart';
+import 'logics/providers/login_state.dart';
 import 'router.dart';
 
 void main() async {

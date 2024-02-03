@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:snulife_internal/login_state.dart';
+import 'package:snulife_internal/logics/providers/login_state.dart';
 
 class LogInPage extends StatelessWidget {
   const LogInPage({super.key});
