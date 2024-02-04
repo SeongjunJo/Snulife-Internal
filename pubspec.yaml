@@ -67,9 +67,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/images/app_logo.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -85,11 +84,11 @@ flutter:
   fonts:
     - family: Spoqa Han Sans Neo
       fonts:
-        - asset: fonts/SpoqaHanSansNeo-Bold.ttf
-        - asset: fonts/SpoqaHanSansNeo-Light.ttf
-        - asset: fonts/SpoqaHanSansNeo-Medium.ttf
-        - asset: fonts/SpoqaHanSansNeo-Regular.ttf
-        - asset: fonts/SpoqaHanSansNeo-Thin.ttf
+        - asset: assets/fonts/SpoqaHanSansNeo-Bold.ttf
+        - asset: assets/fonts/SpoqaHanSansNeo-Light.ttf
+        - asset: assets/fonts/SpoqaHanSansNeo-Medium.ttf
+        - asset: assets/fonts/SpoqaHanSansNeo-Regular.ttf
+        - asset: assets/fonts/SpoqaHanSansNeo-Thin.ttf
     #
     # For details regarding fonts from package dependencies,
     # see https://flutter.dev/custom-fonts/#from-packages
