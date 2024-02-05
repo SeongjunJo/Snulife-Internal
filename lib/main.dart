@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import 'logics/providers/login_state.dart';
 import 'router.dart';
+import 'ui/styles/colors.dart';
+import 'ui/styles/fonts.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,22 +26,12 @@ class InternalApp extends StatelessWidget {
     return MaterialApp.router(
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.lightBlue,
-          brightness: Brightness.light,
-        ),
-        textTheme: TextTheme(
-          displayLarge: const TextStyle(
-            fontSize: 72,
-            fontWeight: FontWeight.w300,
-          ),
-          titleLarge: GoogleFonts.roboto(
-            fontSize: 48,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        fontFamily: 'Spoqa Han Sans Neo',
       ),
       routerConfig: appRouter,
     );
   }
 }
+
+AppColors get appColors => AppColors();
+AppFonts get appFonts => AppFonts();
