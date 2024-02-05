@@ -20,7 +20,6 @@ void main() async {
 class InternalApp extends StatelessWidget {
   const InternalApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
@@ -34,4 +33,5 @@ class InternalApp extends StatelessWidget {
 }
 
 AppColors get appColors => AppColors();
+
 AppFonts get appFonts => AppFonts();

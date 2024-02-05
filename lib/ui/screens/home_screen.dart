@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:snulife_internal/main.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -11,13 +12,7 @@ class HomePage extends StatelessWidget {
         centerTitle: true,
         backgroundColor: Colors.lightBlue,
         automaticallyImplyLeading: false,
-        title: const Text(
-          'Home',
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 48,
-          ),
-        ),
+        title: Text('Home', style: appFonts.b1),
       ),
       body: GridView.count(
         crossAxisCount: 2,

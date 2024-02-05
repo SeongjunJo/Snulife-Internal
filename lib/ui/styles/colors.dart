@@ -14,8 +14,8 @@ class AppColors {
   final Color blue8 = const Color(0xFF027598);
   final Color blue9 = const Color(0xFF027598);
 
-  final Color grey1 = const Color(0xFFF8F9FA);
-  final Color grey0 = const Color(0xFFF1F3F5);
+  final Color grey0 = const Color(0xFFF8F9FA);
+  final Color grey1 = const Color(0xFFF1F3F5);
   final Color grey2 = const Color(0xFFE9EDF0);
   final Color grey3 = const Color(0xFFE3E7EB);
   final Color grey4 = const Color(0xFFCED4DA);
