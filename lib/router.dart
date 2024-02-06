@@ -34,11 +34,13 @@ final appRouter = GoRouter(
         ),
         GoRoute(
           path: AppRoutePath.settings,
-          builder: (context, state) => const SettingPage(),
+          pageBuilder: (context, state) =>
+              const CupertinoPage(child: SettingPage()),
           routes: [
             GoRoute(
               path: 'profile',
-              builder: (context, state) => const ProfilePage(),
+              pageBuilder: (context, state) =>
+                  const CupertinoPage(child: ProfilePage()),
             ),
           ],
         ),

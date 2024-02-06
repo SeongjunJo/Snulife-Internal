@@ -9,7 +9,8 @@ class SettingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
+      color: appColors.white,
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         children: [

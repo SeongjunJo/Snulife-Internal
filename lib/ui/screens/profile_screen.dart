@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../main.dart';
 import '../widgets/setting_widget.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -7,9 +8,11 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
+    return Container(
+      color: appColors.white,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: const Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(height: 14),
           SettingRow(title: "프로필 사진 변경", trailing: RightArrow()),
