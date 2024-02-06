@@ -15,7 +15,7 @@ final appRouter = GoRouter(
   initialLocation: '/home',
   routes: [
     GoRoute(
-      path: '/login',
+      path: AppRoutePath.login,
       builder: (context, state) => const LogInPage(),
       routes: const [],
     ),
@@ -29,11 +29,11 @@ final appRouter = GoRouter(
       },
       routes: [
         GoRoute(
-          path: '/home',
+          path: AppRoutePath.home,
           builder: (context, state) => const HomePage(),
         ),
         GoRoute(
-          path: '/settings',
+          path: AppRoutePath.settings,
           builder: (context, state) => const SettingPage(),
           routes: [
             GoRoute(
@@ -46,3 +46,10 @@ final appRouter = GoRouter(
     )
   ],
 );
+
+class AppRoutePath {
+  static const home = '/home';
+  static const login = '/login';
+  static const settings = '/settings';
+  static const profile = '/settings/profile';
+}

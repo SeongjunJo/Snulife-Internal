@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:snulife_internal/main.dart';
+import 'package:snulife_internal/router.dart';
 
 import 'app_bar.dart';
 
@@ -21,12 +22,12 @@ class InternalAppScaffold extends StatelessWidget {
 
     if (!isHomeScreen) {
       switch (screenName) {
-        case '/settings':
+        case AppRoutePath.settings:
           title = "마이페이지";
-        case '/profile':
+        case AppRoutePath.profile:
           title = "프로필 관리";
         default:
-          throw Exception("Unspecified Route: $screenName");
+          throw Exception("scaffold에서 신규 라우트를 설정해주세요: $screenName");
       }
     }
 

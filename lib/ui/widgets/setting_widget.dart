@@ -1,27 +1,33 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 import '../../main.dart';
 
 class SettingRow extends StatelessWidget {
   final String title;
   final Widget trailing;
+  final void Function()? onTap;
 
   const SettingRow({
     super.key,
     required this.title,
     required this.trailing,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 14),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(title, style: appFonts.settingText),
-          trailing,
-        ],
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(title, style: appFonts.settingText),
+            trailing,
+          ],
+        ),
       ),
     );
   }
