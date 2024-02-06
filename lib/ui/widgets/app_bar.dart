@@ -62,13 +62,25 @@ class SubScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
       toolbarHeight: 50,
       automaticallyImplyLeading: false,
       centerTitle: true,
-      leading: IconButton(
-        icon: Image.asset(
-          "assets/images/icon_left_arrow.png",
-        ),
-        onPressed: () => context.pop(),
+      titleSpacing: 0,
+      backgroundColor: Colors.white,
+      surfaceTintColor: Colors.white,
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+            padding: EdgeInsets.zero,
+            icon: Image.asset(
+              "assets/images/icon_left_arrow.png",
+              width: 48,
+              height: 48,
+            ),
+            onPressed: () => context.pop(),
+          ),
+          Text(title, style: appFonts.appBarTitle),
+          const SizedBox(width: 48, height: 48),
+        ],
       ),
-      title: Text(title, style: appFonts.tm),
     );
   }
 

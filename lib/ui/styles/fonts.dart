@@ -90,6 +90,16 @@ class AppFonts {
     color: appColors.grey5,
   );
 
+  late final TextStyle appBarTitle = _createTextStyle(
+    sizePx: 18,
+    heightPx: 20,
+    weight: FontWeight.w700,
+    color: appColors.grey7,
+  );
+
+  late final TextStyle settingText =
+      _createTextStyle(sizePx: 16, heightPx: 25, weight: FontWeight.w500);
+
   TextStyle _createTextStyle({
     required double sizePx,
     required double heightPx,
