@@ -15,9 +15,7 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/login',
       builder: (context, state) => const LogInPage(),
-      routes: const [
-        // TODO 회원 가입 플로우
-      ],
+      routes: const [],
     ),
     ShellRoute(
       navigatorKey: _shellNavigatorKey,
@@ -32,7 +30,6 @@ final appRouter = GoRouter(
           path: '/home',
           builder: (context, state) => const HomePage(),
         ),
-        // TODO 홈 플로우
       ],
     )
   ],

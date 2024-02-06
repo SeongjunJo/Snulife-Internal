@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:snulife_internal/main.dart';
 
 import 'app_bar.dart';
 
@@ -36,6 +37,7 @@ class InternalAppScaffold extends StatelessWidget {
     return Scaffold(
       appBar: internalAppBar,
       body: child,
+      backgroundColor: appColors.grey0,
     );
   }
 }
