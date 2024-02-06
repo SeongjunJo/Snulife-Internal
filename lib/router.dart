@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:snulife_internal/ui/screens/home_screen.dart';
 import 'package:snulife_internal/ui/screens/login_screen.dart';
+import 'package:snulife_internal/ui/screens/profile_screen.dart';
+import 'package:snulife_internal/ui/screens/setting_screen.dart';
 import 'package:snulife_internal/ui/widgets/app_scaffold.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -29,6 +31,16 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/home',
           builder: (context, state) => const HomePage(),
+        ),
+        GoRoute(
+          path: '/settings',
+          builder: (context, state) => const SettingPage(),
+          routes: [
+            GoRoute(
+              path: 'profile',
+              builder: (context, state) => const ProfilePage(),
+            ),
+          ],
         ),
       ],
     )

@@ -20,7 +20,7 @@ class HomePage extends StatelessWidget {
           const Column(
             children: [
               SizedBox(height: 48),
-              // TODO logInState.user!.displayName!
+              // TODO user 이름
               WelcomeText(name: "정선영"),
               SizedBox(height: 10),
               Row(

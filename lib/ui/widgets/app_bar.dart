@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:snulife_internal/main.dart';
 
 class HomeScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -16,7 +17,7 @@ class HomeScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.white,
       title: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        padding: const EdgeInsets.only(left: 10.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -25,10 +26,15 @@ class HomeScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
               width: 23.77,
               height: 25.46,
             ),
-            Image.asset(
-              "assets/images/icon_person.png",
-              width: 30,
-              height: 30,
+            IconButton(
+              icon: Image.asset(
+                "assets/images/icon_person.png",
+                width: 30,
+                height: 30,
+              ),
+              onPressed: () {
+                context.push('/settings');
+              },
             ),
           ],
         ),
@@ -60,7 +66,7 @@ class SubScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
         icon: Image.asset(
           "assets/images/icon_left_arrow.png",
         ),
-        onPressed: () => Navigator.of(context).pop(),
+        onPressed: () => context.pop(),
       ),
       title: Text(title, style: appFonts.tm),
     );

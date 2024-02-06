@@ -84,7 +84,7 @@ class AppFonts {
   );
 
   late final TextStyle secondaryTabName = _createTextStyle(
-    sizePx: 14,
+    sizePx: 16,
     heightPx: 25,
     weight: FontWeight.w500,
     color: appColors.grey5,

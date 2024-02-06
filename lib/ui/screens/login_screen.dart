@@ -77,7 +77,7 @@ class _LoginFormState extends State<LoginForm> {
           onPressed: () {
             _signIn();
             if (widget.isLoggedIn) {
-              context.pushReplacement('/home');
+              context.go('/home');
             }
           },
           child: const Text('Log In'),

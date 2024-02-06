@@ -39,7 +39,7 @@ class SecondaryTabIcon extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 3, left: 7, right: 3, bottom: 3),
       child:
-          Image.asset("assets/images/icon_folder.png", width: 90, height: 94),
+          Image.asset("assets/images/icon_folder.png", width: 100, height: 106),
     );
   }
 }
