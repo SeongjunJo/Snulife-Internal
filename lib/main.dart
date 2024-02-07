@@ -1,20 +1,16 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import 'logics/providers/login_state.dart';
+import 'logics/firebase_options.dart';
 import 'router.dart';
 import 'ui/styles/colors.dart';
 import 'ui/styles/fonts.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => LogInState(),
-      builder: ((context, child) => const InternalApp()),
-    ),
-  );
+  runApp(const InternalApp());
 }
 
 class InternalApp extends StatelessWidget {
@@ -23,15 +19,11 @@ class InternalApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      theme: ThemeData(
-        useMaterial3: true,
-        fontFamily: 'Spoqa Han Sans Neo',
-      ),
+      theme: ThemeData(useMaterial3: true),
       routerConfig: appRouter,
     );
   }
 }
 
 AppColors get appColors => AppColors();
-
 AppFonts get appFonts => AppFonts();

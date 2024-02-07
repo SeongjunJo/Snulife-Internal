@@ -1,43 +1,29 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
-import 'package:snulife_internal/logics/providers/login_state.dart';
 import 'package:snulife_internal/main.dart';
 import 'package:snulife_internal/router.dart';
 
 import '../widgets/screen_specified/login_widget.dart';
 
-class LogInPage extends StatelessWidget {
+class LogInPage extends StatefulWidget {
   const LogInPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        padding: const EdgeInsets.only(top: 95, left: 20, right: 20),
-        child: Consumer<LogInState>(
-          builder: (context, logInState, _) =>
-              LoginForm(isLoggedIn: logInState.isLoggedIn),
-        ),
-      ),
-    );
-  }
+  State<LogInPage> createState() => _LogInPageState();
 }
 
-class LoginForm extends StatefulWidget {
-  final bool isLoggedIn;
-
-  const LoginForm({super.key, required this.isLoggedIn});
-
-  @override
-  State<LoginForm> createState() => _LoginFormState();
-}
-
-class _LoginFormState extends State<LoginForm> {
+class _LogInPageState extends State<LogInPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   bool isAutoLogInTap = false;
+
+  @override
+  dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   void _tryLogIn() async {
     try {
@@ -60,6 +46,12 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user != null) {
+        context.goNamed(AppRoutePath.home);
+      }
+    });
+
     Icon checkBox = isAutoLogInTap
         ? Icon(
             Icons.check_circle_rounded,
@@ -72,57 +64,54 @@ class _LoginFormState extends State<LoginForm> {
             size: 22,
           );
 
-    return ListView(
-      padding: EdgeInsets.zero,
-      children: [
-        Text("로그인 해주세요", style: appFonts.h1),
-        const SizedBox(height: 60),
-        LoginTextField(type: "이메일", controller: emailController),
-        const SizedBox(height: 34),
-        LoginTextField(type: "비밀번호", controller: passwordController),
-        const SizedBox(height: 38),
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              isAutoLogInTap = !isAutoLogInTap;
-            });
-          },
-          child: Row(
-            children: [
-              checkBox,
-              const SizedBox(width: 8),
-              Text("자동 로그인", style: appFonts.loginAutoLoginText),
-            ],
-          ),
-        ),
-        // TODO 아래부터는 디자인 확정 후 반영
-        const SizedBox(height: 38),
-        Center(
-          child: TextButton(
-            onPressed: () {
-              _tryLogIn();
-              if (widget.isLoggedIn) {
-                context.goNamed(AppRoutePath.home);
-              }
+    return Scaffold(
+      body: ListView(
+        padding: const EdgeInsets.only(top: 95, left: 20, right: 20),
+        children: [
+          Text("로그인 해주세요", style: appFonts.h1),
+          const SizedBox(height: 60),
+          LoginTextField(type: "이메일", controller: emailController),
+          const SizedBox(height: 34),
+          LoginTextField(type: "비밀번호", controller: passwordController),
+          const SizedBox(height: 38),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                isAutoLogInTap = !isAutoLogInTap;
+              });
             },
-            style: TextButton.styleFrom(
-              backgroundColor: appColors.slBlue,
-              minimumSize: const Size(300, 50),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50),
-              ),
+            child: Row(
+              children: [
+                checkBox,
+                const SizedBox(width: 8),
+                Text("자동 로그인", style: appFonts.loginAutoLoginText),
+              ],
             ),
-            child: const Text('로그인', style: TextStyle(color: Colors.white)),
           ),
-        ),
-        const SizedBox(height: 38),
-        GestureDetector(
-          onTap: () {},
-          child: const Center(
-            child: Text("비밀번호를 잊으셨나요?"),
+          // TODO 아래부터는 디자인 확정 후 반영
+          const SizedBox(height: 38),
+          Center(
+            child: TextButton(
+              onPressed: _tryLogIn,
+              style: TextButton.styleFrom(
+                backgroundColor: appColors.slBlue,
+                minimumSize: const Size(300, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50),
+                ),
+              ),
+              child: const Text('로그인', style: TextStyle(color: Colors.white)),
+            ),
           ),
-        ),
-      ],
+          const SizedBox(height: 38),
+          GestureDetector(
+            onTap: () {},
+            child: const Center(
+              child: Text("비밀번호를 잊으셨나요?"),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
