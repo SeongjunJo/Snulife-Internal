@@ -12,9 +12,10 @@ final GlobalKey<NavigatorState> _shellNavigatorKey =
 
 final appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: '/home',
+  initialLocation: AppRoutePath.login,
   routes: [
     GoRoute(
+      name: AppRoutePath.login,
       path: AppRoutePath.login,
       builder: (context, state) => const LogInPage(),
       routes: const [],
@@ -29,15 +30,18 @@ final appRouter = GoRouter(
       },
       routes: [
         GoRoute(
+          name: AppRoutePath.home,
           path: AppRoutePath.home,
           builder: (context, state) => const HomePage(),
         ),
         GoRoute(
+          name: AppRoutePath.settings,
           path: AppRoutePath.settings,
           pageBuilder: (context, state) =>
               const CupertinoPage(child: SettingPage()),
           routes: [
             GoRoute(
+              name: AppRoutePath.profile,
               path: 'profile',
               pageBuilder: (context, state) =>
                   const CupertinoPage(child: ProfilePage()),
@@ -49,6 +53,7 @@ final appRouter = GoRouter(
   ],
 );
 
+// path 실수 방지용 name 설정
 class AppRoutePath {
   static const home = '/home';
   static const login = '/login';

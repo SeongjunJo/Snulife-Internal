@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:snulife_internal/router.dart';
 
 import '../../main.dart';
 import '../widgets/setting_widget.dart';
@@ -18,7 +19,7 @@ class SettingPage extends StatelessWidget {
           SettingRow(
             title: "프로필 관리",
             trailing: const RightArrow(),
-            onTap: () => context.push('/settings/profile'),
+            onTap: () => context.pushNamed(AppRoutePath.profile),
           ),
           const SettingRow(title: "계정 관리", trailing: RightArrow()),
           const SizedBox(height: 14),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:snulife_internal/logics/providers/login_state.dart';
+import 'package:snulife_internal/router.dart';
 
 class LogInPage extends StatelessWidget {
   const LogInPage({super.key});
@@ -77,7 +78,7 @@ class _LoginFormState extends State<LoginForm> {
           onPressed: () {
             _signIn();
             if (widget.isLoggedIn) {
-              context.go('/home');
+              context.goNamed(AppRoutePath.home);
             }
           },
           child: const Text('Log In'),

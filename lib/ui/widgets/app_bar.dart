@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:snulife_internal/main.dart';
+import 'package:snulife_internal/router.dart';
 
 class HomeScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
   const HomeScreenAppBar({
@@ -33,7 +34,7 @@ class HomeScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
                 height: 30,
               ),
               onPressed: () {
-                context.push('/settings');
+                context.pushNamed(AppRoutePath.settings);
               },
             ),
           ],
