@@ -38,52 +38,72 @@ class AppFonts {
   late final TextStyle btn =
       _createTextStyle(sizePx: 16, heightPx: 27, weight: FontWeight.w700);
 
-  late final TextStyle name = _createTextStyle(
+  late final TextStyle loginTitle =
+      _createTextStyle(sizePx: 20, heightPx: 30, weight: FontWeight.w700);
+
+  late final TextStyle loginFieldTitle =
+      _createTextStyle(sizePx: 16, heightPx: 25, weight: FontWeight.w500);
+
+  late final TextStyle loginFieldHint = _createTextStyle(
+    sizePx: 14,
+    heightPx: 20,
+    weight: FontWeight.w400,
+    color: appColors.grey4,
+  );
+
+  late final TextStyle loginAutoLoginText = _createTextStyle(
+    sizePx: 14,
+    heightPx: 18,
+    weight: FontWeight.w500,
+    color: appColors.grey8,
+  );
+
+  late final TextStyle homePersonName = _createTextStyle(
     sizePx: 24,
     heightPx: 30,
     weight: FontWeight.w700,
     color: appColors.slBlue,
   );
 
-  late final TextStyle welcome =
+  late final TextStyle homeWelcomeText =
       _createTextStyle(sizePx: 24, heightPx: 30, weight: FontWeight.w700);
 
-  late final TextStyle info = _createTextStyle(
+  late final TextStyle homePersonInfo = _createTextStyle(
     sizePx: 14,
     heightPx: 18,
     weight: FontWeight.w500,
     color: appColors.grey6,
   );
 
-  late final TextStyle primaryTabName = _createTextStyle(
+  late final TextStyle homePrimaryTabName = _createTextStyle(
     sizePx: 28,
     heightPx: 25,
     weight: FontWeight.w500,
     color: appColors.grey8,
   );
 
-  late final TextStyle primaryTabContent = _createTextStyle(
+  late final TextStyle homePrimaryTabContent = _createTextStyle(
     sizePx: 14,
     heightPx: 18,
     weight: FontWeight.w500,
     color: appColors.grey8,
   );
 
-  late final TextStyle primaryTabPerson = _createTextStyle(
+  late final TextStyle homePrimaryTabPersonName = _createTextStyle(
     sizePx: 14,
     heightPx: 18,
     weight: FontWeight.w700,
     color: appColors.slBlue,
   );
 
-  late final TextStyle bottomLogo = _createTextStyle(
+  late final TextStyle homeBottomText = _createTextStyle(
     sizePx: 14,
     heightPx: 18,
     weight: FontWeight.w500,
     color: appColors.grey3,
   );
 
-  late final TextStyle secondaryTabName = _createTextStyle(
+  late final TextStyle homeSecondaryTabName = _createTextStyle(
     sizePx: 16,
     heightPx: 25,
     weight: FontWeight.w500,
@@ -97,7 +117,7 @@ class AppFonts {
     color: appColors.grey7,
   );
 
-  late final TextStyle settingText =
+  late final TextStyle settingTabTitle =
       _createTextStyle(sizePx: 16, heightPx: 25, weight: FontWeight.w500);
 
   TextStyle _createTextStyle({

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../main.dart';
+import '../../../main.dart';
 
 class SettingRow extends StatelessWidget {
   final String title;
@@ -24,7 +24,7 @@ class SettingRow extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(title, style: appFonts.settingText),
+            Text(title, style: appFonts.settingTabTitle),
             trailing,
           ],
         ),

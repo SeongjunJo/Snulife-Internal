@@ -25,6 +25,8 @@ class AppColors {
   final Color grey8 = const Color(0xFF343A40);
   final Color grey9 = const Color(0xFF212529);
 
+  final Color red = const Color(0xFFEB0000);
+
   final Color white = Colors.white;
   final Color black = Colors.black;
 }

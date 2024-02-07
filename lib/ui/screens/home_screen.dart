@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:snulife_internal/main.dart';
 
-import '../widgets/icon_widget.dart';
-import '../widgets/primary_tab.dart';
-import '../widgets/secondary_tab.dart';
-import '../widgets/text_widget.dart';
+import '../widgets/commons/icon_widget.dart';
+import '../widgets/commons/text_widget.dart';
+import '../widgets/screen_specified/home_widget.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -70,7 +69,7 @@ class HomePage extends StatelessWidget {
           child: Center(
             child: Text(
               "SNULife Internal",
-              style: appFonts.bottomLogo,
+              style: appFonts.homeBottomText,
             ),
           ),
         ),

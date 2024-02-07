@@ -4,7 +4,7 @@ import 'package:snulife_internal/ui/screens/home_screen.dart';
 import 'package:snulife_internal/ui/screens/login_screen.dart';
 import 'package:snulife_internal/ui/screens/profile_screen.dart';
 import 'package:snulife_internal/ui/screens/setting_screen.dart';
-import 'package:snulife_internal/ui/widgets/app_scaffold.dart';
+import 'package:snulife_internal/ui/widgets/commons/app_scaffold.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> _shellNavigatorKey =

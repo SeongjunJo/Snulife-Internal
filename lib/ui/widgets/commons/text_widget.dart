@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../main.dart';
+import '../../../main.dart';
 
 class WelcomeText extends StatelessWidget {
   final String name;
@@ -17,11 +17,11 @@ class WelcomeText extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text(name, style: appFonts.name),
-            Text(" 님,", style: appFonts.welcome),
+            Text(name, style: appFonts.homePersonName),
+            Text(" 님,", style: appFonts.homeWelcomeText),
           ],
         ),
-        Text("환영해요!", style: appFonts.welcome),
+        Text("환영해요!", style: appFonts.homeWelcomeText),
       ],
     );
   }
@@ -46,7 +46,7 @@ class InfoBox extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(50),
       ),
-      child: Text(info, style: appFonts.info),
+      child: Text(info, style: appFonts.homePersonInfo),
     );
   }
 }
@@ -64,11 +64,11 @@ class AttendanceText extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("오늘 서기는", style: appFonts.primaryTabContent),
+        Text("오늘 서기는", style: appFonts.homePrimaryTabContent),
         Row(
           children: [
-            Text(clerk, style: appFonts.primaryTabPerson),
-            Text(" 님이에요", style: appFonts.primaryTabContent),
+            Text(clerk, style: appFonts.homePrimaryTabPersonName),
+            Text(" 님이에요", style: appFonts.homePrimaryTabContent),
           ],
         ),
       ],
@@ -83,7 +83,7 @@ class ReceiptText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text("지출 내역을\n기록 해주세요.", style: appFonts.primaryTabContent);
+    return Text("지출 내역을\n기록 해주세요.", style: appFonts.homePrimaryTabContent);
   }
 }
 
@@ -97,6 +97,6 @@ class SecondaryTabName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(name, style: appFonts.secondaryTabName);
+    return Text(name, style: appFonts.homeSecondaryTabName);
   }
 }
