@@ -17,7 +17,11 @@ class LoginTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String title = type == '이메일' ? '이메일' : '비밀번호';
-    final String hint = type == '이메일' ? '이메일을 입력해주세요' : '비밀번호를 입력해주세요';
+    final String hint = type == '비밀번호'
+        ? '비밀번호를 입력해주세요'
+        : isForgottenPasswordField
+            ? '가입시 사용한 이메일을 입력해주세요'
+            : '이메일을 입력해주세요';
     final TextInputType keyboardType = type == '이메일'
         ? TextInputType.emailAddress
         : TextInputType.visiblePassword;

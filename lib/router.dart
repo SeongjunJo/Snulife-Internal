@@ -1,14 +1,18 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:snulife_internal/ui/screens/main_screens/home_screen.dart';
 import 'package:snulife_internal/ui/screens/setting_screens/profile_screen.dart';
 import 'package:snulife_internal/ui/screens/setting_screens/setting_screen.dart';
+import 'package:snulife_internal/ui/screens/sign_screens/confirm_password_reset_screen.dart';
 import 'package:snulife_internal/ui/screens/sign_screens/forgotten_password_screen.dart';
 import 'package:snulife_internal/ui/screens/sign_screens/login_screen.dart';
-import 'package:snulife_internal/ui/widgets/commons/app_scaffold.dart';
+import 'package:snulife_internal/ui/widgets/commons/app_scaffolds.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
-final GlobalKey<NavigatorState> _shellNavigatorKey =
+final GlobalKey<NavigatorState> _signShellNavigatorKey =
+    GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> _mainShellNavigatorKey =
     GlobalKey<NavigatorState>();
 
 final appRouter = GoRouter(
@@ -20,24 +24,34 @@ final appRouter = GoRouter(
       path: AppRoutePath.login,
       builder: (context, state) => const LogInPage(),
       routes: [
-        GoRoute(
-          name: AppRoutePath.forgottenPassword,
-          path: 'forgottenPassword',
-          pageBuilder: (context, state) => const CupertinoPage(
-            child: ForgottenPasswordPage(),
-            fullscreenDialog: true,
-          ),
-        )
+        ShellRoute(
+          navigatorKey: _signShellNavigatorKey,
+          builder: (context, state, child) => SignScreensScaffold(child: child),
+          routes: [
+            GoRoute(
+              name: AppRoutePath.forgottenPassword,
+              path: 'forgottenPassword',
+              pageBuilder: (context, state) => const MaterialPage(
+                child: ForgottenPasswordPage(),
+                fullscreenDialog: true,
+              ),
+            ),
+            GoRoute(
+              name: AppRoutePath.confirmPasswordReset,
+              path: 'confirmPasswordReset',
+              pageBuilder: (context, state) => const MaterialPage(
+                child: ConfirmPasswordResetPage(),
+                fullscreenDialog: true,
+              ),
+            ),
+          ],
+        ),
       ],
     ),
     ShellRoute(
-      navigatorKey: _shellNavigatorKey,
-      builder: (context, state, child) {
-        return InternalAppScaffold(
-          screenPath: state.fullPath,
-          child: child,
-        );
-      },
+      navigatorKey: _mainShellNavigatorKey,
+      builder: (context, state, child) =>
+          InternalAppScaffold(screenPath: state.fullPath, child: child),
       routes: [
         GoRoute(
           name: AppRoutePath.home,
@@ -66,6 +80,7 @@ final appRouter = GoRouter(
 class AppRoutePath {
   static const login = '/login';
   static const forgottenPassword = '/login/forgottenPassword';
+  static const confirmPasswordReset = '/login/confirmPasswordReset';
 
   static const home = '/home';
 

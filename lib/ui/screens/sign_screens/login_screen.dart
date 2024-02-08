@@ -66,6 +66,7 @@ class _LogInPageState extends State<LogInPage> {
           );
 
     return Scaffold(
+      backgroundColor: appColors.white,
       body: ListView(
         padding: const EdgeInsets.only(top: 95, left: 20, right: 20),
         children: [
@@ -89,7 +90,6 @@ class _LogInPageState extends State<LogInPage> {
               ],
             ),
           ),
-          // TODO 아래부터는 디자인 확정 후 반영
           const SizedBox(height: 38),
           AppLargeButton(buttonText: '로그인', onPressed: _tryLogIn),
           const SizedBox(height: 38),
@@ -97,8 +97,9 @@ class _LogInPageState extends State<LogInPage> {
             onTap: () {
               context.pushNamed(AppRoutePath.forgottenPassword);
             },
-            child: const Center(
-              child: Text("비밀번호를 잊으셨나요?"),
+            child: Center(
+              child: Text("비밀번호를 잊으셨나요?",
+                  style: appFonts.loginForgotPasswordAskText),
             ),
           ),
         ],

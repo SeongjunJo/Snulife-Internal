@@ -18,6 +18,7 @@ class AppLargeButton extends StatelessWidget {
       child: TextButton(
         onPressed: onPressed,
         style: TextButton.styleFrom(
+          disabledBackgroundColor: appColors.grey2,
           backgroundColor: appColors.slBlue,
           minimumSize: const Size(320, 50),
           padding: const EdgeInsets.symmetric(vertical: 14),

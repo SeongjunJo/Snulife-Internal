@@ -65,6 +65,13 @@ class AppFonts {
     color: appColors.grey8,
   );
 
+  late final TextStyle loginForgotPasswordAskText = _createTextStyle(
+    sizePx: 14,
+    heightPx: 20,
+    weight: FontWeight.w400,
+    color: appColors.grey5,
+  );
+
   late final TextStyle homePersonName = _createTextStyle(
     sizePx: 24,
     heightPx: 30,

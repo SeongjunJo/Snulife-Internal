@@ -5,14 +5,14 @@ import 'package:snulife_internal/router.dart';
 import 'app_bars.dart';
 
 class InternalAppScaffold extends StatelessWidget {
-  final String? screenPath;
-  final Widget child;
-
   const InternalAppScaffold({
     super.key,
     required this.screenPath,
     required this.child,
   });
+
+  final String? screenPath;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +39,26 @@ class InternalAppScaffold extends StatelessWidget {
       appBar: internalAppBar,
       body: child,
       backgroundColor: appColors.grey0,
+    );
+  }
+}
+
+class SignScreensScaffold extends StatelessWidget {
+  const SignScreensScaffold({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("비밀번호 초기화"),
+        toolbarHeight: 50,
+        titleSpacing: 0,
+        backgroundColor: appColors.white,
+      ),
+      body: child,
+      backgroundColor: appColors.white,
     );
   }
 }
