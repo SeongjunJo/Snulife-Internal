@@ -38,6 +38,13 @@ class AppFonts {
   late final TextStyle btn =
       _createTextStyle(sizePx: 16, heightPx: 27, weight: FontWeight.w700);
 
+  late final TextStyle largeBtn = _createTextStyle(
+    sizePx: 17,
+    heightPx: 25,
+    weight: FontWeight.w700,
+    color: appColors.white,
+  );
+
   late final TextStyle loginTitle =
       _createTextStyle(sizePx: 20, heightPx: 30, weight: FontWeight.w700);
 

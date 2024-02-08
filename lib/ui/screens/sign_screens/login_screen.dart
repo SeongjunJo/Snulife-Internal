@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:snulife_internal/main.dart';
 import 'package:snulife_internal/router.dart';
+import 'package:snulife_internal/ui/widgets/commons/button_widgets.dart';
 
-import '../widgets/screen_specified/login_widget.dart';
+import '../../widgets/screen_specified/login_widget.dart';
 
 class LogInPage extends StatefulWidget {
   const LogInPage({super.key});
@@ -90,22 +91,12 @@ class _LogInPageState extends State<LogInPage> {
           ),
           // TODO 아래부터는 디자인 확정 후 반영
           const SizedBox(height: 38),
-          Center(
-            child: TextButton(
-              onPressed: _tryLogIn,
-              style: TextButton.styleFrom(
-                backgroundColor: appColors.slBlue,
-                minimumSize: const Size(300, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50),
-                ),
-              ),
-              child: const Text('로그인', style: TextStyle(color: Colors.white)),
-            ),
-          ),
+          AppLargeButton(buttonText: '로그인', onPressed: _tryLogIn),
           const SizedBox(height: 38),
           GestureDetector(
-            onTap: () {},
+            onTap: () {
+              context.pushNamed(AppRoutePath.forgottenPassword);
+            },
             child: const Center(
               child: Text("비밀번호를 잊으셨나요?"),
             ),

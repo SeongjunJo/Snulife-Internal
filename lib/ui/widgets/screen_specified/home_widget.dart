@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../main.dart';
-import '../commons/icon_widget.dart';
-import '../commons/text_widget.dart';
+import '../commons/icon_widgets.dart';
+import '../commons/text_widgets.dart';
 
 class PrimaryTab extends StatelessWidget {
   final String primaryTabName;

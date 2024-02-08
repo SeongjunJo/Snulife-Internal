@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../main.dart';
-import '../widgets/screen_specified/setting_widget.dart';
+import '../../../main.dart';
+import '../../widgets/screen_specified/setting_widget.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});

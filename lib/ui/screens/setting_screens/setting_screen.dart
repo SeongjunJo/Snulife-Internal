@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:snulife_internal/router.dart';
 
-import '../../main.dart';
-import '../widgets/screen_specified/setting_widget.dart';
+import '../../../main.dart';
+import '../../widgets/screen_specified/setting_widget.dart';
 
 class SettingPage extends StatelessWidget {
   const SettingPage({super.key});

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:snulife_internal/main.dart';
 
-import '../widgets/commons/icon_widget.dart';
-import '../widgets/commons/text_widget.dart';
-import '../widgets/screen_specified/home_widget.dart';
+import '../../widgets/commons/icon_widgets.dart';
+import '../../widgets/commons/text_widgets.dart';
+import '../../widgets/screen_specified/home_widget.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

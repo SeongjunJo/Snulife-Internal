@@ -7,17 +7,24 @@ class LoginTextField extends StatelessWidget {
     super.key,
     required this.type,
     required this.controller,
+    this.isForgottenPasswordField = false,
   });
 
   final String type;
   final TextEditingController controller;
+  final bool isForgottenPasswordField;
 
   @override
   Widget build(BuildContext context) {
     final String title = type == '이메일' ? '이메일' : '비밀번호';
     final String hint = type == '이메일' ? '이메일을 입력해주세요' : '비밀번호를 입력해주세요';
-    final TextInputAction action =
-        type == '이메일' ? TextInputAction.next : TextInputAction.done;
+    final TextInputType keyboardType = type == '이메일'
+        ? TextInputType.emailAddress
+        : TextInputType.visiblePassword;
+    final TextInputAction inputAction =
+        (type == '비밀번호') || isForgottenPasswordField
+            ? TextInputAction.done
+            : TextInputAction.next;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -35,8 +42,9 @@ class LoginTextField extends StatelessWidget {
               borderSide: BorderSide(color: appColors.red),
             ),
           ),
-          keyboardType: TextInputType.emailAddress,
-          textInputAction: action,
+          obscureText: type == '비밀번호',
+          keyboardType: keyboardType,
+          textInputAction: inputAction,
           controller: controller,
         ),
       ],
