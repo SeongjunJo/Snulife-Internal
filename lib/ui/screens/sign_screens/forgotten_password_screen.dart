@@ -14,31 +14,31 @@ class ForgottenPasswordPage extends StatefulWidget {
 }
 
 class _ForgottenPasswordPageState extends State<ForgottenPasswordPage> {
-  final emailController = TextEditingController();
-  bool isBtnEnabled = false;
-  void Function()? onPressed;
+  final _emailController = TextEditingController();
+  bool _isBtnEnabled = false;
+  void Function()? _onPressed;
 
   @override
   void initState() {
     super.initState();
-    emailController.addListener(
+    _emailController.addListener(
       () => setState(() {
-        isBtnEnabled = emailController.text.isNotEmpty;
+        _isBtnEnabled = _emailController.text.isNotEmpty;
       }),
     );
   }
 
   @override
   void dispose() {
-    emailController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    onPressed = isBtnEnabled
+    _onPressed = _isBtnEnabled
         ? () {
-            context.pushNamed(AppRoutePath.confirmPasswordReset);
+            context.pushReplacementNamed(AppRoutePath.confirmPasswordReset);
           }
         : null;
 
@@ -47,17 +47,17 @@ class _ForgottenPasswordPageState extends State<ForgottenPasswordPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("이메일을 입력해주세요", style: appFonts.h1),
+          Text("이메일을 입력해주세요", style: appFonts.signScreensTitle),
           const SizedBox(height: 60),
           LoginTextField(
             type: "이메일",
-            controller: emailController,
+            controller: _emailController,
             isForgottenPasswordField: true,
           ),
           const SizedBox(height: 80),
           AppLargeButton(
             buttonText: '확인',
-            onPressed: onPressed,
+            onPressed: _onPressed,
           ),
         ],
       ),

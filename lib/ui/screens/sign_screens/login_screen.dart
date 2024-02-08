@@ -15,22 +15,22 @@ class LogInPage extends StatefulWidget {
 }
 
 class _LogInPageState extends State<LogInPage> {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  bool isAutoLogInTap = false;
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _isAutoLogInTap = false;
 
   @override
   dispose() {
-    emailController.dispose();
-    passwordController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
   void _tryLogIn() async {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
+        email: _emailController.text,
+        password: _passwordController.text,
       );
     } on FirebaseAuthException catch (e) {
       // TODO print문 제거 & 에러 핸들링...
@@ -53,7 +53,7 @@ class _LogInPageState extends State<LogInPage> {
       }
     });
 
-    Icon checkBox = isAutoLogInTap
+    Icon checkBox = _isAutoLogInTap
         ? Icon(
             Icons.check_circle_rounded,
             color: appColors.slBlue,
@@ -70,16 +70,16 @@ class _LogInPageState extends State<LogInPage> {
       body: ListView(
         padding: const EdgeInsets.only(top: 95, left: 20, right: 20),
         children: [
-          Text("로그인 해주세요", style: appFonts.h1),
+          Text("로그인 해주세요", style: appFonts.signScreensTitle),
           const SizedBox(height: 60),
-          LoginTextField(type: "이메일", controller: emailController),
+          LoginTextField(type: "이메일", controller: _emailController),
           const SizedBox(height: 34),
-          LoginTextField(type: "비밀번호", controller: passwordController),
+          LoginTextField(type: "비밀번호", controller: _passwordController),
           const SizedBox(height: 38),
           GestureDetector(
             onTap: () {
               setState(() {
-                isAutoLogInTap = !isAutoLogInTap;
+                _isAutoLogInTap = !_isAutoLogInTap;
               });
             },
             child: Row(

@@ -45,6 +45,9 @@ class AppFonts {
     color: appColors.white,
   );
 
+  late final TextStyle signScreensTitle =
+      _createTextStyle(sizePx: 20, heightPx: 30, weight: FontWeight.w700);
+
   late final TextStyle loginTitle =
       _createTextStyle(sizePx: 20, heightPx: 30, weight: FontWeight.w700);
 
