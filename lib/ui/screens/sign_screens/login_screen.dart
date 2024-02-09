@@ -17,6 +17,26 @@ class LogInPage extends StatefulWidget {
 class _LogInPageState extends State<LogInPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _isBtnEnable = false;
+  FirebaseAuthErrors _fieldStatus = FirebaseAuthErrors.none;
+  void Function()? _onPressed;
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController.addListener(
+      () => setState(() {
+        _isBtnEnable = _emailController.text.isNotEmpty &
+            _passwordController.text.isNotEmpty;
+      }),
+    );
+    _passwordController.addListener(
+      () => setState(() {
+        _isBtnEnable = _emailController.text.isNotEmpty &
+            _passwordController.text.isNotEmpty;
+      }),
+    );
+  }
 
   @override
   dispose() {
@@ -32,11 +52,24 @@ class _LogInPageState extends State<LogInPage> {
         password: _passwordController.text,
       );
     } on FirebaseAuthException catch (e) {
-      // TODO print문 제거 & 에러 핸들링...
-      print("파이어베이스 에러 로그: $e & 에러 코드: ${e.code}");
-    } catch (e) {
-      print("에러 로그: $e");
+      switch (e.code) {
+        case 'invalid-email':
+          _fieldStatus = FirebaseAuthErrors.invalidEmail;
+        case 'user-disabled':
+          _fieldStatus = FirebaseAuthErrors.userDisabled;
+        case 'channel-error':
+          _fieldStatus = FirebaseAuthErrors.channelError;
+        case 'invalid-credential':
+          _fieldStatus = FirebaseAuthErrors.invalidCredential;
+        case 'network-request-failed':
+          _fieldStatus = FirebaseAuthErrors.networkRequestFailed;
+        default:
+          _fieldStatus = FirebaseAuthErrors.unknownError;
+      }
+      setState(() {});
+      return;
     }
+    setState(() => _fieldStatus = FirebaseAuthErrors.none);
   }
 
   @override
@@ -46,6 +79,8 @@ class _LogInPageState extends State<LogInPage> {
         context.goNamed(AppRoutePath.home);
       }
     });
+
+    _onPressed = _isBtnEnable ? () => _tryLogIn() : null;
 
     return Scaffold(
       backgroundColor: appColors.white,
@@ -57,16 +92,16 @@ class _LogInPageState extends State<LogInPage> {
           LoginTextFormField(
             type: "이메일",
             controller: _emailController,
-            fieldStatusMessage: FirebaseAuthErrors.none,
+            fieldStatusMessage: _fieldStatus,
           ),
           const SizedBox(height: 34),
           LoginTextFormField(
             type: "비밀번호",
             controller: _passwordController,
-            fieldStatusMessage: FirebaseAuthErrors.none,
+            fieldStatusMessage: _fieldStatus,
           ),
           const SizedBox(height: 60),
-          AppLargeButton(buttonText: '로그인', onPressed: _tryLogIn),
+          AppLargeButton(buttonText: '로그인', onPressed: _onPressed),
           const SizedBox(height: 20),
           GestureDetector(
             onTap: () {

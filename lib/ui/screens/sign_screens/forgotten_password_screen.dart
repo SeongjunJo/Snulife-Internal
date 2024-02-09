@@ -16,7 +16,7 @@ class ForgottenPasswordPage extends StatefulWidget {
 
 class _ForgottenPasswordPageState extends State<ForgottenPasswordPage> {
   final _emailController = TextEditingController();
-  bool _isBtnEnabled = false;
+  bool _isBtnEnable = false;
   FirebaseAuthErrors _fieldStatus = FirebaseAuthErrors.none;
   void Function()? _onPressed;
 
@@ -25,7 +25,7 @@ class _ForgottenPasswordPageState extends State<ForgottenPasswordPage> {
     super.initState();
     _emailController.addListener(
       () => setState(() {
-        _isBtnEnabled = _emailController.text.isNotEmpty;
+        _isBtnEnable = _emailController.text.isNotEmpty;
       }),
     );
   }
@@ -39,7 +39,7 @@ class _ForgottenPasswordPageState extends State<ForgottenPasswordPage> {
   @override
   Widget build(BuildContext context) {
     GoRouter goRouter = GoRouter.of(context);
-    _onPressed = _isBtnEnabled
+    _onPressed = _isBtnEnable
         ? () async {
             try {
               await FirebaseAuth.instance
@@ -48,13 +48,12 @@ class _ForgottenPasswordPageState extends State<ForgottenPasswordPage> {
               switch (e.code) {
                 case 'invalid-email':
                   _fieldStatus = FirebaseAuthErrors.invalidEmail;
-                case 'user-not-found':
-                  _fieldStatus = FirebaseAuthErrors.userNotFound;
+                case 'network-request-failed':
+                  _fieldStatus = FirebaseAuthErrors.networkRequestFailed;
                 default:
                   _fieldStatus = FirebaseAuthErrors.unknownError;
               }
               setState(() {});
-              print(_fieldStatus);
               return;
             }
             setState(() => _fieldStatus = FirebaseAuthErrors.none);

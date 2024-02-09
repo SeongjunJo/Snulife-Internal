@@ -7,7 +7,10 @@ AppFonts get appFonts => AppFonts();
 
 enum FirebaseAuthErrors {
   invalidEmail,
-  userNotFound,
+  channelError,
+  invalidCredential,
+  userDisabled,
+  networkRequestFailed,
   unknownError,
   none,
 }

@@ -40,15 +40,30 @@ class LoginTextFormField extends StatelessWidget {
         TextFormField(
           autovalidateMode: AutovalidateMode.onUserInteraction,
           validator: (_) {
-            switch (fieldStatusMessage) {
-              case FirebaseAuthErrors.invalidEmail:
-                return '올바른 이메일을 입력해주세요';
-              case FirebaseAuthErrors.userNotFound:
-                return '등록되지 않은 이메일입니다';
-              case FirebaseAuthErrors.unknownError:
-                return '알 수 없는 오류가 발생했습니다';
-              case FirebaseAuthErrors.none:
-                return null;
+            if (type == '이메일') {
+              switch (fieldStatusMessage) {
+                case FirebaseAuthErrors.invalidEmail:
+                  return '올바른 이메일을 입력해주세요';
+                case FirebaseAuthErrors.channelError:
+                  return '서버 오류가 발생했습니다';
+                case FirebaseAuthErrors.invalidCredential:
+                  return '이메일을 확인해주세요';
+                case FirebaseAuthErrors.userDisabled:
+                  return '비활성화된 이메일입니다';
+                case FirebaseAuthErrors.networkRequestFailed:
+                  return '네트워크 연결을 확인해주세요';
+                case FirebaseAuthErrors.unknownError:
+                  return '알 수 없는 오류가 발생했습니다';
+                case FirebaseAuthErrors.none:
+                  return null;
+              }
+            } else {
+              switch (fieldStatusMessage) {
+                case FirebaseAuthErrors.invalidCredential:
+                  return '비밀번호를 확인해주세요';
+                default:
+                  return null;
+              }
             }
           },
           decoration: InputDecoration(
