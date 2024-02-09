@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:snulife_internal/main.dart';
 
+import '../../../logics/global_values.dart';
 import '../../widgets/commons/button_widgets.dart';
 
 class ConfirmPasswordResetPage extends StatelessWidget {

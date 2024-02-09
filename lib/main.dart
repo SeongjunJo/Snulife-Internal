@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 
 import 'logics/firebase_options.dart';
 import 'router.dart';
-import 'ui/styles/colors.dart';
-import 'ui/styles/fonts.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,6 +22,3 @@ class InternalApp extends StatelessWidget {
     );
   }
 }
-
-AppColors get appColors => AppColors();
-AppFonts get appFonts => AppFonts();

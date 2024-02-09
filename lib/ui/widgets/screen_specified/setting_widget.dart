@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../../main.dart';
+import '../../../logics/global_values.dart';
 
 class SettingRow extends StatelessWidget {
   final String title;

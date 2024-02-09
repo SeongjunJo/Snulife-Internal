@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../main.dart';
+import '../../../logics/global_values.dart';
 
 class AppLargeButton extends StatelessWidget {
   const AppLargeButton({

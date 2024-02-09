@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:snulife_internal/router.dart';
 import 'package:snulife_internal/ui/widgets/commons/button_widgets.dart';
 
-import '../../../main.dart';
+import '../../../logics/global_values.dart';
 import '../../widgets/screen_specified/login_widget.dart';
 
 class ForgottenPasswordPage extends StatefulWidget {
@@ -17,6 +17,7 @@ class ForgottenPasswordPage extends StatefulWidget {
 class _ForgottenPasswordPageState extends State<ForgottenPasswordPage> {
   final _emailController = TextEditingController();
   bool _isBtnEnabled = false;
+  FirebaseAuthErrors _fieldStatus = FirebaseAuthErrors.none;
   void Function()? _onPressed;
 
   @override
@@ -43,10 +44,20 @@ class _ForgottenPasswordPageState extends State<ForgottenPasswordPage> {
             try {
               await FirebaseAuth.instance
                   .sendPasswordResetEmail(email: _emailController.text);
-            } catch (e) {
-              print("에러 로그: $e");
+            } on FirebaseAuthException catch (e) {
+              switch (e.code) {
+                case 'invalid-email':
+                  _fieldStatus = FirebaseAuthErrors.invalidEmail;
+                case 'user-not-found':
+                  _fieldStatus = FirebaseAuthErrors.userNotFound;
+                default:
+                  _fieldStatus = FirebaseAuthErrors.unknownError;
+              }
+              setState(() {});
+              print(_fieldStatus);
               return;
             }
+            setState(() => _fieldStatus = FirebaseAuthErrors.none);
             goRouter.pushReplacementNamed(AppRoutePath.confirmPasswordReset);
           }
         : null;
@@ -61,9 +72,10 @@ class _ForgottenPasswordPageState extends State<ForgottenPasswordPage> {
             children: [
               Text("이메일을 입력해주세요", style: appFonts.signScreensTitle),
               const SizedBox(height: 48),
-              LoginTextField(
+              LoginTextFormField(
                 type: "이메일",
                 controller: _emailController,
+                fieldStatusMessage: _fieldStatus,
                 isForgottenPasswordField: true,
               ),
             ],

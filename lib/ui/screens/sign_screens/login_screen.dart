@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:snulife_internal/main.dart';
 import 'package:snulife_internal/router.dart';
 import 'package:snulife_internal/ui/widgets/commons/button_widgets.dart';
 
+import '../../../logics/global_values.dart';
 import '../../widgets/screen_specified/login_widget.dart';
 
 class LogInPage extends StatefulWidget {
@@ -54,9 +54,17 @@ class _LogInPageState extends State<LogInPage> {
         children: [
           Text("로그인 해주세요", style: appFonts.signScreensTitle),
           const SizedBox(height: 60),
-          LoginTextField(type: "이메일", controller: _emailController),
+          LoginTextFormField(
+            type: "이메일",
+            controller: _emailController,
+            fieldStatusMessage: FirebaseAuthErrors.none,
+          ),
           const SizedBox(height: 34),
-          LoginTextField(type: "비밀번호", controller: _passwordController),
+          LoginTextFormField(
+            type: "비밀번호",
+            controller: _passwordController,
+            fieldStatusMessage: FirebaseAuthErrors.none,
+          ),
           const SizedBox(height: 60),
           AppLargeButton(buttonText: '로그인', onPressed: _tryLogIn),
           const SizedBox(height: 20),

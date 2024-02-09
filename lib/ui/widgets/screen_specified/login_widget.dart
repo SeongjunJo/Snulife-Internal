@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 
-import '../../../main.dart';
+import '../../../logics/global_values.dart';
 
-class LoginTextField extends StatelessWidget {
-  const LoginTextField({
+class LoginTextFormField extends StatelessWidget {
+  const LoginTextFormField({
     super.key,
     required this.type,
     required this.controller,
+    required this.fieldStatusMessage,
     this.isForgottenPasswordField = false,
   });
 
   final String type;
   final TextEditingController controller;
+  final FirebaseAuthErrors fieldStatusMessage;
   final bool isForgottenPasswordField;
 
   @override
@@ -35,7 +37,20 @@ class LoginTextField extends StatelessWidget {
       children: [
         Text(title, style: appFonts.loginFieldTitle),
         const SizedBox(height: 4),
-        TextField(
+        TextFormField(
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          validator: (_) {
+            switch (fieldStatusMessage) {
+              case FirebaseAuthErrors.invalidEmail:
+                return '올바른 이메일을 입력해주세요';
+              case FirebaseAuthErrors.userNotFound:
+                return '등록되지 않은 이메일입니다';
+              case FirebaseAuthErrors.unknownError:
+                return '알 수 없는 오류가 발생했습니다';
+              case FirebaseAuthErrors.none:
+                return null;
+            }
+          },
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: appFonts.loginFieldHint,

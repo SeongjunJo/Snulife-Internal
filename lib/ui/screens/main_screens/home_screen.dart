@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:snulife_internal/main.dart';
 
+import '../../../logics/global_values.dart';
 import '../../widgets/commons/icon_widgets.dart';
 import '../../widgets/commons/text_widgets.dart';
 import '../../widgets/screen_specified/home_widget.dart';

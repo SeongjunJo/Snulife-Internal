@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../main.dart';
+import '../../../logics/global_values.dart';
 import '../../widgets/screen_specified/setting_widget.dart';
 
 class ProfilePage extends StatelessWidget {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:snulife_internal/main.dart';
+
+import '../../logics/global_values.dart';
 
 @immutable
 class AppFonts {
