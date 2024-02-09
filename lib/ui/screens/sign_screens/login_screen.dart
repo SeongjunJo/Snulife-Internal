@@ -17,7 +17,6 @@ class LogInPage extends StatefulWidget {
 class _LogInPageState extends State<LogInPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _isAutoLogInTap = false;
 
   @override
   dispose() {
@@ -48,18 +47,6 @@ class _LogInPageState extends State<LogInPage> {
       }
     });
 
-    Icon checkBox = _isAutoLogInTap
-        ? Icon(
-            Icons.check_circle_rounded,
-            color: appColors.slBlue,
-            size: 22,
-          )
-        : Icon(
-            Icons.check_circle_outline_rounded,
-            color: appColors.grey5,
-            size: 22,
-          );
-
     return Scaffold(
       backgroundColor: appColors.white,
       body: ListView(
@@ -70,24 +57,9 @@ class _LogInPageState extends State<LogInPage> {
           LoginTextField(type: "이메일", controller: _emailController),
           const SizedBox(height: 34),
           LoginTextField(type: "비밀번호", controller: _passwordController),
-          const SizedBox(height: 38),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                _isAutoLogInTap = !_isAutoLogInTap;
-              });
-            },
-            child: Row(
-              children: [
-                checkBox,
-                const SizedBox(width: 8),
-                Text("자동 로그인", style: appFonts.loginAutoLoginText),
-              ],
-            ),
-          ),
-          const SizedBox(height: 38),
+          const SizedBox(height: 60),
           AppLargeButton(buttonText: '로그인', onPressed: _tryLogIn),
-          const SizedBox(height: 38),
+          const SizedBox(height: 20),
           GestureDetector(
             onTap: () {
               context.pushNamed(AppRoutePath.forgottenPassword);

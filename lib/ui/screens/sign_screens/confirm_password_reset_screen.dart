@@ -13,17 +13,22 @@ class ConfirmPasswordResetPage extends StatelessWidget {
       padding: const EdgeInsets.only(top: 45, left: 20, right: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             "비밀번호 초기화 메일을\n보내드렸습니다.\n\n이메일을 확인해주세요.",
             style: appFonts.signScreensTitle,
           ),
-          const SizedBox(height: 80),
-          AppLargeButton(
-            buttonText: '로그인 화면으로 돌아가기',
-            onPressed: () {
-              context.pop();
-            },
+          Column(
+            children: [
+              AppLargeButton(
+                buttonText: '로그인 화면 돌아가기',
+                onPressed: () {
+                  context.pop();
+                },
+              ),
+              const SizedBox(height: 48),
+            ],
           ),
         ],
       ),

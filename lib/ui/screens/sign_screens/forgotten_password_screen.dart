@@ -45,6 +45,7 @@ class _ForgottenPasswordPageState extends State<ForgottenPasswordPage> {
                   .sendPasswordResetEmail(email: _emailController.text);
             } catch (e) {
               print("에러 로그: $e");
+              return;
             }
             goRouter.pushReplacementNamed(AppRoutePath.confirmPasswordReset);
           }
@@ -53,19 +54,28 @@ class _ForgottenPasswordPageState extends State<ForgottenPasswordPage> {
     return Container(
       padding: const EdgeInsets.only(top: 45, left: 20, right: 20),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("이메일을 입력해주세요", style: appFonts.signScreensTitle),
-          const SizedBox(height: 60),
-          LoginTextField(
-            type: "이메일",
-            controller: _emailController,
-            isForgottenPasswordField: true,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("이메일을 입력해주세요", style: appFonts.signScreensTitle),
+              const SizedBox(height: 48),
+              LoginTextField(
+                type: "이메일",
+                controller: _emailController,
+                isForgottenPasswordField: true,
+              ),
+            ],
           ),
-          const SizedBox(height: 80),
-          AppLargeButton(
-            buttonText: '확인',
-            onPressed: _onPressed,
+          Column(
+            children: [
+              AppLargeButton(
+                buttonText: '확인',
+                onPressed: _onPressed,
+              ),
+              const SizedBox(height: 48),
+            ],
           ),
         ],
       ),
