@@ -35,7 +35,7 @@ class LoginTextFormField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: appFonts.loginFieldTitle),
+        Text(title, style: appFonts.h3),
         const SizedBox(height: 4),
         TextFormField(
           autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -68,7 +68,7 @@ class LoginTextFormField extends StatelessWidget {
           },
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: appFonts.loginFieldHint,
+            hintStyle: appFonts.b2.copyWith(color: appColors.grey4),
             focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: appColors.slBlue),
             ),

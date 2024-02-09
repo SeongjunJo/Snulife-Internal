@@ -26,7 +26,10 @@ class AppLargeButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(50),
           ),
         ),
-        child: Text(buttonText, style: appFonts.largeBtn),
+        child: Text(
+          buttonText,
+          style: appFonts.btn.copyWith(color: appColors.white),
+        ),
       ),
     );
   }

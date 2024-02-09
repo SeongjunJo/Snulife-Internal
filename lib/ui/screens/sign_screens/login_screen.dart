@@ -104,7 +104,7 @@ class _LogInScreenState extends State<LogInScreen> {
       body: ListView(
         padding: const EdgeInsets.only(top: 95, left: 20, right: 20),
         children: [
-          Text("로그인 해주세요", style: appFonts.signScreensTitle),
+          Text("로그인 해주세요.", style: appFonts.h1),
           const SizedBox(height: 60),
           LoginTextFormField(
             type: "이메일",
@@ -125,8 +125,10 @@ class _LogInScreenState extends State<LogInScreen> {
               context.pushNamed(AppRoutePath.forgottenPassword);
             },
             child: Center(
-              child: Text("비밀번호를 잊으셨나요?",
-                  style: appFonts.loginForgotPasswordAskText),
+              child: Text(
+                "비밀번호를 잊으셨나요?",
+                style: appFonts.b2.copyWith(color: appColors.grey5),
+              ),
             ),
           ),
         ],

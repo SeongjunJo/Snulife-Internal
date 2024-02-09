@@ -69,7 +69,7 @@ class HomePage extends StatelessWidget {
           child: Center(
             child: Text(
               "SNULife Internal",
-              style: appFonts.homeBottomText,
+              style: appFonts.t4.copyWith(color: appColors.grey3),
             ),
           ),
         ),

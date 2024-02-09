@@ -69,7 +69,7 @@ class _ForgottenPasswordPageState extends State<ForgottenPasswordPage> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("이메일을 입력해주세요", style: appFonts.signScreensTitle),
+              Text("이메일을 입력해주세요.", style: appFonts.h1),
               const SizedBox(height: 48),
               LoginTextFormField(
                 type: "이메일",

@@ -24,7 +24,7 @@ class SettingRow extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(title, style: appFonts.settingTabTitle),
+            Text(title, style: appFonts.t3),
             trailing,
           ],
         ),

@@ -17,7 +17,7 @@ class ConfirmPasswordResetPage extends StatelessWidget {
         children: [
           Text(
             "비밀번호 초기화 메일을\n보내드렸습니다.\n\n이메일을 확인해주세요.",
-            style: appFonts.signScreensTitle,
+            style: appFonts.h1,
           ),
           Column(
             children: [

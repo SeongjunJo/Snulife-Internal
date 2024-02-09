@@ -30,7 +30,10 @@ class PrimaryTab extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(primaryTabName, style: appFonts.homePrimaryTabName),
+              Text(
+                primaryTabName,
+                style: appFonts.h1.copyWith(color: appColors.grey8),
+              ),
               const SizedBox(height: 34),
               primaryTabContent,
             ],
