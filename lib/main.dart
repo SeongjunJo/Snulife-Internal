@@ -1,5 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:snulife_internal/logics/providers/firebase_states.dart';
 
 import 'logics/firebase_options.dart';
 import 'router.dart';
@@ -8,7 +10,12 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  runApp(const InternalApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => FirebaseStates(),
+      builder: ((context, child) => const InternalApp()),
+    ),
+  );
 }
 
 class InternalApp extends StatelessWidget {
