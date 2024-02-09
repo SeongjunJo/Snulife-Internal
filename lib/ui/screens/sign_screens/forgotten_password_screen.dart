@@ -1,9 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:snulife_internal/router.dart';
 import 'package:snulife_internal/ui/widgets/commons/button_widgets.dart';
 
 import '../../../main.dart';
-import '../../../router.dart';
 import '../../widgets/screen_specified/login_widget.dart';
 
 class ForgottenPasswordPage extends StatefulWidget {
@@ -36,9 +37,16 @@ class _ForgottenPasswordPageState extends State<ForgottenPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
+    GoRouter goRouter = GoRouter.of(context);
     _onPressed = _isBtnEnabled
-        ? () {
-            context.pushReplacementNamed(AppRoutePath.confirmPasswordReset);
+        ? () async {
+            try {
+              await FirebaseAuth.instance
+                  .sendPasswordResetEmail(email: _emailController.text);
+            } catch (e) {
+              print("에러 로그: $e");
+            }
+            goRouter.pushReplacementNamed(AppRoutePath.confirmPasswordReset);
           }
         : null;
 

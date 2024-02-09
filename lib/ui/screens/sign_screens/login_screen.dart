@@ -34,12 +34,7 @@ class _LogInPageState extends State<LogInPage> {
       );
     } on FirebaseAuthException catch (e) {
       // TODO print문 제거 & 에러 핸들링...
-      // FirebaseAuthException이 안 잡히면 그냥 e를 전부 잡아서 로그 까는 게 좋을 수 있음
-      if (e.code == 'user-not-found') {
-        print("user not found");
-      } else if (e.code == 'wrong-password') {
-        print("wrong password");
-      }
+      print("파이어베이스 에러 로그: $e & 에러 코드: ${e.code}");
     } catch (e) {
       print("에러 로그: $e");
     }
