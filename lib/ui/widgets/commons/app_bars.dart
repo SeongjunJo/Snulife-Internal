@@ -79,7 +79,7 @@ class SubScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
             onPressed: () => context.pop(),
           ),
-          Text(title, style: appFonts.tm.copyWith(color: appColors.grey7)),
+          Text(title, style: appFonts.t4.copyWith(color: appColors.grey7)),
           const SizedBox(width: 48, height: 48),
         ],
       ),

@@ -5,7 +5,7 @@ import 'package:snulife_internal/router.dart';
 import 'package:snulife_internal/ui/widgets/commons/button_widgets.dart';
 
 import '../../../logics/global_values.dart';
-import '../../widgets/screen_specified/login_widget.dart';
+import '../../widgets/screen_specified/sign_widget.dart';
 
 class ForgottenPasswordPage extends StatefulWidget {
   const ForgottenPasswordPage({super.key});

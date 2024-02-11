@@ -1,33 +1,61 @@
 import 'package:flutter/material.dart';
 
+import '../../../logics/firestore_read.dart';
 import '../../../logics/global_values.dart';
 import '../../widgets/commons/icon_widgets.dart';
 import '../../widgets/commons/text_widgets.dart';
 import '../../widgets/screen_specified/home_widget.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final firestoreReader = FirestoreReader();
+  late final Future<Map<String, dynamic>> userInfo;
+  late final Future<String> clerk;
+
+  @override
+  void initState() {
+    super.initState();
+    userInfo = firestoreReader.getUserInfo();
+    clerk = firestoreReader.getClerk();
+  }
 
   @override
   Widget build(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       children: [
-        const Column(
-          children: [
-            SizedBox(height: 48),
-            // TODO user 이름
-            WelcomeText(name: "정선영"),
-            SizedBox(height: 10),
-            Row(
-              children: [
-                // TODO user의 정보
-                InfoBox(info: "디자인팀"),
-                SizedBox(width: 8),
-                InfoBox(info: "주니어"),
-              ],
-            ),
-          ],
+        FutureBuilder(
+          future: userInfo,
+          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+            if (snapshot.hasData) {
+              return Column(
+                children: [
+                  const SizedBox(height: 48),
+                  WelcomeText(name: snapshot.data['name']),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      InfoBox(info: snapshot.data['team']),
+                      const SizedBox(width: 8),
+                      InfoBox(info: snapshot.data['isSenior'] ? '시니어' : '주니어'),
+                      const SizedBox(width: 8),
+                      InfoBox(info: snapshot.data['position']),
+                    ],
+                  ),
+                ],
+              );
+            } else {
+              return Center(
+                child: CircularProgressIndicator(color: appColors.slBlue),
+              );
+            }
+          },
         ),
         Padding(
           padding: const EdgeInsets.only(top: 34),
@@ -58,18 +86,27 @@ class HomePage extends StatelessWidget {
             ),
           ),
         ),
-        const Padding(
-          padding: EdgeInsets.symmetric(vertical: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16),
           child: Column(
             children: [
               PrimaryTab(
                 primaryTabName: "출석",
-                // TODO 당일 서기 이름
-                primaryTabContent: AttendanceText(clerk: "정선영"),
-                primaryTabIcon: AttendanceIcon(),
+                primaryTabContent: FutureBuilder(
+                  future: clerk,
+                  builder:
+                      (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                    if (snapshot.hasData) {
+                      return AttendanceText(clerk: snapshot.data);
+                    } else {
+                      return const CircularProgressIndicator(value: 0);
+                    }
+                  },
+                ),
+                primaryTabIcon: const AttendanceIcon(),
               ),
-              SizedBox(height: 16),
-              PrimaryTab(
+              const SizedBox(height: 16),
+              const PrimaryTab(
                 primaryTabName: "지출 내역",
                 primaryTabContent: ReceiptText(),
                 primaryTabIcon: ReceiptIcon(),
