@@ -29,8 +29,37 @@ class HomePage extends StatelessWidget {
             ),
           ],
         ),
+        Padding(
+          padding: const EdgeInsets.only(top: 34),
+          child: GestureDetector(
+            onTap: () {
+              // TODO 내 출결 관리 페이지로 이동
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+              decoration: BoxDecoration(
+                color: appColors.white,
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '내 출결 관리',
+                    style: appFonts.t3.copyWith(color: appColors.grey7),
+                  ),
+                  Image.asset(
+                    'assets/images/icon_right_arrow.png',
+                    width: 22,
+                    height: 22,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
         const Padding(
-          padding: EdgeInsets.symmetric(vertical: 34),
+          padding: EdgeInsets.symmetric(vertical: 16),
           child: Column(
             children: [
               PrimaryTab(
@@ -48,6 +77,7 @@ class HomePage extends StatelessWidget {
             ],
           ),
         ),
+        const SizedBox(height: 8),
         const Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
