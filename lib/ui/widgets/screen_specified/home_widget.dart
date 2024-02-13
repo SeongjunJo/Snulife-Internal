@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:snulife_internal/router.dart';
 
 import '../../../logics/commons/common_classes.dart';
 import '../commons/icon_widgets.dart';
@@ -18,28 +20,31 @@ class PrimaryTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: appColors.white,
-        borderRadius: BorderRadius.circular(24),
-      ),
-      padding: const EdgeInsets.only(left: 19),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                primaryTabName,
-                style: appFonts.h1.copyWith(color: appColors.grey8),
-              ),
-              const SizedBox(height: 34),
-              primaryTabContent,
-            ],
-          ),
-          primaryTabIcon,
-        ],
+    return GestureDetector(
+      onTap: () => context.pushNamed(AppRoutePath.attendance),
+      child: Container(
+        decoration: BoxDecoration(
+          color: appColors.white,
+          borderRadius: BorderRadius.circular(24),
+        ),
+        padding: const EdgeInsets.only(left: 19),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  primaryTabName,
+                  style: appFonts.h1.copyWith(color: appColors.grey8),
+                ),
+                const SizedBox(height: 34),
+                primaryTabContent,
+              ],
+            ),
+            primaryTabIcon,
+          ],
+        ),
       ),
     );
   }

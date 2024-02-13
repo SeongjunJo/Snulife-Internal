@@ -34,9 +34,7 @@ class HomeScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
                 width: 30,
                 height: 30,
               ),
-              onPressed: () {
-                context.pushNamed(AppRoutePath.settings);
-              },
+              onPressed: () => context.pushNamed(AppRoutePath.settings),
             ),
           ],
         ),

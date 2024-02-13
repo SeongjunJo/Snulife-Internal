@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:snulife_internal/ui/screens/main_screens/attendance_screens/attandance_screen.dart';
 import 'package:snulife_internal/ui/screens/main_screens/home_screen.dart';
 import 'package:snulife_internal/ui/screens/setting_screens/profile_screen.dart';
 import 'package:snulife_internal/ui/screens/setting_screens/setting_screen.dart';
@@ -57,6 +58,13 @@ final appRouter = GoRouter(
           name: AppRoutePath.home,
           path: AppRoutePath.home,
           builder: (context, state) => const HomePage(),
+          routes: [
+            GoRoute(
+              name: AppRoutePath.attendance,
+              path: 'attendance',
+              builder: (context, state) => const AttendancePage(),
+            ),
+          ],
         ),
         GoRoute(
           name: AppRoutePath.settings,
@@ -83,6 +91,7 @@ class AppRoutePath {
   static const confirmPasswordReset = '/login/confirmPasswordReset';
 
   static const home = '/home';
+  static const attendance = '/home/attendance';
 
   static const settings = '/settings';
   static const profile = '/settings/profile';

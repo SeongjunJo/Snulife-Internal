@@ -74,7 +74,7 @@ class LoginTextFormField extends StatelessWidget {
               borderSide: BorderSide(color: appColors.slBlue),
             ),
             errorBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: appColors.red),
+              borderSide: BorderSide(color: appColors.failure),
             ),
           ),
           obscureText: type == '비밀번호',

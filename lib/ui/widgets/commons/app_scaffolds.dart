@@ -26,6 +26,8 @@ class InternalAppScaffold extends StatelessWidget {
           title = "마이페이지";
         case AppRoutePath.profile:
           title = "프로필 관리";
+        case AppRoutePath.attendance:
+          title = "출결";
         default:
           throw Exception("scaffold에서 신규 라우트를 설정해주세요: $screenPath");
       }
