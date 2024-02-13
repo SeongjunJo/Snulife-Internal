@@ -4,7 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:snulife_internal/router.dart';
 import 'package:snulife_internal/ui/widgets/commons/button_widgets.dart';
 
-import '../../../logics/global_values.dart';
+import '../../../logics/commons/common_classes.dart';
+import '../../../logics/commons/firebase_classes.dart';
 import '../../widgets/screen_specified/sign_widget.dart';
 
 class ForgottenPasswordPage extends StatefulWidget {
@@ -17,7 +18,7 @@ class ForgottenPasswordPage extends StatefulWidget {
 class _ForgottenPasswordPageState extends State<ForgottenPasswordPage> {
   final _emailController = TextEditingController();
   bool _isBtnEnable = false;
-  FirebaseAuthErrors _fieldStatus = FirebaseAuthErrors.none;
+  FirebaseAuthErrorTypes _fieldStatus = FirebaseAuthErrorTypes.none;
   void Function()? _onPressed;
 
   @override
@@ -47,16 +48,16 @@ class _ForgottenPasswordPageState extends State<ForgottenPasswordPage> {
             } on FirebaseAuthException catch (e) {
               switch (e.code) {
                 case 'invalid-email':
-                  _fieldStatus = FirebaseAuthErrors.invalidEmail;
+                  _fieldStatus = FirebaseAuthErrorTypes.invalidEmail;
                 case 'network-request-failed':
-                  _fieldStatus = FirebaseAuthErrors.networkRequestFailed;
+                  _fieldStatus = FirebaseAuthErrorTypes.networkRequestFailed;
                 default:
-                  _fieldStatus = FirebaseAuthErrors.unknownError;
+                  _fieldStatus = FirebaseAuthErrorTypes.unknownError;
               }
               setState(() {});
               return;
             }
-            setState(() => _fieldStatus = FirebaseAuthErrors.none);
+            setState(() => _fieldStatus = FirebaseAuthErrorTypes.none);
             goRouter.pushReplacementNamed(AppRoutePath.confirmPasswordReset);
           }
         : null;

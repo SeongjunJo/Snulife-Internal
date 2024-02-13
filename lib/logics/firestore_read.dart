@@ -1,14 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
+import 'commons/common_classes.dart';
 
 class FirestoreReader {
-  // make singleton class
-  FirestoreReader._();
-  static final FirestoreReader _instance = FirestoreReader._();
-  factory FirestoreReader() => _instance;
+  final _db = firebaseInstance.db;
+  final _userId = firebaseInstance.userId;
 
-  final _db = FirebaseFirestore.instance;
-  final _userId = FirebaseAuth.instance.currentUser?.uid;
+  Future<String> getUserName() async {
+    final userInfoField = _db.collection('users').doc(_userId).get();
+    String userName = '';
+
+    await userInfoField.then((DocumentSnapshot doc) {
+      userName = doc['name'];
+    });
+
+    return userName;
+  }
 
   Future<Map<String, dynamic>> getUserInfo() async {
     final userInfoField = _db.collection('users').doc(_userId).get();

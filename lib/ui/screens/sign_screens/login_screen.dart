@@ -6,7 +6,8 @@ import 'package:snulife_internal/logics/providers/firebase_states.dart';
 import 'package:snulife_internal/router.dart';
 import 'package:snulife_internal/ui/widgets/commons/button_widgets.dart';
 
-import '../../../logics/global_values.dart';
+import '../../../logics/commons/common_classes.dart';
+import '../../../logics/commons/firebase_classes.dart';
 import '../../widgets/screen_specified/sign_widget.dart';
 
 class LogInPage extends StatelessWidget {
@@ -35,7 +36,7 @@ class _LogInScreenState extends State<LogInScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isBtnEnable = false;
-  FirebaseAuthErrors _fieldStatus = FirebaseAuthErrors.none;
+  FirebaseAuthErrorTypes _fieldStatus = FirebaseAuthErrorTypes.none;
   void Function()? _onPressed;
 
   @override
@@ -71,22 +72,22 @@ class _LogInScreenState extends State<LogInScreen> {
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case 'invalid-email':
-          _fieldStatus = FirebaseAuthErrors.invalidEmail;
+          _fieldStatus = FirebaseAuthErrorTypes.invalidEmail;
         case 'user-disabled':
-          _fieldStatus = FirebaseAuthErrors.userDisabled;
+          _fieldStatus = FirebaseAuthErrorTypes.userDisabled;
         case 'channel-error':
-          _fieldStatus = FirebaseAuthErrors.channelError;
+          _fieldStatus = FirebaseAuthErrorTypes.channelError;
         case 'invalid-credential':
-          _fieldStatus = FirebaseAuthErrors.invalidCredential;
+          _fieldStatus = FirebaseAuthErrorTypes.invalidCredential;
         case 'network-request-failed':
-          _fieldStatus = FirebaseAuthErrors.networkRequestFailed;
+          _fieldStatus = FirebaseAuthErrorTypes.networkRequestFailed;
         default:
-          _fieldStatus = FirebaseAuthErrors.unknownError;
+          _fieldStatus = FirebaseAuthErrorTypes.unknownError;
       }
       setState(() {});
       return;
     }
-    setState(() => _fieldStatus = FirebaseAuthErrors.none);
+    setState(() => _fieldStatus = FirebaseAuthErrorTypes.none);
   }
 
   @override

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:snulife_internal/router.dart';
 
-import '../../../logics/global_values.dart';
+import '../../../logics/commons/common_classes.dart';
 import 'app_bars.dart';
 
 class InternalAppScaffold extends StatelessWidget {

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../logics/firestore_read.dart';
-import '../../../logics/global_values.dart';
+import '../../../logics/commons/common_classes.dart';
 import '../../widgets/commons/icon_widgets.dart';
 import '../../widgets/commons/text_widgets.dart';
 import '../../widgets/screen_specified/home_widget.dart';
@@ -14,7 +13,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final firestoreReader = FirestoreReader();
   late final Future<Map<String, dynamic>> userInfo;
   late final Future<String> clerk;
 
@@ -51,9 +49,7 @@ class _HomePageState extends State<HomePage> {
                 ],
               );
             } else {
-              return Center(
-                child: CircularProgressIndicator(color: appColors.slBlue),
-              );
+              return const SizedBox(height: 105);
             }
           },
         ),
@@ -99,7 +95,7 @@ class _HomePageState extends State<HomePage> {
                     if (snapshot.hasData) {
                       return AttendanceText(clerk: snapshot.data);
                     } else {
-                      return const CircularProgressIndicator(value: 0);
+                      return const SizedBox();
                     }
                   },
                 ),

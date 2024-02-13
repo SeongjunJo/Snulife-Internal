@@ -7,7 +7,6 @@ class FirebaseStates extends ChangeNotifier {
   }
 
   bool _loggedIn = false;
-
   bool get loggedIn => _loggedIn;
 
   void init() {

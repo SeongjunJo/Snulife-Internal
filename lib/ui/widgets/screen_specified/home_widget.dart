@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../logics/global_values.dart';
+import '../../../logics/commons/common_classes.dart';
 import '../commons/icon_widgets.dart';
 import '../commons/text_widgets.dart';
 

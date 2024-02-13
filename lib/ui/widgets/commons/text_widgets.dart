@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../logics/global_values.dart';
+import '../../../logics/commons/common_classes.dart';
 
 class WelcomeText extends StatelessWidget {
   final String name;

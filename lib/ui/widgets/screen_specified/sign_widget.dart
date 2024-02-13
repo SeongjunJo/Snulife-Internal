@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../logics/global_values.dart';
+import '../../../logics/commons/common_classes.dart';
+import '../../../logics/commons/firebase_classes.dart';
 
 class LoginTextFormField extends StatelessWidget {
   const LoginTextFormField({
@@ -13,7 +14,7 @@ class LoginTextFormField extends StatelessWidget {
 
   final String type;
   final TextEditingController controller;
-  final FirebaseAuthErrors fieldStatusMessage;
+  final FirebaseAuthErrorTypes fieldStatusMessage;
   final bool isForgottenPasswordField;
 
   @override
@@ -42,24 +43,24 @@ class LoginTextFormField extends StatelessWidget {
           validator: (_) {
             if (type == '이메일') {
               switch (fieldStatusMessage) {
-                case FirebaseAuthErrors.invalidEmail:
+                case FirebaseAuthErrorTypes.invalidEmail:
                   return '올바른 이메일을 입력해주세요';
-                case FirebaseAuthErrors.channelError:
+                case FirebaseAuthErrorTypes.channelError:
                   return '서버 오류가 발생했습니다';
-                case FirebaseAuthErrors.invalidCredential:
+                case FirebaseAuthErrorTypes.invalidCredential:
                   return '이메일을 확인해주세요';
-                case FirebaseAuthErrors.userDisabled:
+                case FirebaseAuthErrorTypes.userDisabled:
                   return '비활성화된 이메일입니다';
-                case FirebaseAuthErrors.networkRequestFailed:
+                case FirebaseAuthErrorTypes.networkRequestFailed:
                   return '네트워크 연결을 확인해주세요';
-                case FirebaseAuthErrors.unknownError:
+                case FirebaseAuthErrorTypes.unknownError:
                   return '알 수 없는 오류가 발생했습니다';
-                case FirebaseAuthErrors.none:
+                case FirebaseAuthErrorTypes.none:
                   return null;
               }
             } else {
               switch (fieldStatusMessage) {
-                case FirebaseAuthErrors.invalidCredential:
+                case FirebaseAuthErrorTypes.invalidCredential:
                   return '비밀번호를 확인해주세요';
                 default:
                   return null;
