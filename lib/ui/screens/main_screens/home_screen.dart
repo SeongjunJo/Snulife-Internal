@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../logics/commons/common_classes.dart';
+import '../../../logics/common_instances.dart';
 import '../../widgets/commons/icon_widgets.dart';
 import '../../widgets/commons/text_widgets.dart';
 import '../../widgets/screen_specified/home_widget.dart';

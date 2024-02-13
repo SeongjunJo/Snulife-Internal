@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:snulife_internal/router.dart';
 
-import '../../../logics/commons/common_classes.dart';
+import '../../../logics/common_instances.dart';
 import '../commons/icon_widgets.dart';
 import '../commons/text_widgets.dart';
 

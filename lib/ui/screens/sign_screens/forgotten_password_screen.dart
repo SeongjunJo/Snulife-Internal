@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:snulife_internal/router.dart';
 import 'package:snulife_internal/ui/widgets/commons/button_widgets.dart';
 
-import '../../../logics/commons/common_classes.dart';
-import '../../../logics/commons/firebase_classes.dart';
+import '../../../logics/common_instances.dart';
+import '../../../logics/utils/firebase_util.dart';
 import '../../widgets/screen_specified/sign_widget.dart';
 
 class ForgottenPasswordPage extends StatefulWidget {

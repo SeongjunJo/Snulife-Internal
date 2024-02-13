@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../logics/commons/common_classes.dart';
-import '../../../logics/commons/firebase_classes.dart';
+import '../../../logics/common_instances.dart';
+import '../../../logics/utils/firebase_util.dart';
 
 class LoginTextFormField extends StatelessWidget {
   const LoginTextFormField({

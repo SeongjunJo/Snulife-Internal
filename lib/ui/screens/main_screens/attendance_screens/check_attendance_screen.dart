@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:snulife_internal/logics/utils/date_util.dart';
 import 'package:snulife_internal/ui/widgets/commons/button_widgets.dart';
 
-import '../../../../logics/commons/common_classes.dart';
+import '../../../../logics/common_instances.dart';
 import '../../../widgets/screen_specified/attendance_widget.dart';
 
 class CheckAttendancePage extends StatelessWidget {
@@ -10,7 +11,7 @@ class CheckAttendancePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DateTime today = DateTime.now();
+    final today = LocalDateTime.now();
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 20),

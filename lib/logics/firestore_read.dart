@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'commons/common_classes.dart';
+import 'common_instances.dart';
 
 class FirestoreReader {
   final _db = firebaseInstance.db;

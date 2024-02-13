@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../logics/commons/common_classes.dart';
+import '../../../logics/common_instances.dart';
 
 class AppLargeButton extends StatelessWidget {
   const AppLargeButton({

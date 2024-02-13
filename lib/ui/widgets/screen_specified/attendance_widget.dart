@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:snulife_internal/logics/commons/common_classes.dart';
+import 'package:snulife_internal/logics/common_instances.dart';
 import 'package:snulife_internal/ui/widgets/commons/button_widgets.dart';
 
 class AttendanceList extends StatefulWidget {
