@@ -70,12 +70,14 @@ class _AttendanceListItemState extends State<AttendanceListItem> {
 class ClerkListItem extends StatefulWidget {
   const ClerkListItem({
     super.key,
+    required this.name,
     required this.index,
     required this.selectedIndex,
     required this.onSelected,
     required this.clerkCount,
   });
 
+  final String name;
   final int index;
   final int selectedIndex;
   final Function() onSelected;
@@ -102,7 +104,7 @@ class _ClerkListItemState extends State<ClerkListItem> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "김이름",
+              widget.name,
               style: appFonts.h3.copyWith(
                   color: isSelected ? appColors.slBlue : appColors.grey8),
             ),

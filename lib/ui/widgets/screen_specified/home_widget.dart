@@ -21,7 +21,10 @@ class PrimaryTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => context.pushNamed(AppRoutePath.attendance),
+      // TODO PrimaryTab이 많아지면 enum으로 관리
+      onTap: primaryTabName == "출석"
+          ? () => context.pushNamed(AppRoutePath.attendance)
+          : null,
       child: Container(
         decoration: BoxDecoration(
           color: appColors.white,

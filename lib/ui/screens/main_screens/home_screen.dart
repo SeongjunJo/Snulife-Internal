@@ -15,18 +15,12 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late final Future<Map<String, dynamic>> userInfo;
   late final Future<String> clerk;
-  late final List<Object> data;
-
-  Future<void> getData() async {
-    userInfo = firestoreReader.getUserInfo();
-    clerk = firestoreReader.getClerk();
-    data = await Future.wait([userInfo, clerk]);
-  }
 
   @override
   void initState() {
     super.initState();
-    getData();
+    userInfo = firestoreReader.getUserInfo();
+    clerk = firestoreReader.getClerk();
   }
 
   @override
