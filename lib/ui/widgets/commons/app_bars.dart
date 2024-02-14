@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:snulife_internal/router.dart';
 
 import '../../../logics/common_instances.dart';
+import 'app_tabs.dart';
 
 class HomeScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
   const HomeScreenAppBar({
@@ -51,13 +52,17 @@ class SubScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     required this.appBar,
     required this.title,
+    required this.isTabView,
   });
 
   final AppBar appBar;
   final String title;
+  final bool isTabView;
 
   @override
   Widget build(BuildContext context) {
+    TabController tabController = AppTab.attendanceTabController;
+
     return AppBar(
       toolbarHeight: 50,
       automaticallyImplyLeading: false,
@@ -81,9 +86,26 @@ class SubScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
           const SizedBox(width: 48, height: 48),
         ],
       ),
+      bottom: isTabView
+          ? TabBar(
+              controller: tabController,
+              tabs: AppTab.attendanceTabs,
+              indicator: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: appColors.slBlue, width: 2),
+                ),
+              ),
+              indicatorSize: TabBarIndicatorSize.tab,
+              dividerColor: appColors.grey3,
+              labelColor: appColors.grey9,
+              unselectedLabelColor: appColors.grey5,
+              labelStyle: appFonts.b1,
+              unselectedLabelStyle: appFonts.b1,
+            )
+          : null,
     );
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(appBar.preferredSize.height);
+  Size get preferredSize => Size.fromHeight(isTabView ? 100 : 50);
 }

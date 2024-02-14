@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:snulife_internal/logics/common_instances.dart';
 import 'package:snulife_internal/ui/widgets/commons/button_widgets.dart';
 
-class AttendanceList extends StatefulWidget {
-  const AttendanceList({super.key});
+class AttendanceListItem extends StatefulWidget {
+  const AttendanceListItem({super.key});
 
   @override
-  State<AttendanceList> createState() => _AttendanceListState();
+  State<AttendanceListItem> createState() => _AttendanceListItemState();
 }
 
-class _AttendanceListState extends State<AttendanceList> {
+class _AttendanceListItemState extends State<AttendanceListItem> {
   int? index;
   bool isTagSelected = false;
 

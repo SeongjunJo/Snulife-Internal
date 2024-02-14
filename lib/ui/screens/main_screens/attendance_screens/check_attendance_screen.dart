@@ -30,7 +30,7 @@ class CheckAttendancePage extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: 20,
               itemBuilder: (BuildContext context, int index) {
-                return const AttendanceList();
+                return const AttendanceListItem();
               },
               separatorBuilder: (BuildContext context, int index) {
                 return const SizedBox(height: 8);
