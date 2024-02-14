@@ -60,3 +60,58 @@ class _AttendanceListItemState extends State<AttendanceListItem> {
     );
   }
 }
+
+class ClerkListItem extends StatefulWidget {
+  const ClerkListItem({
+    super.key,
+    required this.index,
+    required this.selectedIndex,
+    required this.onSelected,
+    required this.clerkCount,
+  });
+
+  final int index;
+  final int selectedIndex;
+  final Function() onSelected;
+  final int clerkCount;
+
+  @override
+  State<ClerkListItem> createState() => _ClerkListItemState();
+}
+
+class _ClerkListItemState extends State<ClerkListItem> {
+  @override
+  Widget build(BuildContext context) {
+    bool isSelected = widget.index == widget.selectedIndex;
+
+    return GestureDetector(
+      onTap: widget.onSelected,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 18),
+        decoration: BoxDecoration(
+          color: isSelected ? appColors.subBlue2 : appColors.white,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "김이름",
+              style: appFonts.h3.copyWith(
+                  color: isSelected ? appColors.slBlue : appColors.grey8),
+            ),
+            AttendanceChip(
+              index: null, // clerk chip은 index 필요 없음
+              type: AttendanceChipType.clerk,
+              // clerk chip 단독 터치 불가, 색상 보정을 위해 isSelected 일 때 onSelected 필요
+              onSelected: isSelected ? (_) {} : null,
+              isSelected: isSelected, // clerk chip 전용 변수
+              clerkCount:
+                  isSelected ? widget.clerkCount + 1 : widget.clerkCount,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

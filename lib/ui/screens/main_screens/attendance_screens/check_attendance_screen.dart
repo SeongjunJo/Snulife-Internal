@@ -14,10 +14,11 @@ class CheckAttendancePage extends StatelessWidget {
     final today = LocalDateTime.now();
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       color: appColors.grey1,
       child: ListView(
         children: [
+          const SizedBox(height: 32),
           Text(
             "${today.month}월 ${today.day}일자 회의\n출석체크를 해주세요.",
             style: appFonts.h1,
@@ -39,7 +40,7 @@ class CheckAttendancePage extends StatelessWidget {
           ),
           const SizedBox(height: 70),
           AppLargeButton(buttonText: "돌아가기", onPressed: () => context.pop()),
-          const SizedBox(height: 20),
+          const SizedBox(height: 40),
         ],
       ),
     );

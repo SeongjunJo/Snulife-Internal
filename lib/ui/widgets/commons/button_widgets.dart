@@ -40,12 +40,14 @@ class AttendanceChip extends StatefulWidget {
     required this.index,
     required this.type,
     required this.onSelected,
+    this.isSelected,
     this.clerkCount = 100, // default value
   });
 
   final int? index;
   final AttendanceChipType type;
-  final Function(bool) onSelected;
+  final Function(bool)? onSelected;
+  final bool? isSelected; // clerk chip 전용 변수
   final int clerkCount;
 
   @override
@@ -53,7 +55,7 @@ class AttendanceChip extends StatefulWidget {
 }
 
 class _AttendanceChipState extends State<AttendanceChip> {
-  late int _index;
+  late int? _index;
   late bool isSelected;
   late String text;
   late Color textColor;
@@ -78,26 +80,37 @@ class _AttendanceChipState extends State<AttendanceChip> {
         textColor = appColors.failure;
         selectedColor = const Color(0xFFFBEEEE);
       case AttendanceChipType.clerk:
-        _index = 0;
-        text = widget.clerkCount == 100 ? "임시" : "${widget.clerkCount}번";
+        _index = null; // clerk chip은 index 필요 없이 전달 받은 isSelected 사용
+        text = widget.clerkCount == 100 ? "임시" : "${widget.clerkCount} 번";
         textColor = appColors.white;
         selectedColor = appColors.slBlue;
     }
-    isSelected = _index == widget.index;
+    // 전달 받은 isSelected가 null이면 다른 chip => index로 판단
+    isSelected = widget.isSelected ?? _index == widget.index;
 
     return ChoiceChip(
       label: Text(text),
-      labelStyle:
-          appFonts.t4.copyWith(color: isSelected ? textColor : appColors.grey5),
+      labelStyle: appFonts.t4.copyWith(
+        color: isSelected
+            ? textColor
+            : widget.onSelected != null
+                ? appColors.grey5
+                : appColors.grey7, // clerk chip 텍스트 색상 보정
+      ),
       labelPadding: const EdgeInsets.symmetric(vertical: 0),
       padding: const EdgeInsets.symmetric(horizontal: 15),
       selected: isSelected,
       onSelected: widget.onSelected,
       selectedColor: selectedColor,
       backgroundColor: appColors.grey1,
+      disabledColor: appColors.grey1,
       showCheckmark: false,
       shape: RoundedRectangleBorder(
-        side: BorderSide(width: 0, color: appColors.white),
+        side: BorderSide(
+            width: 0,
+            color: widget.onSelected != null
+                ? appColors.white
+                : appColors.subBlue2), // clerk chip 배경 색상
         borderRadius: BorderRadius.circular(10),
       ),
     );

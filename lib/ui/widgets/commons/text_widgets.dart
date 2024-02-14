@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import '../../../logics/common_instances.dart';
 
 class WelcomeText extends StatelessWidget {
-  final String name;
-
   const WelcomeText({
     super.key,
     required this.name,
   });
+
+  final String name;
 
   @override
   Widget build(BuildContext context) {
@@ -34,12 +34,12 @@ class WelcomeText extends StatelessWidget {
 }
 
 class InfoBox extends StatelessWidget {
-  final String info;
-
   const InfoBox({
     super.key,
     required this.info,
   });
+
+  final String info;
 
   @override
   Widget build(BuildContext context) {
@@ -58,12 +58,12 @@ class InfoBox extends StatelessWidget {
 }
 
 class AttendanceText extends StatelessWidget {
-  final String clerk;
-
   const AttendanceText({
     super.key,
     required this.clerk,
   });
+
+  final String clerk;
 
   @override
   Widget build(BuildContext context) {
@@ -103,15 +103,73 @@ class ReceiptText extends StatelessWidget {
 }
 
 class SecondaryTabName extends StatelessWidget {
-  final String name;
-
   const SecondaryTabName({
     super.key,
     required this.name,
   });
 
+  final String name;
+
   @override
   Widget build(BuildContext context) {
     return Text(name, style: appFonts.t4.copyWith(color: appColors.grey5));
+  }
+}
+
+class ClerkRotationText extends StatelessWidget {
+  const ClerkRotationText({
+    super.key,
+    required this.clerk,
+    required this.nextClerk,
+  });
+
+  final String clerk;
+  final String nextClerk;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              "오늘의 서기는 ",
+              style: appFonts.b2.copyWith(color: appColors.grey7),
+            ),
+            Text(
+              clerk,
+              style: appFonts.b2.copyWith(
+                color: appColors.grey7,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            Text(
+              " 님입니다.",
+              style: appFonts.b2.copyWith(color: appColors.grey7),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Text(
+              "다음 서기는 ",
+              style: appFonts.b2.copyWith(color: appColors.grey7),
+            ),
+            Text(
+              nextClerk,
+              style: appFonts.b2.copyWith(
+                color: appColors.grey7,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            Text(
+              " 님이에요.",
+              style: appFonts.b2.copyWith(color: appColors.grey7),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 }
