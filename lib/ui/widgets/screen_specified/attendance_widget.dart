@@ -25,9 +25,9 @@ class _AttendanceListItemState extends State<AttendanceListItem> {
         children: [
           AttendanceTag(
             isSelected: isTagSelected,
-            onPressed: () {
-              setState(() => isTagSelected = !isTagSelected);
-            },
+            onPressed: (index == 2 || index == 3)
+                ? () => setState(() => isTagSelected = !isTagSelected)
+                : () {},
           ),
           const Expanded(flex: 2, child: SizedBox()),
           Text("김이름", style: appFonts.t3.copyWith(color: appColors.grey8)),
@@ -44,7 +44,10 @@ class _AttendanceListItemState extends State<AttendanceListItem> {
             index: index,
             type: AttendanceChipType.late,
             onSelected: (bool isSelected) {
-              setState(() => index = isSelected ? 2 : null);
+              setState(() {
+                index = isSelected ? 2 : null;
+                isTagSelected = isSelected ? true : false;
+              });
             },
           ),
           const Expanded(flex: 1, child: SizedBox(width: 10)),
@@ -52,7 +55,10 @@ class _AttendanceListItemState extends State<AttendanceListItem> {
             index: index,
             type: AttendanceChipType.absence,
             onSelected: (bool isSelected) {
-              setState(() => index = isSelected ? 3 : null);
+              setState(() {
+                index = isSelected ? 3 : null;
+                isTagSelected = isSelected ? true : false;
+              });
             },
           ),
         ],

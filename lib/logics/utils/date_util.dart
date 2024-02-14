@@ -1,7 +1,7 @@
-class LocalDateTime extends DateTime {
-  LocalDateTime(super.year);
+class DateUtil extends DateTime {
+  DateUtil(super.year);
 
-  static DateTime now() {
+  static DateTime getLocalNow() {
     return DateTime.now().add(const Duration(hours: 9)); // Korea Time : UTC+9
   }
 }

@@ -41,7 +41,7 @@ class _ClerkPageState extends State<ClerkPage> {
               // 전체 위젯이 한번에 빌드되지만, 인원수가 많지 않고 index는 필요하므로 builder 사용
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: 6,
+              itemCount: 4,
               itemBuilder: (BuildContext context, int index) {
                 return ClerkListItem(
                   index: index,

@@ -95,7 +95,7 @@ class _AttendanceChipState extends State<AttendanceChip> {
             ? textColor
             : widget.onSelected != null
                 ? appColors.grey5
-                : appColors.grey7, // clerk chip 텍스트 색상 보정
+                : appColors.grey8, // clerk chip 텍스트 색상 보정
       ),
       labelPadding: const EdgeInsets.symmetric(vertical: 0),
       padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -107,10 +107,11 @@ class _AttendanceChipState extends State<AttendanceChip> {
       showCheckmark: false,
       shape: RoundedRectangleBorder(
         side: BorderSide(
-            width: 0,
-            color: widget.onSelected != null
-                ? appColors.white
-                : appColors.subBlue2), // clerk chip 배경 색상
+          width: 0,
+          color: isSelected & (widget.type == AttendanceChipType.clerk)
+              ? appColors.subBlue2 // clerk chip 활성화 배경 색상
+              : appColors.white,
+        ),
         borderRadius: BorderRadius.circular(10),
       ),
     );
@@ -140,6 +141,7 @@ class _AttendanceTagState extends State<AttendanceTag> {
           color: widget.isSelected ? appColors.slBlue : appColors.grey6),
       onPressed: widget.onPressed,
       backgroundColor: widget.isSelected ? appColors.subBlue2 : appColors.grey2,
+      disabledColor: appColors.grey2,
       labelPadding: const EdgeInsets.symmetric(vertical: -6.5),
       padding: const EdgeInsets.symmetric(horizontal: 6.3),
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,

@@ -11,7 +11,7 @@ class CheckAttendancePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final today = LocalDateTime.now();
+    final today = DateUtil.getLocalNow();
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20),

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:snulife_internal/logics/utils/map_util.dart';
 
 import 'common_instances.dart';
 
@@ -22,10 +23,8 @@ class FirestoreReader {
     Map<String, dynamic> userInfo = {};
 
     await userInfoField.then((DocumentSnapshot doc) {
-      userInfo['name'] = doc['name'];
-      userInfo['team'] = doc['team'];
-      userInfo['isSenior'] = doc['isSenior'];
-      userInfo['position'] = doc['position'];
+      userInfo = MapUtil.convertDocumentSnapshot(
+          doc, ['name', 'team', 'isSenior', 'position']);
     });
 
     return userInfo;
@@ -34,16 +33,12 @@ class FirestoreReader {
   Future<String> getClerk() async {
     final clerkCollection = _db.collection('clerks').get();
     String clerk = '';
+    Map<String, dynamic> clerkMap = {};
 
     await clerkCollection.then(
       (querySnapshot) {
-        int leastCount = 100; // sufficiently large number
-        for (var docSnapshot in querySnapshot.docs) {
-          if (docSnapshot.data()['count'] < leastCount) {
-            leastCount = docSnapshot.data()['count'];
-            clerk = docSnapshot.id;
-          }
-        }
+        clerkMap = MapUtil.convertQuerySnapshot(querySnapshot, 'count');
+        clerk = MapUtil.getLeastKey(clerkMap);
       },
     );
     return clerk;
