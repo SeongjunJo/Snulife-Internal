@@ -30,16 +30,13 @@ class FirestoreReader {
     return userInfo;
   }
 
-  Future<Map<String, dynamic>> getClerkMap() async {
-    final clerkCollection = _db.collection('clerks').get();
-    Map<String, dynamic> clerkMap = {};
+  getClerkMap() async {
+    QuerySnapshot<Map<String, dynamic>> clerkCollection;
 
-    await clerkCollection.then(
-      (querySnapshot) {
-        clerkMap = MapUtil.convertQuerySnapshot(querySnapshot, 'count');
-      },
-    );
-    return clerkMap;
+    return memoizer.runOnce(() async {
+      clerkCollection = await _db.collection('clerks').get();
+      return MapUtil.convertQuerySnapshot(clerkCollection, 'count');
+    });
   }
 
   Future<String> getClerk() async {
@@ -50,5 +47,15 @@ class FirestoreReader {
     clerk = MapUtil.getLeastKey(clerkMap);
 
     return clerk;
+  }
+
+  getUserList() async {
+    DocumentSnapshot<Map<String, dynamic>> userListDocument;
+
+    return memoizer.runOnce(() async {
+      userListDocument =
+          await _db.collection('informations').doc('userList').get();
+      return userListDocument.data()!['names'];
+    });
   }
 }

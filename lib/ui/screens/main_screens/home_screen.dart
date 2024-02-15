@@ -28,6 +28,7 @@ class _HomePageState extends State<HomePage> {
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       children: [
+        // 홈 화면은 스택에 남아 있어서 빌드 1번만 하니 future 캐싱 안 해도 됨
         FutureBuilder(
           future: userInfo,
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {

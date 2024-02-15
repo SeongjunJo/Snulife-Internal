@@ -3,7 +3,9 @@ import 'package:snulife_internal/logics/common_instances.dart';
 import 'package:snulife_internal/ui/widgets/commons/button_widgets.dart';
 
 class AttendanceListItem extends StatefulWidget {
-  const AttendanceListItem({super.key});
+  const AttendanceListItem({super.key, required this.name});
+
+  final String name;
 
   @override
   State<AttendanceListItem> createState() => _AttendanceListItemState();
@@ -30,13 +32,19 @@ class _AttendanceListItemState extends State<AttendanceListItem> {
                 : () {},
           ),
           const Expanded(flex: 2, child: SizedBox()),
-          Text("김이름", style: appFonts.t3.copyWith(color: appColors.grey8)),
+          Text(
+            widget.name,
+            style: appFonts.t3.copyWith(color: appColors.grey8),
+          ),
           const Expanded(flex: 2, child: SizedBox(width: 10)),
           AttendanceChip(
             index: index,
             type: AttendanceChipType.presence,
             onSelected: (bool isSelected) {
-              setState(() => index = isSelected ? 1 : null);
+              setState(() {
+                index = isSelected ? 1 : null;
+                isTagSelected = false;
+              });
             },
           ),
           const Expanded(flex: 1, child: SizedBox(width: 10)),

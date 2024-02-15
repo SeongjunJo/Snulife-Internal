@@ -7,7 +7,9 @@ import '../../../../logics/common_instances.dart';
 import '../../../widgets/screen_specified/attendance_widget.dart';
 
 class CheckAttendancePage extends StatelessWidget {
-  const CheckAttendancePage({super.key});
+  const CheckAttendancePage({super.key, required this.userList});
+
+  final List<dynamic> userList;
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +31,9 @@ class CheckAttendancePage extends StatelessWidget {
               // 전체 위젯이 한번에 빌드되지만, 인원수가 많지 않고 index는 필요하므로 builder 사용
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: 20,
+              itemCount: userList.length,
               itemBuilder: (BuildContext context, int index) {
-                return const AttendanceListItem();
+                return AttendanceListItem(name: userList[index]);
               },
               separatorBuilder: (BuildContext context, int index) {
                 return const SizedBox(height: 8);
