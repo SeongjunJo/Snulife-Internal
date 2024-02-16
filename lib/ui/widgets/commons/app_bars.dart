@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:snulife_internal/router.dart';
 
+import '../../../logics/app_tabs.dart';
 import '../../../logics/common_instances.dart';
-import 'app_tabs.dart';
 
 class HomeScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
   const HomeScreenAppBar({

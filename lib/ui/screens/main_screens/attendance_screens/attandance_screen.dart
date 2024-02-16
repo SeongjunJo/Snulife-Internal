@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../../../../logics/app_tabs.dart';
 import '../../../../logics/common_instances.dart';
-import '../../../widgets/commons/app_tabs.dart';
 import 'check_attendance_screen.dart';
 import 'clerk_screen.dart';
 
-class AttendancePage extends StatefulWidget {
+class AttendancePage extends StatelessWidget {
   const AttendancePage({super.key});
 
-  @override
-  State<AttendancePage> createState() => _AttendancePageState();
-}
-
-class _AttendancePageState extends State<AttendancePage> {
   @override
   Widget build(BuildContext context) {
     return TabBarView(

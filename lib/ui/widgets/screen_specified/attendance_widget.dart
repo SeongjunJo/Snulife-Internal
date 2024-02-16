@@ -3,9 +3,14 @@ import 'package:snulife_internal/logics/common_instances.dart';
 import 'package:snulife_internal/ui/widgets/commons/button_widgets.dart';
 
 class AttendanceListItem extends StatefulWidget {
-  const AttendanceListItem({super.key, required this.name});
+  const AttendanceListItem({
+    super.key,
+    required this.name,
+    required this.attendanceStatus,
+  });
 
   final String name;
+  final Map<String, dynamic> attendanceStatus;
 
   @override
   State<AttendanceListItem> createState() => _AttendanceListItemState();
@@ -14,11 +19,36 @@ class AttendanceListItem extends StatefulWidget {
 class _AttendanceListItemState extends State<AttendanceListItem> {
   int? index;
   bool isTagSelected = false;
+  bool didUserModify = false;
 
   @override
   Widget build(BuildContext context) {
+    if (!didUserModify) {
+      if (widget.attendanceStatus['present'].contains(widget.name)) {
+        // 출석
+        index = 1;
+      } else if (widget.attendanceStatus['late'].contains(widget.name)) {
+        // 사유 지각
+        index = 2;
+        isTagSelected = true;
+      } else if (widget.attendanceStatus['absent'].contains(widget.name)) {
+        // 사유 결석
+        index = 3;
+        isTagSelected = true;
+      } else if (widget.attendanceStatus['badLate'].contains(widget.name)) {
+        // 무단 지각
+        index = 2;
+      } else if (widget.attendanceStatus['badAbsent'].contains(widget.name)) {
+        // 무단 결석
+        index = 3;
+      } else {
+        index = null;
+        isTagSelected = false;
+      }
+    }
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
       decoration: BoxDecoration(
         color: appColors.white,
         borderRadius: BorderRadius.circular(10),
@@ -28,8 +58,11 @@ class _AttendanceListItemState extends State<AttendanceListItem> {
           AttendanceTag(
             isSelected: isTagSelected,
             onPressed: (index == 2 || index == 3)
-                ? () => setState(() => isTagSelected = !isTagSelected)
-                : () {},
+                ? () => setState(() {
+                      isTagSelected = !isTagSelected;
+                      didUserModify = true;
+                    })
+                : () {}, // Chip 색상 문제로 null 대신 빈 함수 선언
           ),
           const Expanded(flex: 2, child: SizedBox()),
           Text(
@@ -44,6 +77,7 @@ class _AttendanceListItemState extends State<AttendanceListItem> {
               setState(() {
                 index = isSelected ? 1 : null;
                 isTagSelected = false;
+                didUserModify = true;
               });
             },
           ),
@@ -54,7 +88,8 @@ class _AttendanceListItemState extends State<AttendanceListItem> {
             onSelected: (bool isSelected) {
               setState(() {
                 index = isSelected ? 2 : null;
-                isTagSelected = isSelected ? true : false;
+                isTagSelected = false;
+                didUserModify = true;
               });
             },
           ),
@@ -65,7 +100,8 @@ class _AttendanceListItemState extends State<AttendanceListItem> {
             onSelected: (bool isSelected) {
               setState(() {
                 index = isSelected ? 3 : null;
-                isTagSelected = isSelected ? true : false;
+                isTagSelected = false;
+                didUserModify = true;
               });
             },
           ),

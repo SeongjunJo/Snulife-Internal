@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:snulife_internal/router.dart';
 
+import '../../../logics/app_tabs.dart';
 import '../../../logics/common_instances.dart';
 import 'app_bars.dart';
-import 'app_tabs.dart';
 
 class InternalAppScaffold extends StatefulWidget {
   const InternalAppScaffold({

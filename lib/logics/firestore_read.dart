@@ -7,17 +7,6 @@ class FirestoreReader {
   final _db = firebaseInstance.db;
   final _userId = firebaseInstance.userId;
 
-  Future<String> getUserName() async {
-    final userInfoField = _db.collection('users').doc(_userId).get();
-    String userName = '';
-
-    await userInfoField.then((DocumentSnapshot doc) {
-      userName = doc['name'];
-    });
-
-    return userName;
-  }
-
   Future<Map<String, dynamic>> getUserInfo() async {
     final userInfoField = _db.collection('users').doc(_userId).get();
     Map<String, dynamic> userInfo = {};
@@ -57,5 +46,14 @@ class FirestoreReader {
           await _db.collection('informations').doc('userList').get();
       return userListDocument.data()!['names'];
     });
+  }
+
+  getAttendanceStatus(String quarter, String date) {
+    return firebaseInstance.db
+        .collection('attendances')
+        .doc(quarter)
+        .collection('dates')
+        .doc(date)
+        .snapshots();
   }
 }

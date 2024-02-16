@@ -18,7 +18,6 @@ class ClerkPage extends StatefulWidget {
 
 class _ClerkPageState extends State<ClerkPage> {
   late int selectedIndex;
-  bool hasSelected = false;
 
   late final Map<String, dynamic> _clerkMap = widget.clerkMap;
   late List<MapEntry<String, dynamic>> clerkList;
@@ -29,17 +28,14 @@ class _ClerkPageState extends State<ClerkPage> {
   @override
   void initState() {
     super.initState();
+    clerkList = _clerkMap.entries.toList();
+    clerk = MapUtil.getLeastKey(_clerkMap);
+    nextClerk = MapUtil.getNextLeastKey(_clerkMap);
+    selectedIndex = clerkList.indexWhere((element) => element.key == clerk);
   }
 
   @override
   Widget build(BuildContext context) {
-    clerkList = _clerkMap.entries.toList();
-    clerk = MapUtil.getLeastKey(_clerkMap);
-    nextClerk = MapUtil.getNextLeastKey(_clerkMap);
-    selectedIndex = hasSelected
-        ? selectedIndex
-        : clerkList.indexWhere((element) => element.key == clerk);
-
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       color: appColors.grey1,
@@ -64,7 +60,6 @@ class _ClerkPageState extends State<ClerkPage> {
                   onSelected: () {
                     setState(() {
                       selectedIndex = index;
-                      hasSelected = true;
                     });
                   },
                   clerkCount: clerkList[index].value,
