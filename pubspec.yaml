@@ -44,6 +44,8 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   flutter_native_splash: ^2.3.10
   async: ^2.11.0
+  http: ^1.2.0
+  html: ^0.15.4
 
 dev_dependencies:
   flutter_test:
