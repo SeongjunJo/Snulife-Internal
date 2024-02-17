@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:snulife_internal/router.dart';
 
 import '../../../logics/common_instances.dart';
 import '../../widgets/commons/icon_widgets.dart';
@@ -57,7 +59,9 @@ class _HomePageState extends State<HomePage> {
         Padding(
           padding: const EdgeInsets.only(top: 34),
           child: GestureDetector(
-            onTap: () {},
+            onTap: () {
+              context.pushNamed(AppRoutePath.myAttendance);
+            },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
               decoration: BoxDecoration(

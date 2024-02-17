@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:snulife_internal/ui/screens/main_screens/attendance_screens/attandance_screen.dart';
 import 'package:snulife_internal/ui/screens/main_screens/home_screen.dart';
+import 'package:snulife_internal/ui/screens/main_screens/my_attendance_screens/my_attandance_screen.dart';
 import 'package:snulife_internal/ui/screens/setting_screens/profile_screen.dart';
 import 'package:snulife_internal/ui/screens/setting_screens/setting_screen.dart';
 import 'package:snulife_internal/ui/screens/sign_screens/confirm_password_reset_screen.dart';
@@ -64,6 +65,11 @@ final appRouter = GoRouter(
               path: 'attendance',
               builder: (context, state) => const AttendancePage(),
             ),
+            GoRoute(
+              name: AppRoutePath.myAttendance,
+              path: 'myAttendance',
+              builder: (context, state) => const MyAttendancePage(),
+            ),
           ],
         ),
         GoRoute(
@@ -92,6 +98,7 @@ class AppRoutePath {
 
   static const home = '/home';
   static const attendance = '/home/attendance';
+  static const myAttendance = '/home/myAttendance';
 
   static const settings = '/settings';
   static const profile = '/settings/profile';

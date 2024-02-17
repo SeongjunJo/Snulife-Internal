@@ -61,7 +61,11 @@ class SubScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    TabController tabController = AppTab.attendanceTabController;
+    TabController tabController = title == "출결"
+        ? AppTab.attendanceTabController
+        : AppTab.myAttendanceTabController;
+    List<Widget> appTabs =
+        title == "출결" ? AppTab.attendanceTabs : AppTab.myAttendanceTabs;
 
     return AppBar(
       toolbarHeight: 50,
@@ -89,7 +93,7 @@ class SubScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
       bottom: isTabView
           ? TabBar(
               controller: tabController,
-              tabs: AppTab.attendanceTabs,
+              tabs: appTabs,
               indicator: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(color: appColors.slBlue, width: 2),

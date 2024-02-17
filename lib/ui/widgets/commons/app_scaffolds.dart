@@ -20,18 +20,21 @@ class InternalAppScaffold extends StatefulWidget {
 }
 
 class _InternalAppScaffoldState extends State<InternalAppScaffold>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
     AppTab.attendanceTabController =
         TabController(length: AppTab.attendanceTabs.length, vsync: this);
+    AppTab.myAttendanceTabController =
+        TabController(length: AppTab.myAttendanceTabs.length, vsync: this);
   }
 
   @override
   void dispose() {
     super.dispose();
     AppTab.attendanceTabController.dispose();
+    AppTab.myAttendanceTabController.dispose();
   }
 
   @override
@@ -51,6 +54,9 @@ class _InternalAppScaffoldState extends State<InternalAppScaffold>
           isTabView = false;
         case AppRoutePath.attendance:
           title = "출결";
+          isTabView = true;
+        case AppRoutePath.myAttendance:
+          title = "내 출결 관리";
           isTabView = true;
         default:
           throw Exception("scaffold에서 신규 라우트를 설정해주세요: ${widget.screenPath}");
