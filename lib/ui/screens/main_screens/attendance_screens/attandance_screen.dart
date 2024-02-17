@@ -23,7 +23,7 @@ class AttendancePage extends StatelessWidget {
                     if (snapshot.hasData) {
                       return CheckAttendancePage(userList: snapshot.data);
                     } else {
-                      return Container(color: appColors.grey1);
+                      return Container(color: appColors.grey0);
                     }
                   },
                 )
@@ -34,7 +34,7 @@ class AttendancePage extends StatelessWidget {
                     if (snapshot.hasData) {
                       return ClerkPage(clerkMap: snapshot.data);
                     } else {
-                      return Container(color: appColors.grey1);
+                      return Container(color: appColors.grey0);
                     }
                   },
                 );

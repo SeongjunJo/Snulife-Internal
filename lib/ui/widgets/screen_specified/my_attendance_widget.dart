@@ -2,8 +2,72 @@ import 'package:flutter/material.dart';
 import 'package:snulife_internal/logics/common_instances.dart';
 import 'package:snulife_internal/ui/widgets/commons/button_widgets.dart';
 
-class AttendanceListItem extends StatefulWidget {
-  const AttendanceListItem({
+class LateAbsenceListItem extends StatelessWidget {
+  const LateAbsenceListItem({
+    super.key,
+    required this.week,
+    required this.date,
+    required this.isSelected,
+    this.lateOrAbsence,
+  });
+
+  final int week;
+  final String date;
+  final bool isSelected;
+  final String? lateOrAbsence;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 60,
+      padding: const EdgeInsets.symmetric(horizontal: 18),
+      decoration: BoxDecoration(
+        color: lateOrAbsence == null ? appColors.white : appColors.grey3,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: isSelected ? appColors.slBlue : Colors.transparent,
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '정기회의 $week주차',
+                style: appFonts.c3.copyWith(color: appColors.grey6),
+              ),
+              Text(
+                date,
+                style: appFonts.h3.copyWith(
+                    color: lateOrAbsence == null
+                        ? appColors.grey6
+                        : appColors.grey8),
+              ),
+            ],
+          ),
+          lateOrAbsence == null
+              ? Image.asset(
+                  'assets/images/icon_check.png',
+                  color: isSelected ? appColors.slBlue : appColors.grey3,
+                  width: 34,
+                  height: 34,
+                )
+              : Text(
+                  '$lateOrAbsence 예정',
+                  style: appFonts.t4.copyWith(color: appColors.grey6),
+                ),
+        ],
+      ),
+    );
+  }
+}
+
+class MyAttendanceListItem extends StatefulWidget {
+  const MyAttendanceListItem({
     super.key,
     required this.name,
     required this.attendanceStatus,
@@ -13,10 +77,10 @@ class AttendanceListItem extends StatefulWidget {
   final Map<String, dynamic> attendanceStatus;
 
   @override
-  State<AttendanceListItem> createState() => _AttendanceListItemState();
+  State<MyAttendanceListItem> createState() => _MyAttendanceListItemState();
 }
 
-class _AttendanceListItemState extends State<AttendanceListItem> {
+class _MyAttendanceListItemState extends State<MyAttendanceListItem> {
   int? index;
   bool isTagSelected = false;
   bool didUserModify = false;
@@ -55,26 +119,6 @@ class _AttendanceListItemState extends State<AttendanceListItem> {
       ),
       child: Row(
         children: [
-          ActionChip(
-            label: const Text('사유'),
-            labelStyle: appFonts.c3.copyWith(
-                color: isTagSelected ? appColors.slBlue : appColors.grey6),
-            onPressed: (index == 2 || index == 3)
-                ? () => setState(() {
-                      isTagSelected = !isTagSelected;
-                      didUserModify = true;
-                    })
-                : () {},
-            backgroundColor:
-                isTagSelected ? appColors.subBlue2 : appColors.grey2,
-            labelPadding: const EdgeInsets.symmetric(vertical: -6.5),
-            padding: const EdgeInsets.symmetric(horizontal: 6.3),
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            shape: RoundedRectangleBorder(
-              side: BorderSide(width: 0, color: appColors.white),
-              borderRadius: BorderRadius.circular(9),
-            ),
-          ),
           const Expanded(flex: 2, child: SizedBox()),
           Text(
             widget.name,
@@ -117,63 +161,6 @@ class _AttendanceListItemState extends State<AttendanceListItem> {
             },
           ),
         ],
-      ),
-    );
-  }
-}
-
-class ClerkListItem extends StatefulWidget {
-  const ClerkListItem({
-    super.key,
-    required this.name,
-    required this.index,
-    required this.selectedIndex,
-    required this.onSelected,
-    required this.clerkCount,
-  });
-
-  final String name;
-  final int index;
-  final int selectedIndex;
-  final Function() onSelected;
-  final int clerkCount;
-
-  @override
-  State<ClerkListItem> createState() => _ClerkListItemState();
-}
-
-class _ClerkListItemState extends State<ClerkListItem> {
-  @override
-  Widget build(BuildContext context) {
-    bool isSelected = widget.index == widget.selectedIndex;
-
-    return GestureDetector(
-      onTap: widget.onSelected,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 18),
-        decoration: BoxDecoration(
-          color: isSelected ? appColors.subBlue2 : appColors.white,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              widget.name,
-              style: appFonts.h3.copyWith(
-                  color: isSelected ? appColors.slBlue : appColors.grey8),
-            ),
-            AttendanceChip(
-              index: null, // clerk chip은 index 필요 없음
-              type: AttendanceChipType.clerk,
-              // clerk chip 단독 터치 불가, 색상 보정을 위해 isSelected 일 때 onSelected 필요
-              onSelected: isSelected ? (_) {} : null,
-              isSelected: isSelected, // clerk chip 전용 변수
-              clerkCount:
-                  isSelected ? widget.clerkCount + 1 : widget.clerkCount,
-            ),
-          ],
-        ),
       ),
     );
   }

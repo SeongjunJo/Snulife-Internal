@@ -119,7 +119,7 @@ class _LogInScreenState extends State<LogInScreen> {
             fieldStatusMessage: _fieldStatus,
           ),
           const SizedBox(height: 60),
-          AppLargeButton(buttonText: '로그인', onPressed: _onPressed),
+          AppExpandedButton(buttonText: '로그인', onPressed: _onPressed),
           const SizedBox(height: 20),
           GestureDetector(
             onTap: () {

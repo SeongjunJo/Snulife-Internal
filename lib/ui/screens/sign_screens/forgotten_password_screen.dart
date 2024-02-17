@@ -82,7 +82,7 @@ class _ForgottenPasswordPageState extends State<ForgottenPasswordPage> {
           ),
           Column(
             children: [
-              AppLargeButton(
+              AppExpandedButton(
                 buttonText: '확인',
                 onPressed: _onPressed,
               ),

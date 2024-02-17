@@ -21,7 +21,7 @@ class ConfirmPasswordResetPage extends StatelessWidget {
           ),
           Column(
             children: [
-              AppLargeButton(
+              AppExpandedButton(
                 buttonText: '로그인 화면 돌아가기',
                 onPressed: () {
                   context.pop();

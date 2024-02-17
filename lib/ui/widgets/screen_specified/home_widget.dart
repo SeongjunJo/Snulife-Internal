@@ -3,8 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:snulife_internal/router.dart';
 
 import '../../../logics/common_instances.dart';
-import '../commons/icon_widgets.dart';
-import '../commons/text_widgets.dart';
 
 class PrimaryTab extends StatelessWidget {
   final String primaryTabName;
@@ -73,9 +71,14 @@ class SecondaryTab extends StatelessWidget {
       ),
       child: Column(
         children: [
-          const SecondaryTabIcon(),
+          Padding(
+            padding:
+                const EdgeInsets.only(top: 3, left: 7, right: 3, bottom: 3),
+            child: Image.asset("assets/images/icon_folder.png",
+                width: 100, height: 106),
+          ),
           const SizedBox(height: 12),
-          SecondaryTabName(name: name),
+          Text(name, style: appFonts.t4.copyWith(color: appColors.grey5)),
         ],
       ),
     );

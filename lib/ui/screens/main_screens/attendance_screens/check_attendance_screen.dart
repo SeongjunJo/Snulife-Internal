@@ -20,7 +20,7 @@ class CheckAttendancePage extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      color: appColors.grey1,
+      color: appColors.grey0,
       child: StreamBuilder(
         stream: usersStream,
         builder:
@@ -53,7 +53,7 @@ class CheckAttendancePage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 70),
-                AppLargeButton(
+                AppExpandedButton(
                   buttonText: "돌아가기",
                   onPressed: () => context.pop(),
                 ),

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:snulife_internal/router.dart';
@@ -5,8 +6,15 @@ import 'package:snulife_internal/router.dart';
 import '../../../logics/common_instances.dart';
 import '../../widgets/screen_specified/setting_widget.dart';
 
-class SettingPage extends StatelessWidget {
+class SettingPage extends StatefulWidget {
   const SettingPage({super.key});
+
+  @override
+  State<SettingPage> createState() => _SettingPageState();
+}
+
+class _SettingPageState extends State<SettingPage> {
+  bool switchValue = true;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +33,24 @@ class SettingPage extends StatelessWidget {
           const SizedBox(height: 14),
           Divider(height: 1, thickness: 1, color: appColors.grey3),
           const SizedBox(height: 14),
-          const SettingRow(title: "시스템 알림 설정", trailing: NotificationSwitch()),
+          SettingRow(
+            title: "시스템 알림 설정",
+            trailing: Transform.scale(
+              scale: 0.8,
+              child: CupertinoSwitch(
+                // This bool value toggles the switch.
+                value: switchValue,
+                activeColor: appColors.slBlue,
+                onChanged: (bool? value) {
+                  setState(
+                    () {
+                      switchValue = value ?? false;
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
         ],
       ),
     );

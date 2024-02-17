@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 
 import '../../../logics/common_instances.dart';
 
-class AppLargeButton extends StatelessWidget {
-  const AppLargeButton({
+class AppExpandedButton extends StatelessWidget {
+  const AppExpandedButton({
     super.key,
     required this.buttonText,
     required this.onPressed,
+    this.isCancelButton = false,
   });
 
   final String buttonText;
   final void Function()? onPressed;
+  final bool isCancelButton;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +21,7 @@ class AppLargeButton extends StatelessWidget {
         onPressed: onPressed,
         style: TextButton.styleFrom(
           disabledBackgroundColor: appColors.grey2,
-          backgroundColor: appColors.slBlue,
+          backgroundColor: !isCancelButton ? appColors.slBlue : appColors.grey2,
           padding: const EdgeInsets.symmetric(vertical: 14),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -113,41 +115,6 @@ class _AttendanceChipState extends State<AttendanceChip> {
               : appColors.white,
         ),
         borderRadius: BorderRadius.circular(10),
-      ),
-    );
-  }
-}
-
-class AttendanceTag extends StatefulWidget {
-  const AttendanceTag({
-    super.key,
-    required this.isSelected,
-    required this.onPressed,
-  });
-
-  final bool isSelected;
-  final void Function()? onPressed;
-
-  @override
-  State<AttendanceTag> createState() => _AttendanceTagState();
-}
-
-class _AttendanceTagState extends State<AttendanceTag> {
-  @override
-  Widget build(BuildContext context) {
-    return ActionChip(
-      label: const Text('사유'),
-      labelStyle: appFonts.c3.copyWith(
-          color: widget.isSelected ? appColors.slBlue : appColors.grey6),
-      onPressed: widget.onPressed,
-      backgroundColor: widget.isSelected ? appColors.subBlue2 : appColors.grey2,
-      disabledColor: appColors.grey2,
-      labelPadding: const EdgeInsets.symmetric(vertical: -6.5),
-      padding: const EdgeInsets.symmetric(horizontal: 6.3),
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      shape: RoundedRectangleBorder(
-        side: BorderSide(width: 0, color: appColors.white),
-        borderRadius: BorderRadius.circular(9),
       ),
     );
   }

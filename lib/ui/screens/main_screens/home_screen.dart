@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:snulife_internal/router.dart';
 
 import '../../../logics/common_instances.dart';
-import '../../widgets/commons/icon_widgets.dart';
 import '../../widgets/commons/text_widgets.dart';
 import '../../widgets/screen_specified/home_widget.dart';
 
@@ -38,7 +37,25 @@ class _HomePageState extends State<HomePage> {
               return Column(
                 children: [
                   const SizedBox(height: 48),
-                  WelcomeText(name: snapshot.data['name']),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            snapshot.data['name'],
+                            style: appFonts.h1.copyWith(
+                              fontSize: 24,
+                              color: appColors.slBlue,
+                            ),
+                          ),
+                          Text(" 님,",
+                              style: appFonts.h1.copyWith(fontSize: 24)),
+                        ],
+                      ),
+                      Text("환영해요!", style: appFonts.h1.copyWith(fontSize: 24)),
+                    ],
+                  ),
                   const SizedBox(height: 10),
                   Row(
                     children: [
@@ -96,19 +113,52 @@ class _HomePageState extends State<HomePage> {
                   builder:
                       (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                     if (snapshot.hasData) {
-                      return AttendanceText(clerk: snapshot.data);
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("이번 주 서기는",
+                              style:
+                                  appFonts.t4.copyWith(color: appColors.grey8)),
+                          Row(
+                            children: [
+                              Text(
+                                snapshot.data,
+                                style: appFonts.t4.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: appColors.slBlue,
+                                ),
+                              ),
+                              Text(" 님이에요",
+                                  style: appFonts.t4
+                                      .copyWith(color: appColors.grey8)),
+                            ],
+                          ),
+                        ],
+                      );
                     } else {
                       return const SizedBox();
                     }
                   },
                 ),
-                primaryTabIcon: const AttendanceIcon(),
+                primaryTabIcon: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Image.asset("assets/images/icon_qs.png",
+                      width: 124, height: 130),
+                ),
               ),
               const SizedBox(height: 16),
-              const PrimaryTab(
+              PrimaryTab(
                 primaryTabName: "지출 내역",
-                primaryTabContent: ReceiptText(),
-                primaryTabIcon: ReceiptIcon(),
+                primaryTabContent: Text(
+                  "지출 내역을\n기록 해주세요.",
+                  style: appFonts.t4.copyWith(color: appColors.grey8),
+                ),
+                primaryTabIcon: Padding(
+                  padding: const EdgeInsets.only(
+                      top: 9, left: 9, right: 14, bottom: 7),
+                  child: Image.asset("assets/images/icon_receipt.png",
+                      width: 131, height: 138),
+                ),
               ),
             ],
           ),

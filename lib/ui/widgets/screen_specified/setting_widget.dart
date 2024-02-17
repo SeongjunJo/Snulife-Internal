@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../logics/common_instances.dart';
@@ -42,35 +41,5 @@ class RightArrow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Image.asset('assets/images/icon_right_arrow.png',
         width: 22, height: 22);
-  }
-}
-
-class NotificationSwitch extends StatefulWidget {
-  const NotificationSwitch({super.key});
-
-  @override
-  State<NotificationSwitch> createState() => _NotificationSwitchState();
-}
-
-class _NotificationSwitchState extends State<NotificationSwitch> {
-  bool switchValue = true;
-
-  @override
-  Widget build(BuildContext context) {
-    return Transform.scale(
-      scale: 0.8,
-      child: CupertinoSwitch(
-        // This bool value toggles the switch.
-        value: switchValue,
-        activeColor: appColors.slBlue,
-        onChanged: (bool? value) {
-          setState(
-            () {
-              switchValue = value ?? false;
-            },
-          );
-        },
-      ),
-    );
   }
 }

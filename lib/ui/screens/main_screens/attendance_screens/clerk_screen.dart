@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:snulife_internal/logics/common_instances.dart';
-import 'package:snulife_internal/ui/widgets/commons/text_widgets.dart';
 
 import '../../../../logics/utils/map_util.dart';
 import '../../../widgets/commons/button_widgets.dart';
@@ -38,13 +37,55 @@ class _ClerkPageState extends State<ClerkPage> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      color: appColors.grey1,
+      color: appColors.grey0,
       child: ListView(
         children: [
           const SizedBox(height: 32),
           Text("서기 로테이션", style: appFonts.h1),
           const SizedBox(height: 8),
-          ClerkRotationText(clerk: clerk, nextClerk: nextClerk),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    "오늘의 서기는 ",
+                    style: appFonts.b2.copyWith(color: appColors.grey7),
+                  ),
+                  Text(
+                    clerk,
+                    style: appFonts.b2.copyWith(
+                      color: appColors.grey7,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  Text(
+                    " 님입니다.",
+                    style: appFonts.b2.copyWith(color: appColors.grey7),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Text(
+                    "다음 서기는 ",
+                    style: appFonts.b2.copyWith(color: appColors.grey7),
+                  ),
+                  Text(
+                    nextClerk,
+                    style: appFonts.b2.copyWith(
+                      color: appColors.grey7,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  Text(
+                    " 님이에요.",
+                    style: appFonts.b2.copyWith(color: appColors.grey7),
+                  ),
+                ],
+              ),
+            ],
+          ),
           const SizedBox(height: 40),
           Expanded(
             child: ListView.separated(
@@ -71,7 +112,7 @@ class _ClerkPageState extends State<ClerkPage> {
             ),
           ),
           const SizedBox(height: 70),
-          AppLargeButton(buttonText: "돌아가기", onPressed: () => context.pop()),
+          AppExpandedButton(buttonText: "돌아가기", onPressed: () => context.pop()),
           const SizedBox(height: 40),
         ],
       ),
