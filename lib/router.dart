@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 import 'package:snulife_internal/ui/screens/main_screens/attendance_screens/attandance_screen.dart';
 import 'package:snulife_internal/ui/screens/main_screens/home_screen.dart';
 import 'package:snulife_internal/ui/screens/main_screens/my_attendance_screens/my_attandance_screen.dart';
@@ -11,10 +10,6 @@ import 'package:snulife_internal/ui/screens/sign_screens/confirm_password_reset_
 import 'package:snulife_internal/ui/screens/sign_screens/forgotten_password_screen.dart';
 import 'package:snulife_internal/ui/screens/sign_screens/login_screen.dart';
 import 'package:snulife_internal/ui/widgets/commons/app_scaffolds.dart';
-
-import 'logics/common_instances.dart';
-import 'logics/providers/select_semester_states.dart';
-import 'logics/utils/string_util.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> _signShellNavigatorKey =
@@ -73,21 +68,7 @@ final appRouter = GoRouter(
             GoRoute(
               name: AppRoutePath.myAttendance,
               path: 'myAttendance',
-              builder: (context, state) => FutureBuilder(
-                future: memoizer
-                    .runOnce(() async => await StringUtil.getCurrentSemester()),
-                builder:
-                    (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                  if (snapshot.hasData) {
-                    return ChangeNotifierProvider(
-                        create: (context) => SelectSemesterStatus(
-                            currentSemester: snapshot.data),
-                        child: const MyAttendancePage());
-                  } else {
-                    return Container(color: appColors.grey0);
-                  }
-                },
-              ),
+              builder: (context, state) => const MyAttendancePage(),
             ),
           ],
         ),

@@ -6,6 +6,7 @@ import 'package:snulife_internal/ui/screens/main_screens/my_attendance_screens/v
 import '../../../../logics/app_tabs.dart';
 import '../../../../logics/common_instances.dart';
 import '../../../../logics/providers/select_semester_states.dart';
+import '../../../../logics/utils/string_util.dart';
 
 class MyAttendancePage extends StatelessWidget {
   const MyAttendancePage({super.key});
@@ -30,12 +31,19 @@ class MyAttendancePage extends StatelessWidget {
                     }
                   },
                 )
-              : Consumer<SelectSemesterStatus>(
-                  builder: (BuildContext context, value, _) {
-                    return ViewMyAttendancePage(
-                      text: value.selectedSemester,
-                      onPressed: value.changeSemester,
-                    );
+              : FutureBuilder(
+                  future: memoizer.runOnce(
+                      () async => await StringUtil.getCurrentSemester()),
+                  builder:
+                      (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                    if (snapshot.hasData) {
+                      return ChangeNotifierProvider(
+                          create: (context) => SelectSemesterStatus(
+                              currentSemester: snapshot.data),
+                          child: const ViewMyAttendancePage());
+                    } else {
+                      return Container(color: appColors.grey0);
+                    }
                   },
                 );
         }).toList());
