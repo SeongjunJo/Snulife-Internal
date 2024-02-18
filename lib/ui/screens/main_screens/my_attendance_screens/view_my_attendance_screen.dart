@@ -12,6 +12,8 @@ class ViewMyAttendancePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<String> semesters = ["2023-S", "2023-2", "2023-W"];
+
     return Consumer<SelectSemesterStatus>(
       builder: (BuildContext context, value, _) {
         return FutureBuilder(
@@ -70,30 +72,9 @@ class ViewMyAttendancePage extends StatelessWidget {
                     const SizedBox(height: 16),
                     // right end drop down
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        const Expanded(child: SizedBox()),
-                        Container(
-                          width: 105,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            color: appColors.white,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          padding: const EdgeInsets.only(left: 15, right: 10),
-                          child: Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("2023-w",
-                                    style: appFonts.t4
-                                        .copyWith(color: appColors.grey6)),
-                                Text("▼",
-                                    style: appFonts.pm
-                                        .copyWith(color: appColors.grey6)),
-                              ],
-                            ),
-                          ),
-                        ),
+                        SemesterDropDownMenu(semesters: semesters),
                       ],
                     ),
                     const SizedBox(height: 16),

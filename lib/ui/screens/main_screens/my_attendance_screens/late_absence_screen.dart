@@ -62,12 +62,11 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
                             }
                           });
                         },
-                        // TODO 지각/결석이 아니라면 빈 문자열 넘김 (미래 디폴트 데이터는 ""으로 옴)
                         child: MyAttendanceListItem(
                           week: 4,
                           date: '02/15',
                           isSelected: _selectedIndexes.contains(index),
-                          lateOrAbsence: '',
+                          lateOrAbsence: '', // 지각/결석이 아니라면 빈 문자열이 넘어감
                         ),
                       );
                     },

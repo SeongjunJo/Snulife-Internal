@@ -126,3 +126,77 @@ enum AttendanceChipType {
   late,
   clerk,
 }
+
+class SemesterDropDownMenu extends StatelessWidget {
+  const SemesterDropDownMenu({
+    super.key,
+    required this.semesters,
+  });
+
+  final List<String> semesters;
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownMenu(
+      menuStyle: MenuStyle(
+        backgroundColor: MaterialStateProperty.all(appColors.white),
+        surfaceTintColor: MaterialStateProperty.all(appColors.white),
+        elevation: MaterialStateProperty.all(2),
+        padding: MaterialStateProperty.all(const EdgeInsets.all(0)),
+        shape: MaterialStateProperty.all(
+          const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+          ),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: appColors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: const EdgeInsets.only(left: 15),
+        constraints: const BoxConstraints(
+          minHeight: 50,
+          minWidth: 130,
+          maxHeight: 50,
+          maxWidth: 130,
+        ),
+      ),
+      initialSelection: semesters.last,
+      trailingIcon: Image.asset(
+        'assets/images/icon_down.png',
+        width: 16,
+        height: 16,
+        color: appColors.grey6,
+      ),
+      selectedTrailingIcon: Image.asset(
+        'assets/images/icon_up.png',
+        width: 16,
+        height: 16,
+        color: appColors.grey6,
+      ),
+      textStyle: appFonts.t4.copyWith(color: appColors.grey6),
+      onSelected: (String? selectedSemester) {
+        // TODO provider에 전달 -> provider 로직을 여기로 넘겨서 콜하면 될 듯
+      },
+      dropdownMenuEntries: semesters
+          .map(
+            (String semester) => DropdownMenuEntry(
+              value: semester,
+              label: semester,
+              style: ButtonStyle(
+                textStyle: MaterialStateProperty.all(appFonts.t4),
+                foregroundColor: MaterialStateProperty.all(appColors.grey6),
+                backgroundColor: MaterialStateProperty.all(appColors.white),
+                fixedSize: MaterialStateProperty.all(const Size(130, 50)),
+                padding:
+                    MaterialStateProperty.all(const EdgeInsets.only(left: 15)),
+              ),
+            ),
+          )
+          .toList(),
+    );
+  }
+}
