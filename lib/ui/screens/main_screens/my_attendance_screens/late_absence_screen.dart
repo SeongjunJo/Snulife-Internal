@@ -22,13 +22,14 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
   Widget build(BuildContext context) {
     return Container(
       color: appColors.grey0,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: StreamBuilder(
         stream: null,
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (!snapshot.hasData) {
             return ListView(
               children: [
+                const SizedBox(height: 24),
                 Container(
                   decoration: BoxDecoration(
                     color: appColors.grey1,
@@ -61,11 +62,12 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
                             }
                           });
                         },
-                        child: LateAbsenceListItem(
+                        // TODO 지각/결석이 아니라면 빈 문자열 넘김 (미래 디폴트 데이터는 ""으로 옴)
+                        child: MyAttendanceListItem(
                           week: 4,
                           date: '02/15',
                           isSelected: _selectedIndexes.contains(index),
-                          lateOrAbsence: '결석',
+                          lateOrAbsence: '',
                         ),
                       );
                     },
@@ -87,7 +89,7 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
                     );
                   },
                 ),
-                const SizedBox(height: 38),
+                const SizedBox(height: 62),
               ],
             );
           } else {
