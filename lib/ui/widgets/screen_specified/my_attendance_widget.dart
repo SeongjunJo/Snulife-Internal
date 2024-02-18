@@ -44,8 +44,8 @@ class LateAbsenceListItem extends StatelessWidget {
                 date,
                 style: appFonts.h3.copyWith(
                     color: lateOrAbsence == null
-                        ? appColors.grey6
-                        : appColors.grey8),
+                        ? appColors.grey8
+                        : appColors.grey6),
               ),
             ],
           ),

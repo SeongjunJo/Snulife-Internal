@@ -51,6 +51,7 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
                     itemCount: 2,
                     itemBuilder: (BuildContext context, int index) {
                       return GestureDetector(
+                        // TODO 지각/결석 예정이면 onTap 없애기
                         onTap: () {
                           setState(() {
                             if (_selectedIndexes.contains(index)) {
@@ -64,6 +65,7 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
                           week: 4,
                           date: '02/15',
                           isSelected: _selectedIndexes.contains(index),
+                          lateOrAbsence: '결석',
                         ),
                       );
                     },

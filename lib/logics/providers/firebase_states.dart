@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 
 class FirebaseStates extends ChangeNotifier {
   FirebaseStates() {
-    init();
+    _init();
   }
 
   bool _loggedIn = false;
   bool get loggedIn => _loggedIn;
 
-  void init() {
+  void _init() {
     FirebaseAuth.instance.userChanges().listen((User? user) {
       if (user != null) {
         _loggedIn = true;
