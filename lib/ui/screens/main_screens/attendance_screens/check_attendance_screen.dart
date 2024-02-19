@@ -15,7 +15,7 @@ class CheckAttendancePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final today = DateUtil.getLocalNow();
     Stream<DocumentSnapshot> usersStream =
-        firestoreReader.getAttendanceStatus('2023-W', '0215');
+        firestoreReader.getPeopleAttendanceStream('2023-W', '0215');
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20),

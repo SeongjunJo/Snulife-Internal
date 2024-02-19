@@ -13,8 +13,11 @@ enum FirebaseAuthErrorTypes {
 
 class FirebaseInstance {
   final _db = FirebaseFirestore.instance;
-  final _userId = FirebaseAuth.instance.currentUser?.uid;
+  final _user = FirebaseAuth.instance.currentUser;
+  late final _userId = _user?.uid;
+  late var userName = _user?.displayName;
 
   FirebaseFirestore get db => _db;
+  User? get user => _user;
   String? get userId => _userId;
 }

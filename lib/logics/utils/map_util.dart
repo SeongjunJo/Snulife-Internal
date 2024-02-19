@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MapUtil {
-  static Map<String, dynamic> convertQuerySnapshot(
+  static Map<String, dynamic> convertQuerySnapshotToMap(
     QuerySnapshot<Map<String, dynamic>> querySnapshot,
     String key,
   ) {
@@ -10,11 +10,13 @@ class MapUtil {
     for (var docSnapshot in querySnapshot.docs) {
       map[docSnapshot.id] = docSnapshot.data()[key];
     }
+    map = Map.fromEntries(
+        map.entries.toList()..sort((e1, e2) => e1.key.compareTo(e2.key)));
 
     return map;
   }
 
-  static Map<String, dynamic> convertDocumentSnapshot(
+  static Map<String, dynamic> convertDocumentSnapshotToMap(
     DocumentSnapshot documentSnapshot,
     List<String> keys,
   ) {

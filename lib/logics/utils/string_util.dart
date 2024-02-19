@@ -1,5 +1,4 @@
-import '../common_instances.dart';
-import 'html_util.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class StringUtil {
   static List<DateTime> getSemesterDatetime(List<String> semesterDuration) {
@@ -15,48 +14,44 @@ class StringUtil {
     return semesterDatetime;
   }
 
-  static Future<String> getCurrentSemester() async {
-    late final String academicCalendarHtml;
-    late String currentSemester;
-    Index index = Index.winter;
+  static List<AttendanceStatus> convertQuerySnapshotToList(
+      QuerySnapshot<Map<String, dynamic>> querySnapshot) {
+    List<AttendanceStatus> attendanceStatus = [];
 
-    academicCalendarHtml = await httpLogic.getAcademicCalendar();
-    List<String> semesterDuration =
-        HtmlUtil.getSemesterDuration(academicCalendarHtml);
-    List<DateTime> semesterDatetime =
-        StringUtil.getSemesterDatetime(semesterDuration);
-
-    DateTime now = DateTime.now();
-    int yearText = now.year;
-
-    for (int i = 0; i < semesterDatetime.length; i++) {
-      if (now.isBefore(semesterDatetime[i])) {
-        index = Index.values[i];
-        break;
-      }
+    for (var docSnapshot in querySnapshot.docs) {
+      attendanceStatus.add(AttendanceStatus.fromFirestore(docSnapshot));
     }
+    attendanceStatus.sort((a, b) => a.date.compareTo(b.date));
 
-    switch (index) {
-      case Index.lastWinter:
-        currentSemester = '${yearText - 1}-w';
-      case Index.spring:
-        currentSemester = '$yearText-1';
-      case Index.summer:
-        currentSemester = '$yearText-s';
-      case Index.fall:
-        currentSemester = '$yearText-2';
-      case Index.winter:
-        currentSemester = '$yearText-w';
-    }
-
-    return currentSemester;
+    return attendanceStatus;
   }
 }
 
-enum Index {
-  lastWinter,
-  spring,
-  summer,
-  fall,
-  winter,
+class AttendanceStatus {
+  final String date;
+  final String attendance;
+  final bool isAuthorized;
+
+  AttendanceStatus({
+    required this.date,
+    required this.attendance,
+    required this.isAuthorized,
+  });
+
+  factory AttendanceStatus.fromFirestore(
+      DocumentSnapshot<Map<String, dynamic>> snapshot) {
+    final data = snapshot.data();
+    return AttendanceStatus(
+      date: snapshot.id,
+      attendance: data!['attendance'],
+      isAuthorized: data['isAuthorized'],
+    );
+  }
+
+  Map<String, dynamic> toFirestore() {
+    return {
+      'attendance': attendance,
+      'isAuthorized': isAuthorized,
+    };
+  }
 }

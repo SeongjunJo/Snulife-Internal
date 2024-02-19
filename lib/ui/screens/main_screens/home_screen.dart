@@ -34,6 +34,11 @@ class _HomePageState extends State<HomePage> {
           future: userInfo,
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             if (snapshot.hasData) {
+              if (firebaseInstance.userName == null ||
+                  firebaseInstance.userName!.isEmpty) {
+                firebaseInstance.user!.updateDisplayName(snapshot.data['name']);
+              }
+
               return Column(
                 children: [
                   const SizedBox(height: 48),

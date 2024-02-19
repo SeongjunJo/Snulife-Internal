@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:snulife_internal/ui/widgets/screen_specified/my_attendance_widget.dart';
@@ -9,92 +11,123 @@ int? _modalIndex;
 List<int> _selectedIndexes = [];
 
 class LateAbsencePage extends StatefulWidget {
-  const LateAbsencePage({super.key, required this.myAttendanceStatus});
+  const LateAbsencePage({super.key, required this.upcomingAttendanceStatus});
 
-  final List<String> myAttendanceStatus;
+  final List<dynamic> upcomingAttendanceStatus;
 
   @override
   State<LateAbsencePage> createState() => _LateAbsencePageState();
 }
 
 class _LateAbsencePageState extends State<LateAbsencePage> {
+  final now = DateTime.now();
+  late final month = now.month.toString().padLeft(2, '0');
+  late final day = now.day.toString().padLeft(2, '0');
+  late final today = month + day;
+
+  late final currentSemester = widget.upcomingAttendanceStatus[0];
+  late final upcomingSemester = widget.upcomingAttendanceStatus[1];
+  late final currentSemesterStatus = widget.upcomingAttendanceStatus[2]
+      .where((element) => int.parse(element.date) >= int.parse(today))
+      .toList(); // 오늘 이후의 출결 상태
+  late final upcomingSemesterStatus =
+      widget.upcomingAttendanceStatus[3]; // 다음 학기 출결 상태
+  late final indexOffset = currentSemesterStatus.length;
+  late final upcomingAttendanceStatus =
+      currentSemesterStatus + upcomingSemesterStatus;
+
+  late final StreamSubscription currentSemesterStatusListener;
+  late final StreamSubscription? upcomingSemesterStatusListener;
+
+  @override
+  void initState() {
+    super.initState();
+    currentSemesterStatusListener =
+        firestoreReader.getMyAttendanceStatusListener(currentSemester, () {
+      setState(() {});
+    });
+    upcomingSemesterStatusListener = upcomingSemesterStatus != null
+        ? firestoreReader.getMyAttendanceStatusListener(upcomingSemester, () {
+            setState(() {});
+          })
+        : null;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    currentSemesterStatusListener.cancel();
+    upcomingSemesterStatusListener?.cancel();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       color: appColors.grey0,
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: StreamBuilder(
-        stream: null,
-        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          if (!snapshot.hasData) {
-            return ListView(
-              children: [
-                const SizedBox(height: 24),
-                Container(
-                  decoration: BoxDecoration(
-                    color: appColors.grey1,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 10,
-                  ),
-                  child: Text(
-                    "지각 신청은 회의 시작 전까지,\n결석 신청은 전날 자정까지 가능해요.",
-                    style: appFonts.c3.copyWith(color: appColors.grey6),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Expanded(
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: 2,
-                    itemBuilder: (BuildContext context, int index) {
-                      return GestureDetector(
-                        // TODO 지각/결석 예정이면 onTap 없애기
-                        onTap: () {
-                          setState(() {
-                            if (_selectedIndexes.contains(index)) {
-                              _selectedIndexes.remove(index);
-                            } else {
-                              _selectedIndexes.add(index);
-                            }
-                          });
-                        },
-                        child: MyAttendanceListItem(
-                          week: 4,
-                          date: '02/15',
-                          isSelected: _selectedIndexes.contains(index),
-                          lateOrAbsence: '', // 지각/결석이 아니라면 빈 문자열이 넘어감
-                        ),
-                      );
-                    },
-                    separatorBuilder: (BuildContext context, int index) {
-                      return const SizedBox(height: 8);
-                    },
-                  ),
-                ),
-                const SizedBox(height: 37),
-                AppExpandedButton(
-                  buttonText: "신청",
-                  onPressed: () {
-                    _modalIndex = null;
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return const _BottomModal();
-                      },
-                    );
+      child: ListView(
+        children: [
+          const SizedBox(height: 24),
+          Container(
+            decoration: BoxDecoration(
+              color: appColors.grey1,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 10,
+            ),
+            child: Text(
+              "지각 신청은 회의 시작 전까지,\n결석 신청은 전날 자정까지 가능해요.",
+              style: appFonts.c3.copyWith(color: appColors.grey6),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: 2,
+              itemBuilder: (BuildContext context, int index) {
+                return GestureDetector(
+                  // TODO 지각/결석 예정이면 onTap 없애기
+                  onTap: () {
+                    setState(() {
+                      if (_selectedIndexes.contains(index)) {
+                        _selectedIndexes.remove(index);
+                      } else {
+                        _selectedIndexes.add(index);
+                      }
+                    });
                   },
-                ),
-                const SizedBox(height: 62),
-              ],
-            );
-          } else {
-            return const SizedBox();
-          }
-        },
+                  child: MyAttendanceListItem(
+                    week: 4,
+                    date: '02/15',
+                    isSelected: _selectedIndexes.contains(index),
+                    lateOrAbsence: '', // 지각/결석이 아니라면 빈 문자열이 넘어감
+                  ),
+                );
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return const SizedBox(height: 8);
+              },
+            ),
+          ),
+          const SizedBox(height: 37),
+          AppExpandedButton(
+            buttonText: "신청",
+            onPressed: () {
+              _modalIndex = null;
+              showModalBottomSheet(
+                context: context,
+                builder: (BuildContext context) {
+                  return const _BottomModal();
+                },
+              );
+            },
+          ),
+          const SizedBox(height: 62),
+        ],
       ),
     );
   }

@@ -6,46 +6,36 @@ import 'package:snulife_internal/ui/screens/main_screens/my_attendance_screens/v
 import '../../../../logics/app_tabs.dart';
 import '../../../../logics/common_instances.dart';
 import '../../../../logics/providers/select_semester_states.dart';
-import '../../../../logics/utils/string_util.dart';
 
 class MyAttendancePage extends StatelessWidget {
   const MyAttendancePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return TabBarView(
-        controller: AppTab.myAttendanceTabController,
-        children: AppTab.myAttendanceTabs.map((Tab tab) {
-          // 별도 Widget으로 분리하면 memoizer로 캐싱할 수 없음
+    return FutureBuilder(
+      future: memoizer.runOnce(() async {
+        return await firestoreReader.getMyAttendanceStatus(
+            await firestoreReader.getCurrentAndComingSemester());
+      }),
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        if (snapshot.hasData) {
+          return TabBarView(
+              controller: AppTab.myAttendanceTabController,
+              children: AppTab.myAttendanceTabs.map((Tab tab) {
+                // 별도 Widget으로 분리하면 memoizer로 캐싱할 수 없음
 
-          return tab.text! == '지각/결석'
-              ? FutureBuilder(
-                  future: null,
-                  builder:
-                      (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                    // TODO FUTURE 정해지면 느낌표 제거
-                    if (!snapshot.hasData) {
-                      return const LateAbsencePage(myAttendanceStatus: []);
-                    } else {
-                      return Container(color: appColors.grey0);
-                    }
-                  },
-                )
-              : FutureBuilder(
-                  future: memoizer.runOnce(
-                      () async => await StringUtil.getCurrentSemester()),
-                  builder:
-                      (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                    if (snapshot.hasData) {
-                      return ChangeNotifierProvider(
-                          create: (context) => SelectSemesterStatus(
-                              currentSemester: snapshot.data),
-                          child: const ViewMyAttendancePage());
-                    } else {
-                      return Container(color: appColors.grey0);
-                    }
-                  },
-                );
-        }).toList());
+                return tab.text! == '지각/결석'
+                    ? LateAbsencePage(upcomingAttendanceStatus: snapshot.data)
+                    : ChangeNotifierProvider(
+                        create: (context) =>
+                            SelectSemesterStatus(currentSemester: '2023-W'),
+                        child: const ViewMyAttendancePage(),
+                      );
+              }).toList());
+        } else {
+          return Container(color: appColors.grey0);
+        }
+      },
+    );
   }
 }
