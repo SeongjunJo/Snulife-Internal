@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:snulife_internal/logics/utils/map_util.dart';
 
 import 'common_instances.dart';
@@ -17,9 +16,6 @@ class FirestoreWriter {
       final myAttendanceDocument = await myAttendanceDocumentRef.get();
       bool doesDocumentExist = myAttendanceDocument.exists;
       if (doesDocumentExist) {
-        debugPrint('Document: ${myAttendanceDocument.data()}');
-        debugPrint('Document ID: ${myAttendanceDocument.id}');
-        debugPrint('data: ${status.date}');
         await myAttendanceDocumentRef.update({
           'attendance': isLate ? '지각' : '결석',
           'isAuthorized': true,

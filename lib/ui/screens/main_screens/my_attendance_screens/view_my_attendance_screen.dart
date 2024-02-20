@@ -5,22 +5,35 @@ import 'package:snulife_internal/logics/providers/select_semester_states.dart';
 import 'package:snulife_internal/ui/widgets/screen_specified/my_attendance_widget.dart';
 
 import '../../../../logics/common_instances.dart';
+import '../../../../logics/utils/map_util.dart';
 import '../../../widgets/commons/button_widgets.dart';
 
-class ViewMyAttendancePage extends StatelessWidget {
-  const ViewMyAttendancePage({super.key});
+class ViewMyAttendancePage extends StatefulWidget {
+  const ViewMyAttendancePage({super.key, required this.currentSemester});
+
+  final String currentSemester;
+
+  @override
+  State<ViewMyAttendancePage> createState() => _ViewMyAttendancePageState();
+}
+
+class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
+  List<AttendanceStatus> attendanceHistory = [];
 
   @override
   Widget build(BuildContext context) {
-    List<String> semesters = ["2023-S", "2023-2", "2023-W"];
+    List<String> semesters = [
+      ..._getLastTwoSemesters(widget.currentSemester),
+      widget.currentSemester
+    ];
 
     return Consumer<SelectSemesterStatus>(
       builder: (BuildContext context, value, _) {
         return FutureBuilder(
-          future: null,
+          future: memoizer.runOnce(() async => await firestoreReader
+              .getMyAttendanceSummary(value.selectedSemester)),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-            // TODO FUTURE 정해지면 느낌표 제거
-            if (!snapshot.hasData) {
+            if (snapshot.hasData) {
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: ListView(
@@ -33,11 +46,21 @@ class ViewMyAttendancePage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Center(
-                        child: Text(
-                          "총 회의 수 14",
-                          style: appFonts.b1.copyWith(color: appColors.grey7),
-                        ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "총 회의 수 ",
+                            style: appFonts.b1.copyWith(color: appColors.grey7),
+                          ),
+                          Text(
+                            "${snapshot.data['sum']}",
+                            style: appFonts.b1.copyWith(
+                              color: appColors.grey7,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -52,19 +75,52 @@ class ViewMyAttendancePage extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Text("출석 10",
-                                style: appFonts.b1
-                                    .copyWith(color: appColors.grey7)),
+                            Row(
+                              children: [
+                                Text("출석 ",
+                                    style: appFonts.b1
+                                        .copyWith(color: appColors.grey7)),
+                                Text(
+                                  "${snapshot.data['present']}",
+                                  style: appFonts.b1.copyWith(
+                                    color: appColors.grey7,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ),
                             Container(
                                 width: 1, height: 16, color: appColors.grey5),
-                            Text("지각 03",
-                                style: appFonts.b1
-                                    .copyWith(color: appColors.grey7)),
+                            Row(
+                              children: [
+                                Text("지각 ",
+                                    style: appFonts.b1
+                                        .copyWith(color: appColors.grey7)),
+                                Text(
+                                  ' ${snapshot.data['late'] + snapshot.data['badLate']}', // 일반 동아리원은 사유 여부 안 보여줌
+                                  style: appFonts.b1.copyWith(
+                                    color: appColors.grey7,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ),
                             Container(
                                 width: 1, height: 16, color: appColors.grey5),
-                            Text("결석 01",
-                                style: appFonts.b1
-                                    .copyWith(color: appColors.grey7)),
+                            Row(
+                              children: [
+                                Text("결석 ",
+                                    style: appFonts.b1
+                                        .copyWith(color: appColors.grey7)),
+                                Text(
+                                  "${snapshot.data['absent'] + snapshot.data['badAbsent']}", // 일반 동아리원은 사유 여부 안 보여줌
+                                  style: appFonts.b1.copyWith(
+                                    color: appColors.grey7,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),
@@ -74,25 +130,44 @@ class ViewMyAttendancePage extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        SemesterDropDownMenu(semesters: semesters),
+                        SemesterDropDownMenu(
+                          semesters: semesters,
+                          onSelected: value.changeSemester,
+                        ),
                       ],
                     ),
                     const SizedBox(height: 16),
-                    ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: 8,
-                      itemBuilder: (BuildContext context, int index) {
-                        return const MyAttendanceListItem(
-                          week: 4,
-                          date: '2/13',
-                          isSelected: false,
-                          lateOrAbsence: '결석',
-                          isReadOnly: true,
-                        );
-                      },
-                      separatorBuilder: (BuildContext context, int index) {
-                        return const SizedBox(height: 8);
+                    FutureBuilder(
+                      future: memoizer.runOnce(() async =>
+                          await firestoreReader.getMyAttendanceHistory(
+                            value.selectedSemester,
+                            attendanceHistory,
+                          )),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<dynamic> snapshot) {
+                        if (snapshot.hasData) {
+                          return ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: attendanceHistory.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return MyAttendanceListItem(
+                                week: index + 1,
+                                date: attendanceHistory[index].date,
+                                isSelected: false,
+                                lateOrAbsence:
+                                    attendanceHistory[index].attendance,
+                                isReadOnly: true,
+                              );
+                            },
+                            separatorBuilder:
+                                (BuildContext context, int index) {
+                              return const SizedBox(height: 8);
+                            },
+                          );
+                        } else {
+                          return const SizedBox(height: 600);
+                        }
                       },
                     ),
                     const SizedBox(height: 37),
@@ -112,4 +187,23 @@ class ViewMyAttendancePage extends StatelessWidget {
       },
     );
   }
+}
+
+List<String> _getLastTwoSemesters(String semester) {
+  final currentYear = int.parse(semester.split("-")[0]);
+  final currentSemester = semester.split("-")[1];
+  late List<String> lastTwoSemesters;
+
+  switch (currentSemester) {
+    case "1":
+      lastTwoSemesters = ["${currentYear - 1}-2", "${currentYear - 1}-W"];
+    case "S":
+      lastTwoSemesters = ["${currentYear - 1}-W", "$currentYear-1"];
+    case "2":
+      lastTwoSemesters = ["$currentYear -1", "$currentYear-S"];
+    case "W":
+      lastTwoSemesters = ["$currentYear-S", "$currentYear-2"];
+  }
+
+  return lastTwoSemesters;
 }

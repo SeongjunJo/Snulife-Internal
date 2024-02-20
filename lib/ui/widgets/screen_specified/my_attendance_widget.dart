@@ -55,7 +55,7 @@ class MyAttendanceListItem extends StatelessWidget {
                 style: appFonts.c3.copyWith(color: appColors.grey6),
               ),
               Text(
-                date,
+                '${date.substring(0, 2)}/${date.substring(2, 4)}',
                 style: appFonts.h3.copyWith(
                     color: isReadOnly || lateOrAbsence.isEmpty
                         ? appColors.grey8

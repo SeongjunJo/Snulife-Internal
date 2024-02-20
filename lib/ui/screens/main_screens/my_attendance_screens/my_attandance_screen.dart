@@ -21,13 +21,13 @@ class MyAttendancePage extends StatelessWidget {
               controller: AppTab.myAttendanceTabController,
               children: AppTab.myAttendanceTabs.map((Tab tab) {
                 // 별도 Widget으로 분리하면 memoizer로 캐싱할 수 없음
-
                 return tab.text! == '지각/결석'
                     ? LateAbsencePage(semesters: snapshot.data)
                     : ChangeNotifierProvider(
-                        create: (context) =>
-                            SelectSemesterStatus(currentSemester: '2023-W'),
-                        child: const ViewMyAttendancePage(),
+                        create: (context) => SelectSemesterStatus(
+                            currentSemester: snapshot.data[1]),
+                        child: ViewMyAttendancePage(
+                            currentSemester: snapshot.data[1]),
                       );
               }).toList());
         } else {

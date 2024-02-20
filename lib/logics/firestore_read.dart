@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:snulife_internal/logics/utils/html_util.dart';
 import 'package:snulife_internal/logics/utils/map_util.dart';
 import 'package:snulife_internal/logics/utils/string_util.dart';
@@ -118,6 +119,33 @@ class FirestoreReader {
       attendanceStatus.sort((a, b) => a.date.compareTo(b.date));
       setState();
     });
+  }
+
+  getMyAttendanceSummary(String semester) async => await firebaseInstance.db
+      .collection('attendances')
+      .doc(semester)
+      .collection(firebaseInstance.userName!)
+      .doc('summary')
+      .get();
+
+  getMyAttendanceHistory(
+    String semester,
+    List<AttendanceStatus> attendanceHistory,
+  ) async {
+    debugPrint('getMyAttendanceHistory');
+    attendanceHistory.clear();
+    final attendanceCollection = await firebaseInstance.db
+        .collection('attendances')
+        .doc(semester)
+        .collection(firebaseInstance.userName!)
+        .where('attendance', isNull: false)
+        .get(); // 컬렉션에서 summary 문서는 제외
+    for (var doc in attendanceCollection.docs) {
+      attendanceHistory.add(AttendanceStatus.fromFirestore(doc, null));
+    }
+    StringUtil.adjustListWithDate(attendanceHistory, false);
+    attendanceHistory.sort((a, b) => a.date.compareTo(b.date));
+    return attendanceHistory;
   }
 }
 

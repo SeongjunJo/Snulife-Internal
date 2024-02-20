@@ -131,9 +131,11 @@ class SemesterDropDownMenu extends StatelessWidget {
   const SemesterDropDownMenu({
     super.key,
     required this.semesters,
+    required this.onSelected,
   });
 
   final List<String> semesters;
+  final Function(String) onSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -159,27 +161,27 @@ class SemesterDropDownMenu extends StatelessWidget {
         contentPadding: const EdgeInsets.only(left: 15),
         constraints: const BoxConstraints(
           minHeight: 50,
-          minWidth: 130,
           maxHeight: 50,
+          minWidth: 130,
           maxWidth: 130,
         ),
       ),
       initialSelection: semesters.last,
       trailingIcon: Image.asset(
-        'assets/images/icon_down.png',
+        'assets/images/icon_arrow_down.png',
         width: 16,
         height: 16,
         color: appColors.grey6,
       ),
       selectedTrailingIcon: Image.asset(
-        'assets/images/icon_up.png',
+        'assets/images/icon_arrow_up.png',
         width: 16,
         height: 16,
         color: appColors.grey6,
       ),
       textStyle: appFonts.t4.copyWith(color: appColors.grey6),
       onSelected: (String? selectedSemester) {
-        // TODO provider에 전달 -> provider 로직을 여기로 넘겨서 콜하면 될 듯
+        onSelected(selectedSemester!);
       },
       dropdownMenuEntries: semesters
           .map(

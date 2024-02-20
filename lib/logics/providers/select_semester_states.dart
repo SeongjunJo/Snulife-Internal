@@ -7,9 +7,8 @@ class SelectSemesterStatus extends ChangeNotifier {
   late String _selectedSemester = currentSemester;
   String get selectedSemester => _selectedSemester;
 
-  void Function()? changeSemester() {
-    _selectedSemester = 'semester';
+  changeSemester(String semester) {
+    _selectedSemester = semester;
     notifyListeners();
-    return null;
   }
 }
