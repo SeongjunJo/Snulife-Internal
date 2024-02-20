@@ -37,10 +37,10 @@ class FirestoreReader {
     });
   }
 
-  getPeopleAttendanceStream(String quarter, String date) {
+  getPeopleAttendanceStream(String semester, String date) {
     return firebaseInstance.db
         .collection('attendances')
-        .doc(quarter)
+        .doc(semester)
         .collection('dates')
         .doc(date)
         .snapshots();
@@ -104,11 +104,13 @@ class FirestoreReader {
       for (var change in event.docChanges) {
         switch (change.type) {
           case DocumentChangeType.added: // 최초 리스너 등록 이후 added 발생 불가
-            attendanceStatus.add(AttendanceStatus.fromFirestore(change.doc));
+            attendanceStatus
+                .add(AttendanceStatus.fromFirestore(change.doc, null));
           case DocumentChangeType.modified:
             attendanceStatus
                 .removeWhere((element) => element.date == change.doc.id);
-            attendanceStatus.add(AttendanceStatus.fromFirestore(change.doc));
+            attendanceStatus
+                .add(AttendanceStatus.fromFirestore(change.doc, null));
           case DocumentChangeType.removed: // 문서 삭제 경우 발생 불가
             return;
         }

@@ -54,7 +54,8 @@ class MapUtil {
       DocumentSnapshot<Map<String, dynamic>> documentSnapshot) {
     List<AttendanceStatus> attendanceStatus = [];
 
-    attendanceStatus.add(AttendanceStatus.fromFirestore(documentSnapshot));
+    attendanceStatus
+        .add(AttendanceStatus.fromFirestore(documentSnapshot, null));
 
     attendanceStatus.sort((a, b) => a.date.compareTo(b.date));
 
@@ -74,7 +75,8 @@ class AttendanceStatus {
   });
 
   factory AttendanceStatus.fromFirestore(
-      DocumentSnapshot<Map<String, dynamic>> snapshot) {
+      DocumentSnapshot<Map<String, dynamic>> snapshot,
+      SnapshotOptions? options) {
     final data = snapshot.data();
     return AttendanceStatus(
       date: snapshot.id,

@@ -16,8 +16,8 @@ class MyAttendanceListItem extends StatelessWidget {
   final String date;
   final bool isSelected;
   final String lateOrAbsence;
-  final bool isReadOnly; // true: 출결 현황 화면 / false: 지각, 결석 신청 화면
-
+  final bool isReadOnly;
+  // true: 출결 현황 화면 / false: 지각, 결석 신청 화면
   @override
   Widget build(BuildContext context) {
     AttendanceChipType chipType;

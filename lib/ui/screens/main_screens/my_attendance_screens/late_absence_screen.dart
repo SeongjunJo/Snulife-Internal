@@ -11,6 +11,8 @@ import '../../../widgets/commons/button_widgets.dart';
 
 int? _modalIndex;
 List<int> _selectedIndexes = [];
+List<AttendanceStatus> _lateAbsenceList = [];
+bool? _isLate; // null이면 선택 안 함, true면 지각, false면 결석
 
 class LateAbsencePage extends StatefulWidget {
   const LateAbsencePage({super.key, required this.semesters});
@@ -94,8 +96,10 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
                       ? () {
                           setState(() {
                             if (_selectedIndexes.contains(index)) {
+                              _lateAbsenceList.remove(semesterStatus[index]);
                               _selectedIndexes.remove(index);
                             } else {
+                              _lateAbsenceList.add(semesterStatus[index]);
                               _selectedIndexes.add(index);
                             }
                           });
@@ -120,15 +124,23 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
           const SizedBox(height: 37),
           AppExpandedButton(
             buttonText: "신청",
-            onPressed: () {
-              _modalIndex = null;
-              showModalBottomSheet(
-                context: context,
-                builder: (BuildContext context) {
-                  return const _BottomModal();
-                },
-              );
-            },
+            onPressed: _selectedIndexes.isNotEmpty
+                ? () {
+                    _modalIndex = null;
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return _BottomModal(
+                          currentSemester: currentSemester,
+                          upcomingSemester: upcomingSemester,
+                          setState: () {
+                            setState(() {});
+                          },
+                        );
+                      },
+                    );
+                  }
+                : null,
           ),
           const SizedBox(height: 62),
         ],
@@ -138,13 +150,27 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
 }
 
 class _BottomModal extends StatefulWidget {
-  const _BottomModal();
+  const _BottomModal({
+    required this.currentSemester,
+    required this.upcomingSemester,
+    required this.setState,
+  });
+
+  final String currentSemester;
+  final String? upcomingSemester;
+  final Function setState;
 
   @override
   State<_BottomModal> createState() => _BottomModalState();
 }
 
 class _BottomModalState extends State<_BottomModal> {
+  @override
+  void initState() {
+    super.initState();
+    _isLate = null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -165,6 +191,7 @@ class _BottomModalState extends State<_BottomModal> {
                 onTap: () {
                   setState(() {
                     _modalIndex = 0;
+                    _isLate = false;
                   });
                 },
                 child: Container(
@@ -192,6 +219,7 @@ class _BottomModalState extends State<_BottomModal> {
                 onTap: () {
                   setState(() {
                     _modalIndex = 1;
+                    _isLate = true;
                   });
                 },
                 child: Container(
@@ -225,20 +253,33 @@ class _BottomModalState extends State<_BottomModal> {
                 children: [
                   AppExpandedButton(
                     buttonText: '취소',
-                    onPressed: () => context.pop(),
+                    onPressed: () {
+                      context.pop();
+                    },
                     isCancelButton: true,
                   ),
                   const SizedBox(width: 8),
                   AppExpandedButton(
                     buttonText: '확정',
-                    onPressed: () {
-                      _selectedIndexes.clear();
-                      // TODO 서버에 신청이 완료된 후에 pop
-                      // TODO => 즉, 비동기 함수안으로 pop을 옮겨야 함 (onPressed는 함수를 기다리지 않음)
-                      // TODO => 서버에 쓰는 건 기다리고, 서버에서 다시 받아오는 걸 콜만 한 뒤 바로 pop
-                      // TODO => 그럼 pop 되고 난 후 서버에서 값을 받아와서 화면이 rebuild 됨
-                      context.pop();
-                    },
+                    onPressed: _isLate != null
+                        ? () async {
+                            await firestoreWriter.writeMyLateAbsence(
+                                widget.currentSemester,
+                                _lateAbsenceList,
+                                _isLate!);
+                            widget.upcomingSemester != null
+                                ? await firestoreWriter.writeMyLateAbsence(
+                                    widget.upcomingSemester!,
+                                    _lateAbsenceList,
+                                    _isLate!)
+                                : null;
+                            _selectedIndexes.clear();
+                            _lateAbsenceList.clear();
+                            widget.setState();
+                            if (!mounted) return;
+                            context.pop();
+                          }
+                        : null,
                   ),
                 ],
               ),
