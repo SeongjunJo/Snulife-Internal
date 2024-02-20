@@ -13,10 +13,8 @@ class MyAttendancePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: memoizer.runOnce(() async {
-        return await firestoreReader.getMyAttendanceStatus(
-            await firestoreReader.getCurrentAndComingSemester());
-      }),
+      future: memoizer.runOnce(
+          () async => await firestoreReader.getCurrentAndUpcomingSemesters()),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.hasData) {
           return TabBarView(
@@ -25,7 +23,7 @@ class MyAttendancePage extends StatelessWidget {
                 // 별도 Widget으로 분리하면 memoizer로 캐싱할 수 없음
 
                 return tab.text! == '지각/결석'
-                    ? LateAbsencePage(upcomingAttendanceStatus: snapshot.data)
+                    ? LateAbsencePage(semesters: snapshot.data)
                     : ChangeNotifierProvider(
                         create: (context) =>
                             SelectSemesterStatus(currentSemester: '2023-W'),

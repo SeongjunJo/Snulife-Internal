@@ -11,9 +11,9 @@ int? _modalIndex;
 List<int> _selectedIndexes = [];
 
 class LateAbsencePage extends StatefulWidget {
-  const LateAbsencePage({super.key, required this.upcomingAttendanceStatus});
+  const LateAbsencePage({super.key, required this.semesters});
 
-  final List<dynamic> upcomingAttendanceStatus;
+  final List<dynamic> semesters;
 
   @override
   State<LateAbsencePage> createState() => _LateAbsencePageState();
@@ -25,16 +25,9 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
   late final day = now.day.toString().padLeft(2, '0');
   late final today = month + day;
 
-  late final currentSemester = widget.upcomingAttendanceStatus[0];
-  late final upcomingSemester = widget.upcomingAttendanceStatus[1];
-  late final currentSemesterStatus = widget.upcomingAttendanceStatus[2]
-      .where((element) => int.parse(element.date) >= int.parse(today))
-      .toList(); // 오늘 이후의 출결 상태
-  late final upcomingSemesterStatus =
-      widget.upcomingAttendanceStatus[3]; // 다음 학기 출결 상태
-  late final indexOffset = currentSemesterStatus.length;
-  late final upcomingAttendanceStatus =
-      currentSemesterStatus + upcomingSemesterStatus;
+  late final currentSemester = widget.semesters[0];
+  late final upcomingSemester =
+      widget.semesters.length == 2 ? widget.semesters[1] : null;
 
   late final StreamSubscription currentSemesterStatusListener;
   late final StreamSubscription? upcomingSemesterStatusListener;
@@ -46,7 +39,7 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
         firestoreReader.getMyAttendanceStatusListener(currentSemester, () {
       setState(() {});
     });
-    upcomingSemesterStatusListener = upcomingSemesterStatus != null
+    upcomingSemesterStatusListener = upcomingSemester != null
         ? firestoreReader.getMyAttendanceStatusListener(upcomingSemester, () {
             setState(() {});
           })

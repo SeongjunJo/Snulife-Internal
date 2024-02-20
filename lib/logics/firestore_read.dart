@@ -7,26 +7,13 @@ import 'common_instances.dart';
 
 class FirestoreReader {
   final _db = firebaseInstance.db;
-  final _userId = firebaseInstance.userId;
-
-  Future<Map<String, dynamic>> getUserInfo() async {
-    final userInfoField = _db.collection('users').doc(_userId).get();
-    Map<String, dynamic> userInfo = {};
-
-    await userInfoField.then((DocumentSnapshot doc) {
-      userInfo = MapUtil.convertDocumentSnapshotToMap(
-          doc, ['name', 'team', 'isSenior', 'position']);
-    });
-
-    return userInfo;
-  }
 
   getClerkMap() async {
     QuerySnapshot<Map<String, dynamic>> clerkCollection;
 
     return memoizer.runOnce(() async {
       clerkCollection = await _db.collection('clerks').get();
-      return MapUtil.convertQuerySnapshotToMap(clerkCollection, 'count');
+      return MapUtil.orderClerksByCount(clerkCollection, 'count');
     });
   }
 
@@ -59,10 +46,11 @@ class FirestoreReader {
         .snapshots();
   }
 
-  Future<List<String>> getCurrentAndComingSemester() async {
+  Future<List<String>> getCurrentAndUpcomingSemesters() async {
     late final String academicCalendarHtml;
     late List<String> semesters;
-    Index index = Index.winter;
+    Index index = Index.winter; // 디폴트 값
+    late final DocumentSnapshot upcomingSemester;
 
     academicCalendarHtml = await httpLogic.getAcademicCalendar();
     List<String> semesterDuration =
@@ -93,51 +81,31 @@ class FirestoreReader {
         semesters = ['$yearText-W', '${yearText + 1}-1'];
     }
 
-    return semesters;
-  }
+    upcomingSemester =
+        await _db.collection('attendances').doc(semesters[1]).get();
 
-  Future<List<dynamic>?> getMyAttendanceStatus(List<String> semesters) async {
-    final List<dynamic> attendanceStatus = [
-      semesters[0],
-      semesters[1]
-    ]; // 현재 학기 & 다음 학기
+    if (!upcomingSemester.exists) semesters.removeAt(1);
 
-    for (String semester in semesters) {
-      final semesterDocument = _db.collection('attendances').doc(semester);
-      final doesDocumentExist = await semesterDocument.get();
-
-      if (doesDocumentExist.exists) {
-        QuerySnapshot<Map<String, dynamic>> attendanceDocuments = await _db
-            .collection('attendances')
-            .doc(semester)
-            .collection(firebaseInstance.userName!)
-            .where('attendance', isNull: false)
-            .get();
-        attendanceStatus
-            .add(StringUtil.convertQuerySnapshotToList(attendanceDocuments));
-      }
-    }
-
-    return attendanceStatus; // 현재 학기 & 다음 학기 & 현재 학기 dates & 다음 학기 dates(또는 null)
+    return semesters; // 다음 학기가 db에 등록되어 있으면 2개 학기, 없으면 1개 학기
   }
 
   getMyAttendanceStatusListener(
-    String currentSemester,
+    String semester,
     Function setState,
   ) {
     return firebaseInstance.db
         .collection('attendances')
-        .doc(currentSemester)
+        .doc(semester)
         .collection(firebaseInstance.userName!)
-        .where('attendance', isNull: false)
+        .where('attendance', isNull: false) // 컬렉션에서 summary 문서는 제외
         .snapshots()
         .listen((event) {
       for (var change in event.docChanges) {
         switch (change.type) {
           case DocumentChangeType.added: // 최초 리스너 등록 이후 added 발생 불가
-            print("New City: ${change.doc.data()}");
+            print("Initial data: ${change.doc.data()}");
           case DocumentChangeType.modified:
-            print("Modified City: ${change.doc.data()}");
+            print("Modified data: ${change.doc.data()}");
           case DocumentChangeType.removed: // 문서 삭제 경우 발생 불가
             return;
         }

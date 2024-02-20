@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:snulife_internal/router.dart';
@@ -14,13 +15,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late final Future<Map<String, dynamic>> userInfo;
+  late final Future<DocumentSnapshot> userInfo;
   late final Future<String> clerk;
 
   @override
   void initState() {
     super.initState();
-    userInfo = firestoreReader.getUserInfo();
+    userInfo = firebaseInstance.db
+        .collection('users')
+        .doc(firebaseInstance.userId)
+        .get();
     clerk = firestoreReader.getClerk();
   }
 

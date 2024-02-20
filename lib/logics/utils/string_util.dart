@@ -14,13 +14,12 @@ class StringUtil {
     return semesterDatetime;
   }
 
-  static List<AttendanceStatus> convertQuerySnapshotToList(
-      QuerySnapshot<Map<String, dynamic>> querySnapshot) {
+  static List<AttendanceStatus> convertDocumentSnapshotToList(
+      DocumentSnapshot<Map<String, dynamic>> documentSnapshot) {
     List<AttendanceStatus> attendanceStatus = [];
 
-    for (var docSnapshot in querySnapshot.docs) {
-      attendanceStatus.add(AttendanceStatus.fromFirestore(docSnapshot));
-    }
+    attendanceStatus.add(AttendanceStatus.fromFirestore(documentSnapshot));
+
     attendanceStatus.sort((a, b) => a.date.compareTo(b.date));
 
     return attendanceStatus;
