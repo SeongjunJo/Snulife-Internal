@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'map_util.dart';
 
 class StringUtil {
   static List<DateTime> getSemesterDatetime(List<String> semesterDuration) {
@@ -14,43 +14,28 @@ class StringUtil {
     return semesterDatetime;
   }
 
-  static List<AttendanceStatus> convertDocumentSnapshotToList(
-      DocumentSnapshot<Map<String, dynamic>> documentSnapshot) {
-    List<AttendanceStatus> attendanceStatus = [];
+  static List<AttendanceStatus> adjustListWithDate(
+    List<AttendanceStatus> list,
+    bool makeFuture, // 미래만 남길지, 과거만 남길지
+  ) {
+    final List<AttendanceStatus> adjustedList =
+        List.from(list); // 복사 안 하면 인자로 받는 list가 바뀜
 
-    attendanceStatus.add(AttendanceStatus.fromFirestore(documentSnapshot));
+    final now = DateTime.now();
+    late final month = now.month.toString().padLeft(2, '0');
+    late final day = now.day.toString().padLeft(2, '0');
+    late final today = month + day;
 
-    attendanceStatus.sort((a, b) => a.date.compareTo(b.date));
+    if (makeFuture) {
+      adjustedList.removeWhere((element) {
+        return int.parse(element.date) < int.parse(today);
+      });
+    } else {
+      adjustedList.removeWhere((element) {
+        return int.parse(element.date) > int.parse(today);
+      });
+    }
 
-    return attendanceStatus;
-  }
-}
-
-class AttendanceStatus {
-  final String date;
-  final String attendance;
-  final bool isAuthorized;
-
-  AttendanceStatus({
-    required this.date,
-    required this.attendance,
-    required this.isAuthorized,
-  });
-
-  factory AttendanceStatus.fromFirestore(
-      DocumentSnapshot<Map<String, dynamic>> snapshot) {
-    final data = snapshot.data();
-    return AttendanceStatus(
-      date: snapshot.id,
-      attendance: data!['attendance'],
-      isAuthorized: data['isAuthorized'],
-    );
-  }
-
-  Map<String, dynamic> toFirestore() {
-    return {
-      'attendance': attendance,
-      'isAuthorized': isAuthorized,
-    };
+    return adjustedList;
   }
 }

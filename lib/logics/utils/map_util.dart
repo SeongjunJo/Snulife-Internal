@@ -49,4 +49,44 @@ class MapUtil {
     }
     return leastKey;
   }
+
+  static List<AttendanceStatus> convertMapToClass(
+      DocumentSnapshot<Map<String, dynamic>> documentSnapshot) {
+    List<AttendanceStatus> attendanceStatus = [];
+
+    attendanceStatus.add(AttendanceStatus.fromFirestore(documentSnapshot));
+
+    attendanceStatus.sort((a, b) => a.date.compareTo(b.date));
+
+    return attendanceStatus;
+  }
+}
+
+class AttendanceStatus {
+  final String date;
+  final String attendance;
+  final bool isAuthorized;
+
+  AttendanceStatus({
+    required this.date,
+    required this.attendance,
+    required this.isAuthorized,
+  });
+
+  factory AttendanceStatus.fromFirestore(
+      DocumentSnapshot<Map<String, dynamic>> snapshot) {
+    final data = snapshot.data();
+    return AttendanceStatus(
+      date: snapshot.id,
+      attendance: data!['attendance'],
+      isAuthorized: data['isAuthorized'],
+    );
+  }
+
+  Map<String, dynamic> toFirestore() {
+    return {
+      'attendance': attendance,
+      'isAuthorized': isAuthorized,
+    };
+  }
 }

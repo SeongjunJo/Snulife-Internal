@@ -92,6 +92,7 @@ class FirestoreReader {
   getMyAttendanceStatusListener(
     String semester,
     Function setState,
+    List<AttendanceStatus> attendanceStatus,
   ) {
     return firebaseInstance.db
         .collection('attendances')
@@ -103,13 +104,16 @@ class FirestoreReader {
       for (var change in event.docChanges) {
         switch (change.type) {
           case DocumentChangeType.added: // 최초 리스너 등록 이후 added 발생 불가
-            print("Initial data: ${change.doc.data()}");
+            attendanceStatus.add(AttendanceStatus.fromFirestore(change.doc));
           case DocumentChangeType.modified:
-            print("Modified data: ${change.doc.data()}");
+            attendanceStatus
+                .removeWhere((element) => element.date == change.doc.id);
+            attendanceStatus.add(AttendanceStatus.fromFirestore(change.doc));
           case DocumentChangeType.removed: // 문서 삭제 경우 발생 불가
             return;
         }
       }
+      attendanceStatus.sort((a, b) => a.date.compareTo(b.date));
       setState();
     });
   }

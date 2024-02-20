@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:snulife_internal/logics/utils/map_util.dart';
+import 'package:snulife_internal/logics/utils/string_util.dart';
 import 'package:snulife_internal/ui/widgets/screen_specified/my_attendance_widget.dart';
 
 import '../../../../logics/common_instances.dart';
@@ -20,11 +22,6 @@ class LateAbsencePage extends StatefulWidget {
 }
 
 class _LateAbsencePageState extends State<LateAbsencePage> {
-  final now = DateTime.now();
-  late final month = now.month.toString().padLeft(2, '0');
-  late final day = now.day.toString().padLeft(2, '0');
-  late final today = month + day;
-
   late final currentSemester = widget.semesters[0];
   late final upcomingSemester =
       widget.semesters.length == 2 ? widget.semesters[1] : null;
@@ -32,17 +29,20 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
   late final StreamSubscription currentSemesterStatusListener;
   late final StreamSubscription? upcomingSemesterStatusListener;
 
+  final List<AttendanceStatus> currentSemesterStatus = [];
+  final List<AttendanceStatus> upcomingSemesterStatus = [];
+
   @override
   void initState() {
     super.initState();
     currentSemesterStatusListener =
         firestoreReader.getMyAttendanceStatusListener(currentSemester, () {
       setState(() {});
-    });
+    }, currentSemesterStatus);
     upcomingSemesterStatusListener = upcomingSemester != null
         ? firestoreReader.getMyAttendanceStatusListener(upcomingSemester, () {
             setState(() {});
-          })
+          }, upcomingSemesterStatus)
         : null;
   }
 
@@ -55,6 +55,13 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
 
   @override
   Widget build(BuildContext context) {
+    int currentSemesterWeek = currentSemesterStatus.length;
+    List<AttendanceStatus> adjustedCurrentSemesterStatus =
+        StringUtil.adjustListWithDate(currentSemesterStatus, true); // 미래만 남김
+    int indexOffset = adjustedCurrentSemesterStatus.length;
+    List<AttendanceStatus> semesterStatus =
+        adjustedCurrentSemesterStatus + upcomingSemesterStatus;
+
     return Container(
       color: appColors.grey0,
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -80,24 +87,28 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
             child: ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: 2,
+              itemCount: semesterStatus.length,
               itemBuilder: (BuildContext context, int index) {
                 return GestureDetector(
-                  // TODO 지각/결석 예정이면 onTap 없애기
-                  onTap: () {
-                    setState(() {
-                      if (_selectedIndexes.contains(index)) {
-                        _selectedIndexes.remove(index);
-                      } else {
-                        _selectedIndexes.add(index);
-                      }
-                    });
-                  },
+                  onTap: semesterStatus[index].attendance == ""
+                      ? () {
+                          setState(() {
+                            if (_selectedIndexes.contains(index)) {
+                              _selectedIndexes.remove(index);
+                            } else {
+                              _selectedIndexes.add(index);
+                            }
+                          });
+                        }
+                      : null, // 지각/결석 신청했으면 선택 불가
                   child: MyAttendanceListItem(
-                    week: 4,
-                    date: '02/15',
+                    week: (index + 1 > indexOffset)
+                        ? index + 1 - indexOffset
+                        : currentSemesterWeek + index,
+                    date: semesterStatus[index].date,
                     isSelected: _selectedIndexes.contains(index),
-                    lateOrAbsence: '', // 지각/결석이 아니라면 빈 문자열이 넘어감
+                    lateOrAbsence: semesterStatus[index]
+                        .attendance, // 지각/결석이 아니라면 빈 문자열이 넘어감
                   ),
                 );
               },
