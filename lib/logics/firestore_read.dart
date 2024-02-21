@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:snulife_internal/logics/utils/date_util.dart';
 import 'package:snulife_internal/logics/utils/html_util.dart';
 import 'package:snulife_internal/logics/utils/map_util.dart';
 import 'package:snulife_internal/logics/utils/string_util.dart';
@@ -58,7 +59,7 @@ class FirestoreReader {
     List<DateTime> semesterDatetime =
         StringUtil.getSemesterDatetime(semesterDuration);
 
-    DateTime now = DateTime.now();
+    DateTime now = DateUtil.getLocalNow();
     int yearText = now.year;
 
     for (int i = 0; i < semesterDatetime.length; i++) {

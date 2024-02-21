@@ -26,7 +26,7 @@ class MyAttendanceListItem extends StatelessWidget {
         chipType = AttendanceChipType.late;
       case '결석':
         chipType = AttendanceChipType.absence;
-      default:
+      default: // 출석 or 휴회; 휴회인 경우는 chip 없이 text만 표시됨 (지각/결석 화면)
         chipType = AttendanceChipType.presence;
     }
 
