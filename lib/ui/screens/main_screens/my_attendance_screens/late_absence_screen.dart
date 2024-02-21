@@ -9,7 +9,7 @@ import 'package:snulife_internal/ui/widgets/screen_specified/my_attendance_widge
 import '../../../../logics/common_instances.dart';
 import '../../../widgets/commons/button_widgets.dart';
 
-int? _modalIndex;
+int? _modalIndex; // 모달의 결석/지각 체크 박스 인덱스: null이면 선택 안 함, 1이면 결석, 2면 지각
 List<int> _selectedIndexes = [];
 List<AttendanceStatus> _lateAbsenceList = [];
 bool? _isLate; // null이면 선택 안 함, true면 지각, false면 결석
@@ -51,6 +51,8 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
   @override
   void dispose() {
     super.dispose();
+    _selectedIndexes.clear();
+    _lateAbsenceList.clear();
     currentSemesterStatusListener.cancel();
     upcomingSemesterStatusListener?.cancel();
   }

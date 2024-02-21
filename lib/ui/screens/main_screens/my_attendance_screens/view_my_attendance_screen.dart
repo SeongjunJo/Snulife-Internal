@@ -30,8 +30,13 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
     return Consumer<SelectSemesterStatus>(
       builder: (BuildContext context, value, _) {
         return FutureBuilder(
-          future: memoizer.runOnce(() async => await firestoreReader
-              .getMyAttendanceSummary(value.selectedSemester)),
+          future: Future.wait([
+            firestoreReader.getMyAttendanceSummary(value.selectedSemester),
+            firestoreReader.getMyAttendanceHistory(
+              value.selectedSemester,
+              attendanceHistory,
+            )
+          ]),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             if (snapshot.hasData) {
               return Container(
@@ -54,7 +59,7 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
                             style: appFonts.b1.copyWith(color: appColors.grey7),
                           ),
                           Text(
-                            "${snapshot.data['sum']}",
+                            "${snapshot.data[0]['sum']}",
                             style: appFonts.b1.copyWith(
                               color: appColors.grey7,
                               fontWeight: FontWeight.w700,
@@ -81,7 +86,7 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
                                     style: appFonts.b1
                                         .copyWith(color: appColors.grey7)),
                                 Text(
-                                  "${snapshot.data['present']}",
+                                  "${snapshot.data[0]['present']}",
                                   style: appFonts.b1.copyWith(
                                     color: appColors.grey7,
                                     fontWeight: FontWeight.w700,
@@ -97,7 +102,7 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
                                     style: appFonts.b1
                                         .copyWith(color: appColors.grey7)),
                                 Text(
-                                  ' ${snapshot.data['late'] + snapshot.data['badLate']}', // 일반 동아리원은 사유 여부 안 보여줌
+                                  ' ${snapshot.data[0]['late'] + snapshot.data[0]['badLate']}', // 일반 동아리원은 사유 여부 안 보여줌
                                   style: appFonts.b1.copyWith(
                                     color: appColors.grey7,
                                     fontWeight: FontWeight.w700,
@@ -113,7 +118,7 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
                                     style: appFonts.b1
                                         .copyWith(color: appColors.grey7)),
                                 Text(
-                                  "${snapshot.data['absent'] + snapshot.data['badAbsent']}", // 일반 동아리원은 사유 여부 안 보여줌
+                                  "${snapshot.data[0]['absent'] + snapshot.data[0]['badAbsent']}", // 일반 동아리원은 사유 여부 안 보여줌
                                   style: appFonts.b1.copyWith(
                                     color: appColors.grey7,
                                     fontWeight: FontWeight.w700,
@@ -137,37 +142,21 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    FutureBuilder(
-                      future: memoizer.runOnce(() async =>
-                          await firestoreReader.getMyAttendanceHistory(
-                            value.selectedSemester,
-                            attendanceHistory,
-                          )),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<dynamic> snapshot) {
-                        if (snapshot.hasData) {
-                          return ListView.separated(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: attendanceHistory.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return MyAttendanceListItem(
-                                week: index + 1,
-                                date: attendanceHistory[index].date,
-                                isSelected: false,
-                                lateOrAbsence:
-                                    attendanceHistory[index].attendance,
-                                isReadOnly: true,
-                              );
-                            },
-                            separatorBuilder:
-                                (BuildContext context, int index) {
-                              return const SizedBox(height: 8);
-                            },
-                          );
-                        } else {
-                          return const SizedBox(height: 600);
-                        }
+                    ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: attendanceHistory.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return MyAttendanceListItem(
+                          week: index + 1,
+                          date: attendanceHistory[index].date,
+                          isSelected: false,
+                          lateOrAbsence: attendanceHistory[index].attendance,
+                          isReadOnly: true,
+                        );
+                      },
+                      separatorBuilder: (BuildContext context, int index) {
+                        return const SizedBox(height: 8);
                       },
                     ),
                     const SizedBox(height: 37),

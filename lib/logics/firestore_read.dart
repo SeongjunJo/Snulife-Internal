@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:snulife_internal/logics/utils/html_util.dart';
 import 'package:snulife_internal/logics/utils/map_util.dart';
 import 'package:snulife_internal/logics/utils/string_util.dart';
@@ -121,18 +120,18 @@ class FirestoreReader {
     });
   }
 
-  getMyAttendanceSummary(String semester) async => await firebaseInstance.db
-      .collection('attendances')
-      .doc(semester)
-      .collection(firebaseInstance.userName!)
-      .doc('summary')
-      .get();
+  Future<DocumentSnapshot> getMyAttendanceSummary(String semester) async =>
+      await firebaseInstance.db
+          .collection('attendances')
+          .doc(semester)
+          .collection(firebaseInstance.userName!)
+          .doc('summary')
+          .get();
 
-  getMyAttendanceHistory(
+  Future<List> getMyAttendanceHistory(
     String semester,
     List<AttendanceStatus> attendanceHistory,
   ) async {
-    debugPrint('getMyAttendanceHistory');
     attendanceHistory.clear();
     final attendanceCollection = await firebaseInstance.db
         .collection('attendances')

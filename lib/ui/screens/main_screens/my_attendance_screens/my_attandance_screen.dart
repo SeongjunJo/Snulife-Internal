@@ -25,9 +25,9 @@ class MyAttendancePage extends StatelessWidget {
                     ? LateAbsencePage(semesters: snapshot.data)
                     : ChangeNotifierProvider(
                         create: (context) => SelectSemesterStatus(
-                            currentSemester: snapshot.data[1]),
+                            currentSemester: snapshot.data[0]),
                         child: ViewMyAttendancePage(
-                            currentSemester: snapshot.data[1]),
+                            currentSemester: snapshot.data[0]),
                       );
               }).toList());
         } else {
