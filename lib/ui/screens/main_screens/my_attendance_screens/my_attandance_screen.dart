@@ -4,36 +4,34 @@ import 'package:snulife_internal/ui/screens/main_screens/my_attendance_screens/l
 import 'package:snulife_internal/ui/screens/main_screens/my_attendance_screens/view_my_attendance_screen.dart';
 
 import '../../../../logics/app_tabs.dart';
-import '../../../../logics/common_instances.dart';
 import '../../../../logics/providers/select_semester_states.dart';
 
 class MyAttendancePage extends StatelessWidget {
-  const MyAttendancePage({super.key});
+  const MyAttendancePage({
+    super.key,
+    required this.currentSemester,
+    required this.upcomingSemester,
+  });
+
+  final String currentSemester;
+  final String? upcomingSemester;
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: memoizer.runOnce(
-          () async => await firestoreReader.getCurrentAndUpcomingSemesters()),
-      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-        if (snapshot.hasData) {
-          return TabBarView(
-              controller: AppTab.myAttendanceTabController,
-              children: AppTab.myAttendanceTabs.map((Tab tab) {
-                // 별도 Widget으로 분리하면 memoizer로 캐싱할 수 없음
-                return tab.text! == '지각/결석'
-                    ? LateAbsencePage(semesters: snapshot.data)
-                    : ChangeNotifierProvider(
-                        create: (context) => SelectSemesterStatus(
-                            currentSemester: snapshot.data[0]),
-                        child: ViewMyAttendancePage(
-                            currentSemester: snapshot.data[0]),
-                      );
-              }).toList());
-        } else {
-          return Container(color: appColors.grey0);
-        }
-      },
-    );
+    return TabBarView(
+        controller: AppTab.myAttendanceTabController,
+        children: AppTab.myAttendanceTabs.map((Tab tab) {
+          // 별도 Widget으로 분리하면 memoizer로 캐싱할 수 없음
+          return tab.text! == '지각/결석'
+              ? LateAbsencePage(
+                  currentSemester: currentSemester,
+                  upcomingSemester: upcomingSemester,
+                )
+              : ChangeNotifierProvider(
+                  create: (context) =>
+                      SelectSemesterStatus(currentSemester: currentSemester),
+                  child: ViewMyAttendancePage(currentSemester: currentSemester),
+                );
+        }).toList());
   }
 }

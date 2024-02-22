@@ -7,9 +7,15 @@ import '../../../widgets/commons/button_widgets.dart';
 import '../../../widgets/screen_specified/attendance_widget.dart';
 
 class ClerkPage extends StatefulWidget {
-  const ClerkPage({super.key, required this.isManager, required this.clerkMap});
+  const ClerkPage({
+    super.key,
+    required this.isManager,
+    required this.clerk,
+    required this.clerkMap,
+  });
 
   final bool isManager;
+  final String clerk;
   final Map<String, dynamic> clerkMap;
 
   @override
@@ -22,16 +28,15 @@ class _ClerkPageState extends State<ClerkPage> {
   late final Map<String, dynamic> _clerkMap = widget.clerkMap;
   late List<MapEntry<String, dynamic>> clerkList;
 
-  late String clerk;
   late String nextClerk;
 
   @override
   void initState() {
     super.initState();
     clerkList = _clerkMap.entries.toList();
-    clerk = MapUtil.getLeastKey(_clerkMap);
     nextClerk = MapUtil.getNextLeastKey(_clerkMap);
-    selectedIndex = clerkList.indexWhere((element) => element.key == clerk);
+    selectedIndex =
+        clerkList.indexWhere((element) => element.key == widget.clerk);
   }
 
   @override
@@ -54,7 +59,7 @@ class _ClerkPageState extends State<ClerkPage> {
                     style: appFonts.b2.copyWith(color: appColors.grey7),
                   ),
                   Text(
-                    clerk,
+                    widget.clerk,
                     style: appFonts.b2.copyWith(
                       color: appColors.grey7,
                       fontWeight: FontWeight.w700,

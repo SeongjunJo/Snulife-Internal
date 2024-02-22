@@ -61,18 +61,29 @@ final appRouter = GoRouter(
           name: AppRoutePath.home,
           path: AppRoutePath.home,
           builder: (context, state) => Consumer<FirebaseStates>(
-              builder: (context, value, _) =>
-                  HomePage(isManager: value.isManager)),
+            builder: (context, value, _) => HomePage(
+              isManager: value.isManager,
+              userInfo: value.userInfo!,
+              clerk: value.clerk,
+            ),
+          ),
           routes: [
             GoRoute(
               name: AppRoutePath.attendance,
               path: 'attendance',
-              builder: (context, state) => const AttendancePage(),
+              builder: (context, state) => Consumer<FirebaseStates>(
+                  builder: (context, value, _) =>
+                      AttendancePage(currentSemester: value.currentSemester)),
             ),
             GoRoute(
               name: AppRoutePath.myAttendance,
               path: 'myAttendance',
-              builder: (context, state) => const MyAttendancePage(),
+              builder: (context, state) => Consumer<FirebaseStates>(
+                builder: (context, value, _) => MyAttendancePage(
+                  currentSemester: value.currentSemester,
+                  upcomingSemester: value.upcomingSemester,
+                ),
+              ),
             ),
           ],
         ),

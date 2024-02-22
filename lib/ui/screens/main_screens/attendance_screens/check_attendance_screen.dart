@@ -7,21 +7,25 @@ import '../../../../logics/common_instances.dart';
 import '../../../widgets/screen_specified/attendance_widget.dart';
 
 class CheckAttendancePage extends StatelessWidget {
-  const CheckAttendancePage({super.key, required this.userList});
+  const CheckAttendancePage({
+    super.key,
+    required this.currentSemester,
+    required this.userList,
+  });
 
+  final String currentSemester;
   final List<dynamic> userList;
 
   @override
   Widget build(BuildContext context) {
     final today = DateUtil.getLocalNow();
-    Stream<DocumentSnapshot> usersStream =
-        firestoreReader.getPeopleAttendanceStream('2023-W', '0215');
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       color: appColors.grey0,
       child: StreamBuilder(
-        stream: usersStream,
+        stream:
+            firestoreReader.getPeopleAttendanceStream(currentSemester, '0215'),
         builder:
             (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.hasData) {

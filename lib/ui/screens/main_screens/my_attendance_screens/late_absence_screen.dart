@@ -16,19 +16,20 @@ List<AttendanceStatus> _lateAbsenceList = [];
 bool? _isLate; // null이면 선택 안 함, true면 지각, false면 결석
 
 class LateAbsencePage extends StatefulWidget {
-  const LateAbsencePage({super.key, required this.semesters});
+  const LateAbsencePage({
+    super.key,
+    required this.currentSemester,
+    required this.upcomingSemester,
+  });
 
-  final List<dynamic> semesters;
+  final String currentSemester;
+  final String? upcomingSemester;
 
   @override
   State<LateAbsencePage> createState() => _LateAbsencePageState();
 }
 
 class _LateAbsencePageState extends State<LateAbsencePage> {
-  late final currentSemester = widget.semesters[0];
-  late final upcomingSemester =
-      widget.semesters.length == 2 ? widget.semesters[1] : null;
-
   late final StreamSubscription currentSemesterStatusListener;
   late final StreamSubscription? upcomingSemesterStatusListener;
 
@@ -38,12 +39,13 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
   @override
   void initState() {
     super.initState();
-    currentSemesterStatusListener =
-        firestoreReader.getMyAttendanceStatusListener(currentSemester, () {
+    currentSemesterStatusListener = firestoreReader
+        .getMyAttendanceStatusListener(widget.currentSemester, () {
       setState(() {});
     }, currentSemesterStatus);
-    upcomingSemesterStatusListener = upcomingSemester != null
-        ? firestoreReader.getMyAttendanceStatusListener(upcomingSemester, () {
+    upcomingSemesterStatusListener = widget.upcomingSemester != null
+        ? firestoreReader
+            .getMyAttendanceStatusListener(widget.upcomingSemester!, () {
             setState(() {});
           }, upcomingSemesterStatus)
         : null;
@@ -73,6 +75,7 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
           .doc('meetingTime')
           .get()),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        // snapshot : 회의 일자, 휴외 일자, 회의 시간 보유
         if (snapshot.hasData) {
           final String meetingTime = snapshot.data.data()['time'];
           final List<String> meetingRestDates =
@@ -151,8 +154,8 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
                             context: context,
                             builder: (BuildContext context) {
                               return _BottomModal(
-                                currentSemester: currentSemester,
-                                upcomingSemester: upcomingSemester,
+                                currentSemester: widget.currentSemester,
+                                upcomingSemester: widget.upcomingSemester,
                                 meetingTime: meetingTime,
                                 setState: () {
                                   setState(() {});

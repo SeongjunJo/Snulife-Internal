@@ -8,7 +8,9 @@ import 'check_attendance_screen.dart';
 import 'clerk_screen.dart';
 
 class AttendancePage extends StatelessWidget {
-  const AttendancePage({super.key});
+  const AttendancePage({super.key, required this.currentSemester});
+
+  final String currentSemester;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,10 @@ class AttendancePage extends StatelessWidget {
                   builder:
                       (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                     if (snapshot.hasData) {
-                      return CheckAttendancePage(userList: snapshot.data);
+                      return CheckAttendancePage(
+                        userList: snapshot.data,
+                        currentSemester: currentSemester,
+                      );
                     } else {
                       return Container(color: appColors.grey0);
                     }
@@ -37,6 +42,7 @@ class AttendancePage extends StatelessWidget {
                       return Consumer<FirebaseStates>(
                         builder: (context, value, _) => ClerkPage(
                           isManager: value.isManager,
+                          clerk: value.clerk,
                           clerkMap: snapshot.data,
                         ),
                       );
