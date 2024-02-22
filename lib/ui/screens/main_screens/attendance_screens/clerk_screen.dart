@@ -7,8 +7,9 @@ import '../../../widgets/commons/button_widgets.dart';
 import '../../../widgets/screen_specified/attendance_widget.dart';
 
 class ClerkPage extends StatefulWidget {
-  const ClerkPage({super.key, required this.clerkMap});
+  const ClerkPage({super.key, required this.isManager, required this.clerkMap});
 
+  final bool isManager;
   final Map<String, dynamic> clerkMap;
 
   @override
@@ -98,11 +99,13 @@ class _ClerkPageState extends State<ClerkPage> {
                   name: clerkList[index].key,
                   index: index,
                   selectedIndex: selectedIndex,
-                  onSelected: () {
-                    setState(() {
-                      selectedIndex = index;
-                    });
-                  },
+                  onSelected: widget.isManager
+                      ? () {
+                          setState(() {
+                            selectedIndex = index;
+                          });
+                        }
+                      : () {},
                   clerkCount: clerkList[index].value,
                 );
               },
@@ -112,6 +115,22 @@ class _ClerkPageState extends State<ClerkPage> {
             ),
           ),
           const SizedBox(height: 70),
+          widget.isManager
+              ? AppExpandedButton(
+                  buttonText: "서기 변경",
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("서기가 변경되었습니다."),
+                        duration: Duration(seconds: 1),
+                      ),
+                    );
+                  },
+                )
+              : const SizedBox(),
+          widget.isManager // Column으로 묶으면 버튼이 안 보임
+              ? const SizedBox(height: 40)
+              : const SizedBox(),
           AppExpandedButton(buttonText: "돌아가기", onPressed: () => context.pop()),
           const SizedBox(height: 40),
         ],

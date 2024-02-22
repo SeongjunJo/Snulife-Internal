@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:snulife_internal/logics/providers/firebase_states.dart';
 import 'package:snulife_internal/ui/screens/main_screens/attendance_screens/attandance_screen.dart';
 import 'package:snulife_internal/ui/screens/main_screens/home_screen.dart';
 import 'package:snulife_internal/ui/screens/main_screens/my_attendance_screens/my_attandance_screen.dart';
@@ -58,7 +60,9 @@ final appRouter = GoRouter(
         GoRoute(
           name: AppRoutePath.home,
           path: AppRoutePath.home,
-          builder: (context, state) => const HomePage(),
+          builder: (context, state) => Consumer<FirebaseStates>(
+              builder: (context, value, _) =>
+                  HomePage(isManager: value.isManager)),
           routes: [
             GoRoute(
               name: AppRoutePath.attendance,

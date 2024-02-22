@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -29,7 +30,15 @@ class _SettingPageState extends State<SettingPage> {
             trailing: const RightArrow(),
             onTap: () => context.pushNamed(AppRoutePath.profile),
           ),
-          const SettingRow(title: "계정 관리", trailing: RightArrow()),
+          GestureDetector(
+            onTap: () async {
+              await FirebaseAuth.instance.signOut();
+              if (!mounted) return;
+              context.goNamed(AppRoutePath.login);
+            },
+            child: const SettingRow(
+                title: "계정 관리 (임시 로그 아웃)", trailing: RightArrow()),
+          ),
           const SizedBox(height: 14),
           Divider(height: 1, thickness: 1, color: appColors.grey3),
           const SizedBox(height: 14),

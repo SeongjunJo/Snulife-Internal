@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:snulife_internal/logics/providers/firebase_states.dart';
 
 import '../../../../logics/app_tabs.dart';
 import '../../../../logics/common_instances.dart';
@@ -32,7 +34,12 @@ class AttendancePage extends StatelessWidget {
                   builder:
                       (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                     if (snapshot.hasData) {
-                      return ClerkPage(clerkMap: snapshot.data);
+                      return Consumer<FirebaseStates>(
+                        builder: (context, value, _) => ClerkPage(
+                          isManager: value.isManager,
+                          clerkMap: snapshot.data,
+                        ),
+                      );
                     } else {
                       return Container(color: appColors.grey0);
                     }

@@ -11,7 +11,7 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(
-    ChangeNotifierProvider(
+    ChangeNotifierProvider<FirebaseStates>(
       create: (context) => FirebaseStates(),
       builder: ((context, child) => const InternalApp()),
     ),
