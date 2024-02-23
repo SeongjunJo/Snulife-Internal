@@ -14,18 +14,8 @@ class FirestoreReader {
 
     return memoizer.runOnce(() async {
       clerkCollection = await _db.collection('clerks').get();
-      return MapUtil.orderClerksByCount(clerkCollection, 'count');
+      return MapUtil.orderClerksByCount(clerkCollection);
     });
-  }
-
-  Future<String> getClerk() async {
-    String clerk = '';
-    Map<String, dynamic> clerkMap;
-
-    clerkMap = await getClerkMap();
-    clerk = MapUtil.getLeastKey(clerkMap);
-
-    return clerk;
   }
 
   getUserList() async {
@@ -38,7 +28,7 @@ class FirestoreReader {
     });
   }
 
-  getPeopleAttendanceStream(String semester, String date) {
+  getPeopleAttendanceAndClerkStream(String semester, String date) {
     return firebaseInstance.db
         .collection('attendances')
         .doc(semester)

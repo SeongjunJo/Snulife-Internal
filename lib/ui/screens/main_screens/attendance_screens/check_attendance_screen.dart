@@ -24,8 +24,8 @@ class CheckAttendancePage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       color: appColors.grey0,
       child: StreamBuilder(
-        stream:
-            firestoreReader.getPeopleAttendanceStream(currentSemester, '0215'),
+        stream: firestoreReader.getPeopleAttendanceAndClerkStream(
+            currentSemester, '0215'),
         builder:
             (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.hasData) {

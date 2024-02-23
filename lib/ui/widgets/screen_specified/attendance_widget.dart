@@ -169,8 +169,7 @@ class _ClerkListItemState extends State<ClerkListItem> {
               // clerk chip 단독 터치 불가, 색상 보정을 위해 isSelected 일 때 onSelected 필요
               onSelected: isSelected ? (_) {} : null,
               isSelected: isSelected, // clerk chip 전용 변수
-              clerkCount:
-                  isSelected ? widget.clerkCount + 1 : widget.clerkCount,
+              clerkCount: widget.clerkCount,
             ),
           ],
         ),

@@ -22,7 +22,7 @@ class FirebaseStates extends ChangeNotifier {
 
   late DocumentSnapshot? _userInfo; // 유저가 (부)대표인지 확인하는 과정에서 필요
   DocumentSnapshot? get userInfo => _userInfo; // 기왕 받는 김에 홈화면에 넘겨줌
-  late String _clerk;
+  String _clerk = '';
   String get clerk => _clerk;
 
   Future<void> _init() async {
@@ -42,14 +42,17 @@ class FirebaseStates extends ChangeNotifier {
         _currentSemester = semesters[0];
         _upcomingSemester = semesters.length > 1 ? semesters[1] : null;
 
-        final clerkInfo = await firebaseInstance.db // 서기 fetch
-            .collection('attendances')
-            .doc(_currentSemester)
-            .collection('dates')
-            // TODO localToday로 바꾸기
-            .doc('0229')
-            .get();
-        _clerk = clerkInfo['clerk'];
+        firestoreReader
+            .getPeopleAttendanceAndClerkStream(
+          _currentSemester,
+          // TODO localToday로 바꾸기
+          '0229',
+        )
+            .listen((doc) {
+          _clerk = doc.data()!['clerk'];
+          if (_clerk.isEmpty) _clerk = '미정';
+          notifyListeners();
+        });
       } else {
         _loggedIn = false;
         _userInfo = null;

@@ -78,7 +78,9 @@ class MyAttendanceListItem extends StatelessWidget {
                       height: 34,
                     )
                   : Text(
-                      '$lateOrAbsence 예정',
+                      lateOrAbsence == '휴회'
+                          ? lateOrAbsence
+                          : '$lateOrAbsence 예정',
                       style: appFonts.t4.copyWith(color: appColors.grey6),
                     ),
         ],

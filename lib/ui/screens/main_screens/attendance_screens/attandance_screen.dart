@@ -44,6 +44,8 @@ class AttendancePage extends StatelessWidget {
                           isManager: value.isManager,
                           clerk: value.clerk,
                           clerkMap: snapshot.data,
+                          currentSemester: value.currentSemester,
+                          upcomingSemester: value.upcomingSemester,
                         ),
                       );
                     } else {

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:snulife_internal/logics/common_instances.dart';
@@ -12,35 +14,60 @@ class ClerkPage extends StatefulWidget {
     required this.isManager,
     required this.clerk,
     required this.clerkMap,
+    required this.currentSemester,
+    required this.upcomingSemester,
   });
 
   final bool isManager;
   final String clerk;
   final Map<String, dynamic> clerkMap;
+  final String currentSemester;
+  final String? upcomingSemester;
 
   @override
   State<ClerkPage> createState() => _ClerkPageState();
 }
 
 class _ClerkPageState extends State<ClerkPage> {
-  late int selectedIndex;
-
-  late final Map<String, dynamic> _clerkMap = widget.clerkMap;
-  late List<MapEntry<String, dynamic>> clerkList;
-
-  late String nextClerk;
+  late Map<String, dynamic> _clerkMap = widget.clerkMap;
+  late final StreamSubscription _clerkMapListener;
+  late List<MapEntry<String, dynamic>> clerkList = _clerkMap.entries.toList();
+  late int selectedIndex =
+      clerkList.indexWhere((element) => element.key == widget.clerk);
+  bool hasConfirmed = false;
+  late final StreamSubscription _clerkConfirmListener;
 
   @override
   void initState() {
     super.initState();
-    clerkList = _clerkMap.entries.toList();
-    nextClerk = MapUtil.getNextLeastKey(_clerkMap);
-    selectedIndex =
-        clerkList.indexWhere((element) => element.key == widget.clerk);
+    _clerkMapListener = firebaseInstance.db
+        .collection('clerks')
+        .snapshots()
+        .listen((event) => setState(() {
+              _clerkMap = MapUtil.orderClerksByCount(event);
+              clerkList = _clerkMap.entries.toList();
+            }));
+    _clerkConfirmListener = firebaseInstance.db
+        .collection('attendances')
+        .doc(widget.currentSemester)
+        .collection('dates')
+        // TODO localToday로 바꾸기
+        .doc('0229')
+        .snapshots()
+        .listen((event) => hasConfirmed = event.data()!['hasClerkConfirmed']);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _clerkMapListener.cancel();
+    _clerkConfirmListener.cancel();
   }
 
   @override
   Widget build(BuildContext context) {
+    String nextClerk = MapUtil.getNextClerk(_clerkMap, widget.clerk);
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       color: appColors.grey0,
@@ -104,12 +131,8 @@ class _ClerkPageState extends State<ClerkPage> {
                   name: clerkList[index].key,
                   index: index,
                   selectedIndex: selectedIndex,
-                  onSelected: widget.isManager
-                      ? () {
-                          setState(() {
-                            selectedIndex = index;
-                          });
-                        }
+                  onSelected: (widget.isManager && !hasConfirmed)
+                      ? () => setState(() => selectedIndex = index)
                       : () {},
                   clerkCount: clerkList[index].value,
                 );
@@ -122,15 +145,32 @@ class _ClerkPageState extends State<ClerkPage> {
           const SizedBox(height: 70),
           widget.isManager
               ? AppExpandedButton(
-                  buttonText: "서기 변경",
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("서기가 변경되었습니다."),
-                        duration: Duration(seconds: 1),
-                      ),
-                    );
-                  },
+                  buttonText: "서기 확정",
+                  onPressed: !hasConfirmed
+                      ? () {
+                          hasConfirmed = true;
+
+                          nextClerk = MapUtil.getNextClerk(
+                            _clerkMap,
+                            clerkList[selectedIndex].key,
+                          );
+
+                          firebaseInstance.db
+                              .collection('attendances')
+                              .doc(widget.currentSemester)
+                              .collection('dates')
+                              // TODO localToday로 바꾸기
+                              .doc('0229')
+                              .update({'hasClerkConfirmed': true});
+
+                          firestoreWriter.writeConfirmedClerk(
+                            widget.currentSemester,
+                            widget.upcomingSemester,
+                            clerkList[selectedIndex].key,
+                            nextClerk,
+                          );
+                        }
+                      : null,
                 )
               : const SizedBox(),
           widget.isManager // Column으로 묶으면 버튼이 안 보임

@@ -40,6 +40,7 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             if (snapshot.hasData) {
               return Container(
+                color: appColors.grey0,
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: ListView(
                   children: [
@@ -102,7 +103,7 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
                                     style: appFonts.b1
                                         .copyWith(color: appColors.grey7)),
                                 Text(
-                                  ' ${snapshot.data[0]['late'] + snapshot.data[0]['badLate']}', // 일반 동아리원은 사유 여부 안 보여줌
+                                  '${snapshot.data[0]['late'] + snapshot.data[0]['badLate']}', // 일반 동아리원은 사유 여부 안 보여줌
                                   style: appFonts.b1.copyWith(
                                     color: appColors.grey7,
                                     fontWeight: FontWeight.w700,
@@ -169,7 +170,7 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
                 ),
               );
             } else {
-              return const SizedBox();
+              return Container(color: appColors.grey0);
             }
           },
         );
