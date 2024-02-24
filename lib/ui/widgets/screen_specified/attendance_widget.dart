@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:snulife_internal/logics/common_instances.dart';
+import 'package:snulife_internal/logics/providers/check_attendance_state.dart';
 import 'package:snulife_internal/ui/widgets/commons/button_widgets.dart';
 
 class AttendanceListItem extends StatefulWidget {
   const AttendanceListItem({
     super.key,
+    required this.canModify,
     required this.name,
     required this.attendanceStatus,
   });
 
+  final bool canModify;
   final String name;
   final Map<String, dynamic> attendanceStatus;
 
@@ -19,34 +23,39 @@ class AttendanceListItem extends StatefulWidget {
 class _AttendanceListItemState extends State<AttendanceListItem> {
   int? index;
   bool isTagSelected = false;
-  bool didUserModify = false;
+  String? initialStatus;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.attendanceStatus['present'].contains(widget.name)) {
+      index = 1; // 출석
+      initialStatus = '출석';
+    } else if (widget.attendanceStatus['late'].contains(widget.name)) {
+      index = 2; // 사유 지각
+      initialStatus = '지각';
+      isTagSelected = true;
+    } else if (widget.attendanceStatus['absent'].contains(widget.name)) {
+      index = 3; // 사유 결석
+      initialStatus = '결석';
+      isTagSelected = true;
+    } else if (widget.attendanceStatus['badLate'].contains(widget.name)) {
+      index = 2; // 무단 지각
+      initialStatus = '지각';
+    } else if (widget.attendanceStatus['badAbsent'].contains(widget.name)) {
+      index = 3; // 무단 결석
+      initialStatus = '결석';
+    } else {
+      index = null;
+      isTagSelected = false;
+    }
+    context
+        .read<CheckAttendanceState>()
+        .updateUserAttendanceStatus(widget.name, initialStatus, isTagSelected);
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (!didUserModify) {
-      if (widget.attendanceStatus['present'].contains(widget.name)) {
-        // 출석
-        index = 1;
-      } else if (widget.attendanceStatus['late'].contains(widget.name)) {
-        // 사유 지각
-        index = 2;
-        isTagSelected = true;
-      } else if (widget.attendanceStatus['absent'].contains(widget.name)) {
-        // 사유 결석
-        index = 3;
-        isTagSelected = true;
-      } else if (widget.attendanceStatus['badLate'].contains(widget.name)) {
-        // 무단 지각
-        index = 2;
-      } else if (widget.attendanceStatus['badAbsent'].contains(widget.name)) {
-        // 무단 결석
-        index = 3;
-      } else {
-        index = null;
-        isTagSelected = false;
-      }
-    }
-
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
       decoration: BoxDecoration(
@@ -59,11 +68,16 @@ class _AttendanceListItemState extends State<AttendanceListItem> {
             label: const Text('사유'),
             labelStyle: appFonts.c3.copyWith(
                 color: isTagSelected ? appColors.slBlue : appColors.grey6),
-            onPressed: (index == 2 || index == 3)
-                ? () => setState(() {
+            onPressed: (widget.canModify && (index == 2 || index == 3))
+                ? () {
+                    setState(() {
                       isTagSelected = !isTagSelected;
-                      didUserModify = true;
-                    })
+                      context
+                          .read<CheckAttendanceState>()
+                          .updateUserAttendanceStatus(
+                              widget.name, null, isTagSelected);
+                    });
+                  }
                 : () {},
             backgroundColor:
                 isTagSelected ? appColors.subBlue2 : appColors.grey2,
@@ -84,37 +98,52 @@ class _AttendanceListItemState extends State<AttendanceListItem> {
           AttendanceChip(
             index: index,
             type: AttendanceChipType.presence,
-            onSelected: (bool isSelected) {
-              setState(() {
-                index = isSelected ? 1 : null;
-                isTagSelected = false;
-                didUserModify = true;
-              });
-            },
+            onSelected: widget.canModify
+                ? (bool isSelected) {
+                    setState(() {
+                      context
+                          .read<CheckAttendanceState>()
+                          .updateUserAttendanceStatus(
+                              widget.name, isSelected ? '출석' : '', true);
+                      index = isSelected ? 1 : null;
+                      isTagSelected = false;
+                    });
+                  }
+                : (_) {},
           ),
           const Expanded(flex: 1, child: SizedBox(width: 10)),
           AttendanceChip(
             index: index,
             type: AttendanceChipType.late,
-            onSelected: (bool isSelected) {
-              setState(() {
-                index = isSelected ? 2 : null;
-                isTagSelected = false;
-                didUserModify = true;
-              });
-            },
+            onSelected: widget.canModify
+                ? (bool isSelected) {
+                    setState(() {
+                      context
+                          .read<CheckAttendanceState>()
+                          .updateUserAttendanceStatus(
+                              widget.name, isSelected ? '지각' : '', false);
+                      index = isSelected ? 2 : null;
+                      isTagSelected = false;
+                    });
+                  }
+                : (_) {},
           ),
           const Expanded(flex: 1, child: SizedBox(width: 10)),
           AttendanceChip(
             index: index,
             type: AttendanceChipType.absence,
-            onSelected: (bool isSelected) {
-              setState(() {
-                index = isSelected ? 3 : null;
-                isTagSelected = false;
-                didUserModify = true;
-              });
-            },
+            onSelected: widget.canModify
+                ? (bool isSelected) {
+                    setState(() {
+                      context
+                          .read<CheckAttendanceState>()
+                          .updateUserAttendanceStatus(
+                              widget.name, isSelected ? '결석' : '', false);
+                      index = isSelected ? 3 : null;
+                      isTagSelected = false;
+                    });
+                  }
+                : (_) {},
           ),
         ],
       ),

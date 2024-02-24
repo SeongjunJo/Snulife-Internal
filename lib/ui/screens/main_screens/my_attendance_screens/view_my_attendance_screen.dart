@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:snulife_internal/logics/providers/select_semester_states.dart';
 import 'package:snulife_internal/ui/widgets/screen_specified/my_attendance_widget.dart';
@@ -160,12 +159,7 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
                         return const SizedBox(height: 8);
                       },
                     ),
-                    const SizedBox(height: 37),
-                    AppExpandedButton(
-                      buttonText: "돌아가기",
-                      onPressed: () => context.pop(),
-                    ),
-                    const SizedBox(height: 62),
+                    const SizedBox(height: 70),
                   ],
                 ),
               );

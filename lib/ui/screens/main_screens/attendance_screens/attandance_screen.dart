@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:snulife_internal/logics/providers/check_attendance_state.dart';
 import 'package:snulife_internal/logics/providers/firebase_states.dart';
 
 import '../../../../logics/app_tabs.dart';
@@ -8,12 +9,19 @@ import 'check_attendance_screen.dart';
 import 'clerk_screen.dart';
 
 class AttendancePage extends StatelessWidget {
-  const AttendancePage({super.key, required this.currentSemester});
+  const AttendancePage({
+    super.key,
+    required this.currentSemester,
+    required this.clerk,
+  });
 
   final String currentSemester;
+  final String clerk;
 
   @override
   Widget build(BuildContext context) {
+    final bool isClerk = firebaseInstance.userName == clerk;
+
     return TabBarView(
         controller: AppTab.attendanceTabController,
         children: AppTab.attendanceTabs.map((Tab tab) {
@@ -25,9 +33,14 @@ class AttendancePage extends StatelessWidget {
                   builder:
                       (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                     if (snapshot.hasData) {
-                      return CheckAttendancePage(
-                        userList: snapshot.data,
-                        currentSemester: currentSemester,
+                      return ChangeNotifierProvider(
+                        create: (context) =>
+                            CheckAttendanceState(userList: snapshot.data),
+                        builder: ((context, _) => CheckAttendancePage(
+                              isClerk: isClerk,
+                              userList: snapshot.data,
+                              currentSemester: currentSemester,
+                            )),
                       );
                     } else {
                       return Container(color: appColors.grey0);

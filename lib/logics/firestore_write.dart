@@ -86,4 +86,90 @@ class FirestoreWriter {
       }
     }
   }
+
+  saveAttendanceStatus(
+    String semester,
+    Map<String, List<dynamic>> userAttendanceStatus,
+    bool isConfirm,
+  ) {
+    final presentList = [];
+    final lateList = [];
+    final absentList = [];
+    final badLateList = [];
+    final badAbsentList = [];
+
+    for (final user in userAttendanceStatus.keys) {
+      switch (userAttendanceStatus[user]!.first) {
+        case '출석':
+          presentList.add(user);
+        case '지각':
+          userAttendanceStatus[user]!.last
+              ? lateList.add(user)
+              : badLateList.add(user);
+        case '결석':
+          userAttendanceStatus[user]!.last
+              ? absentList.add(user)
+              : badAbsentList.add(user);
+        default: // 출석 체크를 안 해서 ''인 경우는 pass
+      }
+    }
+
+    _db
+        .collection('attendances')
+        .doc(semester)
+        .collection('dates')
+        // TODO localToday로 바꾸기
+        .doc('0215')
+        .update({
+      'present': presentList,
+      'late': lateList,
+      'absent': absentList,
+      'badLate': badLateList,
+      'badAbsent': badAbsentList,
+      'hasAttendanceConfirmed': isConfirm,
+    });
+  }
+
+  confirmAttendanceStatus(
+      String semester, Map<String, List<dynamic>> userAttendanceStatus) {
+    late final String attendance;
+    late final bool isAuthorized;
+    late final String summaryAttendance;
+
+    for (final user in userAttendanceStatus.keys) {
+      if (user != '김신입') continue;
+      attendance = userAttendanceStatus[user]!.first;
+      isAuthorized = userAttendanceStatus[user]!.last;
+      switch (attendance) {
+        case '출석':
+          summaryAttendance = 'present';
+        case '지각':
+          isAuthorized
+              ? summaryAttendance = 'late'
+              : summaryAttendance = 'badLate';
+        case '결석':
+          isAuthorized
+              ? summaryAttendance = 'absent'
+              : summaryAttendance = 'badAbsent';
+      }
+
+      _db
+          .collection('attendances')
+          .doc(semester)
+          .collection(user)
+          // TODO localToday로 바꾸기
+          .doc('0215')
+          .set({'attendance': attendance, 'isAuthorized': isAuthorized});
+
+      _db
+          .collection('attendances')
+          .doc(semester)
+          .collection(user)
+          .doc('summary')
+          .update({
+        'sum': FieldValue.increment(1),
+        summaryAttendance: FieldValue.increment(1),
+      });
+    }
+  }
 }

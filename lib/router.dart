@@ -72,8 +72,11 @@ final appRouter = GoRouter(
               name: AppRoutePath.attendance,
               path: 'attendance',
               builder: (context, state) => Consumer<FirebaseStates>(
-                  builder: (context, value, _) =>
-                      AttendancePage(currentSemester: value.currentSemester)),
+                builder: (context, value, _) => AttendancePage(
+                  currentSemester: value.currentSemester,
+                  clerk: value.clerk,
+                ),
+              ),
             ),
             GoRoute(
               name: AppRoutePath.myAttendance,

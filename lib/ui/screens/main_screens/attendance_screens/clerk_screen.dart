@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:snulife_internal/logics/common_instances.dart';
 
 import '../../../../logics/utils/map_util.dart';
@@ -173,11 +172,9 @@ class _ClerkPageState extends State<ClerkPage> {
                       : null,
                 )
               : const SizedBox(),
-          widget.isManager // Column으로 묶으면 버튼이 안 보임
+          widget.isManager // ListView 때문에 Column으로 못 묶음
               ? const SizedBox(height: 40)
               : const SizedBox(),
-          AppExpandedButton(buttonText: "돌아가기", onPressed: () => context.pop()),
-          const SizedBox(height: 40),
         ],
       ),
     );
