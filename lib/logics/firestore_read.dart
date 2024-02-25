@@ -112,7 +112,7 @@ class FirestoreReader {
   }
 
   Future<DocumentSnapshot> getMyAttendanceSummary(String semester) async =>
-      await firebaseInstance.db
+      firebaseInstance.db
           .collection('attendances')
           .doc(semester)
           .collection(firebaseInstance.userName!)
@@ -123,6 +123,7 @@ class FirestoreReader {
     String semester,
     List<AttendanceStatus> attendanceHistory,
   ) async {
+    var temp = <AttendanceStatus>[];
     attendanceHistory.clear();
     final attendanceCollection = await firebaseInstance.db
         .collection('attendances')
@@ -131,10 +132,11 @@ class FirestoreReader {
         .where('attendance', isNull: false)
         .get(); // 컬렉션에서 summary 문서는 제외
     for (var doc in attendanceCollection.docs) {
-      attendanceHistory.add(AttendanceStatus.fromFirestore(doc, null));
+      temp.add(AttendanceStatus.fromFirestore(doc, null));
     }
-    StringUtil.adjustListWithDate(attendanceHistory, false);
+    attendanceHistory = StringUtil.adjustListWithDate(temp, false);
     attendanceHistory.sort((a, b) => a.date.compareTo(b.date));
+
     return attendanceHistory;
   }
 }

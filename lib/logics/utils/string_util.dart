@@ -1,4 +1,5 @@
-import 'date_util.dart';
+import 'package:snulife_internal/logics/common_instances.dart';
+
 import 'map_util.dart';
 
 class StringUtil {
@@ -21,22 +22,13 @@ class StringUtil {
   ) {
     final List<AttendanceStatus> adjustedList =
         List.from(list); // 복사 안 하면 인자로 받는 list가 바뀜
-
-    final now = DateUtil.getLocalNow();
-    late final month = now.month.toString().padLeft(2, '0');
-    late final day = now.day.toString().padLeft(2, '0');
-    late final today = month + day;
-
     if (makeFuture) {
-      adjustedList.removeWhere((element) {
-        return int.parse(element.date) < int.parse(today);
-      });
+      adjustedList.removeWhere(
+          (element) => int.parse(element.date) < int.parse(localToday));
     } else {
-      adjustedList.removeWhere((element) {
-        return int.parse(element.date) > int.parse(today);
-      });
+      adjustedList.removeWhere(
+          (element) => int.parse(element.date) >= int.parse(localToday));
     }
-
     return adjustedList;
   }
 }

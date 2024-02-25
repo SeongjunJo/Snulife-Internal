@@ -17,7 +17,7 @@ class FirestoreWriter {
       final myAttendanceDocument = await myAttendanceDocumentRef.get();
       bool doesDocumentExist = myAttendanceDocument.exists;
       if (doesDocumentExist) {
-        await myAttendanceDocumentRef.update({
+        myAttendanceDocumentRef.update({
           'attendance': isLate ? '지각' : '결석',
           'isAuthorized': true,
         });
@@ -51,8 +51,8 @@ class FirestoreWriter {
         // TODO nextWeekDateId로 바꾸기
         .doc('0301');
 
-    await todayClerkDocumentRef.update({'clerk': clerk}); // 오늘 서기 확정해서 기록
-    await _db
+    todayClerkDocumentRef.update({'clerk': clerk}); // 오늘 서기 확정해서 기록
+    _db
         .collection('clerks')
         .doc(clerk)
         .update({'count': FieldValue.increment(1)}); // 오늘 서기 횟수 +1
@@ -60,7 +60,7 @@ class FirestoreWriter {
     final nextClerkDocument = await nextClerkDocumentRef.get();
     if (nextClerkDocument.exists) {
       // 다음주 문서 있으면 다음 서기 기록
-      await nextClerkDocumentRef.update({'clerk': nextClerk});
+      nextClerkDocumentRef.update({'clerk': nextClerk});
     } else {
       // 다음주 문서 없으면 다음 학기 문서 존재하는지 검색
       final nextSemesterCollection =
@@ -77,7 +77,7 @@ class FirestoreWriter {
             nextSemesterDateId = doc.id;
           }
         }
-        await _db
+        _db
             .collection('attendances')
             .doc(upcomingSemester)
             .collection('dates')

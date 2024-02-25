@@ -34,10 +34,18 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
             firestoreReader.getMyAttendanceHistory(
               value.selectedSemester,
               attendanceHistory,
-            )
+            ),
+            firebaseInstance.db
+                .collection('informations')
+                .doc('meetingTime')
+                .get(),
           ]),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             if (snapshot.hasData) {
+              attendanceHistory = snapshot.data[1];
+              final List<String> meetingRestDates =
+                  snapshot.data[2].data()['rest'].cast<String>();
+
               return Container(
                 color: appColors.grey0,
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -147,11 +155,16 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: attendanceHistory.length,
                       itemBuilder: (BuildContext context, int index) {
+                        bool isRestDate = meetingRestDates
+                            .contains(attendanceHistory[index].date);
+
                         return MyAttendanceListItem(
                           week: index + 1,
                           date: attendanceHistory[index].date,
                           isSelected: false,
-                          lateOrAbsence: attendanceHistory[index].attendance,
+                          lateOrAbsence: !isRestDate
+                              ? attendanceHistory[index].attendance
+                              : "휴회",
                           isReadOnly: true,
                         );
                       },

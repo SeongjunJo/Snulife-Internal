@@ -70,7 +70,7 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
         adjustedCurrentSemesterStatus + upcomingSemesterStatus;
 
     return FutureBuilder(
-      future: memoizer.runOnce(() async => await firebaseInstance.db
+      future: memoizer.runOnce(() => firebaseInstance.db
           .collection('informations')
           .doc('meetingTime')
           .get()),
