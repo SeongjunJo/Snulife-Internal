@@ -38,7 +38,7 @@ class CheckAttendancePage extends StatelessWidget {
       color: appColors.grey0,
       child: StreamBuilder(
         stream: firestoreReader.getPeopleAttendanceAndClerkStream(
-            currentSemester, '0215'),
+            currentSemester, '0229'),
         builder:
             (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.hasData) {

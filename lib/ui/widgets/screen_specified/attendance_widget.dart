@@ -24,38 +24,36 @@ class _AttendanceListItemState extends State<AttendanceListItem> {
   int? index;
   bool isTagSelected = false;
   String? initialStatus;
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.attendanceStatus['present'].contains(widget.name)) {
-      index = 1; // 출석
-      initialStatus = '출석';
-    } else if (widget.attendanceStatus['late'].contains(widget.name)) {
-      index = 2; // 사유 지각
-      initialStatus = '지각';
-      isTagSelected = true;
-    } else if (widget.attendanceStatus['absent'].contains(widget.name)) {
-      index = 3; // 사유 결석
-      initialStatus = '결석';
-      isTagSelected = true;
-    } else if (widget.attendanceStatus['badLate'].contains(widget.name)) {
-      index = 2; // 무단 지각
-      initialStatus = '지각';
-    } else if (widget.attendanceStatus['badAbsent'].contains(widget.name)) {
-      index = 3; // 무단 결석
-      initialStatus = '결석';
-    } else {
-      index = null;
-      isTagSelected = false;
-    }
-    context
-        .read<CheckAttendanceState>()
-        .updateUserAttendanceStatus(widget.name, initialStatus, isTagSelected);
-  }
+  bool didUserModify = false;
 
   @override
   Widget build(BuildContext context) {
+    if (!didUserModify) {
+      if (widget.attendanceStatus['present'].contains(widget.name)) {
+        index = 1; // 출석
+        initialStatus = '출석';
+      } else if (widget.attendanceStatus['late'].contains(widget.name)) {
+        index = 2; // 사유 지각
+        initialStatus = '지각';
+        isTagSelected = true;
+      } else if (widget.attendanceStatus['absent'].contains(widget.name)) {
+        index = 3; // 사유 결석
+        initialStatus = '결석';
+        isTagSelected = true;
+      } else if (widget.attendanceStatus['badLate'].contains(widget.name)) {
+        index = 2; // 무단 지각
+        initialStatus = '지각';
+      } else if (widget.attendanceStatus['badAbsent'].contains(widget.name)) {
+        index = 3; // 무단 결석
+        initialStatus = '결석';
+      } else {
+        index = null;
+        isTagSelected = false;
+      }
+      context.read<CheckAttendanceState>().updateUserAttendanceStatus(
+          widget.name, initialStatus, isTagSelected);
+    }
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
       decoration: BoxDecoration(
@@ -71,6 +69,7 @@ class _AttendanceListItemState extends State<AttendanceListItem> {
             onPressed: (widget.canModify && (index == 2 || index == 3))
                 ? () {
                     setState(() {
+                      didUserModify = true;
                       isTagSelected = !isTagSelected;
                       context
                           .read<CheckAttendanceState>()
@@ -101,6 +100,7 @@ class _AttendanceListItemState extends State<AttendanceListItem> {
             onSelected: widget.canModify
                 ? (bool isSelected) {
                     setState(() {
+                      didUserModify = true;
                       context
                           .read<CheckAttendanceState>()
                           .updateUserAttendanceStatus(
@@ -118,6 +118,7 @@ class _AttendanceListItemState extends State<AttendanceListItem> {
             onSelected: widget.canModify
                 ? (bool isSelected) {
                     setState(() {
+                      didUserModify = true;
                       context
                           .read<CheckAttendanceState>()
                           .updateUserAttendanceStatus(
@@ -135,6 +136,7 @@ class _AttendanceListItemState extends State<AttendanceListItem> {
             onSelected: widget.canModify
                 ? (bool isSelected) {
                     setState(() {
+                      didUserModify = true;
                       context
                           .read<CheckAttendanceState>()
                           .updateUserAttendanceStatus(

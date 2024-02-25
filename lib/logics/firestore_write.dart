@@ -14,12 +14,23 @@ class FirestoreWriter {
           .doc(semester)
           .collection(firebaseInstance.userName!)
           .doc(status.date);
-      final myAttendanceDocument = await myAttendanceDocumentRef.get();
-      bool doesDocumentExist = myAttendanceDocument.exists;
-      if (doesDocumentExist) {
+      final peopleAttendanceDocumentRef = _db
+          .collection('attendances')
+          .doc(semester)
+          .collection('dates')
+          .doc(status.date);
+      final documents = await Future.wait(
+          [myAttendanceDocumentRef.get(), peopleAttendanceDocumentRef.get()]);
+      if (documents[0].exists) {
         myAttendanceDocumentRef.update({
           'attendance': isLate ? '지각' : '결석',
           'isAuthorized': true,
+        });
+      }
+      if (documents[1].exists) {
+        peopleAttendanceDocumentRef.update({
+          isLate ? 'late' : 'absent':
+              FieldValue.arrayUnion([firebaseInstance.userName!]),
         });
       }
     }
