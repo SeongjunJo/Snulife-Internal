@@ -6,6 +6,7 @@ import 'package:snulife_internal/logics/providers/firebase_states.dart';
 import 'package:snulife_internal/ui/screens/main_screens/attendance_screens/attandance_screen.dart';
 import 'package:snulife_internal/ui/screens/main_screens/home_screen.dart';
 import 'package:snulife_internal/ui/screens/main_screens/my_attendance_screens/my_attandance_screen.dart';
+import 'package:snulife_internal/ui/screens/main_screens/qs_screens/management_screen.dart';
 import 'package:snulife_internal/ui/screens/setting_screens/profile_screen.dart';
 import 'package:snulife_internal/ui/screens/setting_screens/setting_screen.dart';
 import 'package:snulife_internal/ui/screens/sign_screens/confirm_password_reset_screen.dart';
@@ -88,6 +89,11 @@ final appRouter = GoRouter(
                 ),
               ),
             ),
+            GoRoute(
+              name: AppRoutePath.management,
+              path: 'management',
+              builder: (context, state) => const ManagementPage(),
+            ),
           ],
         ),
         GoRoute(
@@ -117,6 +123,7 @@ class AppRoutePath {
   static const home = '/home';
   static const attendance = '/home/attendance';
   static const myAttendance = '/home/myAttendance';
+  static const management = '/home/management';
 
   static const settings = '/settings';
   static const profile = '/settings/profile';

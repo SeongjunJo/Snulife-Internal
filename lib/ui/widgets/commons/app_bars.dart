@@ -61,11 +61,22 @@ class SubScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    TabController tabController = title == "출결"
-        ? AppTab.attendanceTabController
-        : AppTab.myAttendanceTabController;
-    List<Widget> appTabs =
-        title == "출결" ? AppTab.attendanceTabs : AppTab.myAttendanceTabs;
+    late TabController tabController;
+    late List<Widget> appTabs;
+
+    switch (title) {
+      case "출결":
+        tabController = AppTab.attendanceTabController;
+        appTabs = AppTab.attendanceTabs;
+      case "내 출결 관리":
+        tabController = AppTab.myAttendanceTabController;
+        appTabs = AppTab.myAttendanceTabs;
+      case "운영":
+        tabController = AppTab.managementTabController;
+        appTabs = AppTab.managementTabs;
+      default:
+        throw Exception('$title페이지의 탭 컨트롤러를 설정해주세요');
+    }
 
     return AppBar(
       toolbarHeight: 50,

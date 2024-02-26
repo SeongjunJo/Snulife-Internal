@@ -5,7 +5,7 @@ import 'package:snulife_internal/router.dart';
 import '../../../logics/common_instances.dart';
 
 class PrimaryTab extends StatelessWidget {
-  final String primaryTabName;
+  final PrimaryTabName primaryTabName;
   final Widget primaryTabContent;
   final Widget primaryTabIcon;
 
@@ -16,13 +16,23 @@ class PrimaryTab extends StatelessWidget {
     required this.primaryTabIcon,
   });
 
+  void Function()? onTap(PrimaryTabName primaryTabName, GoRouter goRouter) {
+    switch (primaryTabName.name) {
+      case "출석":
+        return () => goRouter.pushNamed(AppRoutePath.attendance);
+      case "운영":
+        return () => goRouter.pushNamed(AppRoutePath.management);
+      case "지출 내역":
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
+    GoRouter goRouter = GoRouter.of(context);
+
     return GestureDetector(
-      // TODO PrimaryTab이 많아지면 enum으로 관리
-      onTap: primaryTabName == "출석"
-          ? () => context.pushNamed(AppRoutePath.attendance)
-          : null,
+      onTap: onTap(primaryTabName, goRouter),
       child: Container(
         decoration: BoxDecoration(
           color: appColors.white,
@@ -36,7 +46,7 @@ class PrimaryTab extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  primaryTabName,
+                  primaryTabName.name,
                   style: appFonts.h1.copyWith(color: appColors.grey8),
                 ),
                 const SizedBox(height: 34),
@@ -83,4 +93,13 @@ class SecondaryTab extends StatelessWidget {
       ),
     );
   }
+}
+
+enum PrimaryTabName {
+  attendance('출석'),
+  management('운영'),
+  receipt('지출 내역');
+
+  const PrimaryTabName(this.name);
+  final String name;
 }

@@ -97,7 +97,7 @@ class HomePage extends StatelessWidget {
           child: Column(
             children: [
               PrimaryTab(
-                primaryTabName: "출석",
+                primaryTabName: PrimaryTabName.attendance,
                 primaryTabContent: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -130,9 +130,9 @@ class HomePage extends StatelessWidget {
                   children: [
                     const SizedBox(height: 16),
                     PrimaryTab(
-                      primaryTabName: "QS",
+                      primaryTabName: PrimaryTabName.management,
                       primaryTabContent: Text(
-                        "QS",
+                        "운영",
                         style: appFonts.t4.copyWith(color: appColors.grey8),
                       ),
                       primaryTabIcon: Padding(
@@ -146,7 +146,7 @@ class HomePage extends StatelessWidget {
                 ),
               const SizedBox(height: 16),
               PrimaryTab(
-                primaryTabName: "지출 내역",
+                primaryTabName: PrimaryTabName.receipt,
                 primaryTabContent: Text(
                   "지출 내역을\n기록 해주세요.",
                   style: appFonts.t4.copyWith(color: appColors.grey8),

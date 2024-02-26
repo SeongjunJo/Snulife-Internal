@@ -28,6 +28,8 @@ class _InternalAppScaffoldState extends State<InternalAppScaffold>
         TabController(length: AppTab.attendanceTabs.length, vsync: this);
     AppTab.myAttendanceTabController =
         TabController(length: AppTab.myAttendanceTabs.length, vsync: this);
+    AppTab.managementTabController =
+        TabController(length: AppTab.managementTabs.length, vsync: this);
   }
 
   @override
@@ -35,6 +37,7 @@ class _InternalAppScaffoldState extends State<InternalAppScaffold>
     super.dispose();
     AppTab.attendanceTabController.dispose();
     AppTab.myAttendanceTabController.dispose();
+    AppTab.managementTabController.dispose();
   }
 
   @override
@@ -47,19 +50,22 @@ class _InternalAppScaffoldState extends State<InternalAppScaffold>
     if (!isHomeScreen) {
       switch (widget.screenPath) {
         case AppRoutePath.settings:
-          title = "마이페이지";
+          title = '마이페이지';
           isTabView = false;
         case AppRoutePath.profile:
-          title = "프로필 관리";
+          title = '프로필 관리';
           isTabView = false;
         case AppRoutePath.attendance:
-          title = "출결";
+          title = '출결';
           isTabView = true;
         case AppRoutePath.myAttendance:
-          title = "내 출결 관리";
+          title = '내 출결 관리';
+          isTabView = true;
+        case AppRoutePath.management:
+          title = '운영';
           isTabView = true;
         default:
-          throw Exception("scaffold에서 신규 라우트를 설정해주세요: ${widget.screenPath}");
+          throw Exception('scaffold에서 신규 라우트를 설정해주세요: ${widget.screenPath}');
       }
     }
 
@@ -88,7 +94,7 @@ class SignScreensScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("비밀번호 초기화"),
+        title: const Text('비밀번호 초기화'),
         toolbarHeight: 50,
         titleSpacing: 0,
         backgroundColor: appColors.white,
