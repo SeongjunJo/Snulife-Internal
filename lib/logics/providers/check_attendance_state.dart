@@ -18,10 +18,11 @@ class CheckAttendanceState extends ChangeNotifier {
     }
   }
 
-  updateUserAttendanceStatus(String name, String? status, bool isAuthorized) {
+  updateUserAttendanceStatus(
+      String name, String? status, bool isAuthorized, bool hasUserModified) {
     if (status != null) _userAttendanceStatus[name]!.first = status;
     _userAttendanceStatus[name]!.last = isAuthorized;
-    _hasUpdated = true;
+    hasUserModified ? _hasUpdated = true : null;
     notifyListeners();
   }
 

@@ -216,13 +216,13 @@ class _BottomModalState extends State<_BottomModal> {
         borderRadius: BorderRadius.circular(20),
       ),
       child: SizedBox(
-        height: 360,
+        height: 312,
         child: Center(
           child: Column(
             children: [
               const SizedBox(height: 22),
-              Text("지각/결석 여부를 선택해주세요.", style: appFonts.h3),
-              const SizedBox(height: 30),
+              Text("지각/결석 여부를 선택해주세요.", style: appFonts.tm),
+              const SizedBox(height: 24),
               GestureDetector(
                 onTap: () {
                   setState(() {
@@ -230,9 +230,8 @@ class _BottomModalState extends State<_BottomModal> {
                     _isLate = false;
                   });
                 },
-                child: Container(
+                child: SizedBox(
                   height: 60,
-                  padding: const EdgeInsets.symmetric(horizontal: 18),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -258,9 +257,8 @@ class _BottomModalState extends State<_BottomModal> {
                     _isLate = true;
                   });
                 },
-                child: Container(
+                child: SizedBox(
                   height: 60,
-                  padding: const EdgeInsets.symmetric(horizontal: 18),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -278,12 +276,12 @@ class _BottomModalState extends State<_BottomModal> {
                   ),
                 ),
               ),
-              const SizedBox(height: 18),
+              const SizedBox(height: 12),
               Text(
                 '신청 후에는 서기만 출결 변경이 가능해요.',
-                style: appFonts.c3.copyWith(color: appColors.grey5),
+                style: appFonts.c2.copyWith(color: appColors.grey5),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

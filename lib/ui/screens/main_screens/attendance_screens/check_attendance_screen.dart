@@ -12,11 +12,13 @@ class CheckAttendancePage extends StatelessWidget {
   const CheckAttendancePage({
     super.key,
     required this.isClerk,
+    required this.hasMeetingStarted,
     required this.currentSemester,
     required this.userList,
   });
 
   final bool isClerk;
+  final bool hasMeetingStarted;
   final String currentSemester;
   final List<dynamic> userList;
 
@@ -38,7 +40,9 @@ class CheckAttendancePage extends StatelessWidget {
       color: appColors.grey0,
       child: StreamBuilder(
         stream: firestoreReader.getPeopleAttendanceAndClerkStream(
-            currentSemester, '0229'),
+            // TODO 실제 날짜로 바꾸기
+            currentSemester,
+            '0215'),
         builder:
             (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.hasData) {
@@ -64,7 +68,8 @@ class CheckAttendancePage extends StatelessWidget {
                     itemBuilder: (BuildContext context, int index) {
                       return AttendanceListItem(
                         canModify: isClerk &&
-                            !hasAttendanceConfirmed, // 서기이면서 확정하지 않은 상태만 수정 가능
+                            !hasAttendanceConfirmed &&
+                            hasMeetingStarted, // 회의 시작 후, 서기이면서 확정하지 않은 상태만 수정 가능
                         name: userList[index],
                         attendanceStatus: attendanceStatus,
                       );
@@ -108,6 +113,7 @@ class CheckAttendancePage extends StatelessWidget {
                                       currentSemester: currentSemester,
                                       userAttendanceStatus: attendanceListener
                                           .userAttendanceStatus),
+                                  useRootNavigator: false, // 뒤로 가기 버튼이 제대로 먹히게
                                 )
                             : null,
                       )
@@ -138,40 +144,41 @@ class AttendanceDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       child: Container(
-        constraints: const BoxConstraints(maxWidth: 300),
+        constraints: const BoxConstraints(maxWidth: 320),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
           color: appColors.white,
         ),
         padding: const EdgeInsets.symmetric(
           horizontal: 20,
-          vertical: 14,
+          vertical: 24,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              "출석 확정 이후에는\n출결을 변경할 수 없어요.",
+              "출석체크 내역을 확정하시겠어요?",
               style: appFonts.h3,
             ),
             const SizedBox(height: 8),
             Text(
-              "꼭 회의가 완료된 뒤에 확정해주세요.\n확정하시겠어요?",
+              "출석 확정 이후에는 출결을 변경할 수 없어요.\n꼭 회의가 끝난 뒤 확정해주세요,",
               style: appFonts.b2.copyWith(color: appColors.grey7),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
             Row(
               children: [
                 AppExpandedButton(
-                  buttonText: "아니요",
+                  buttonText: "취소",
                   onPressed: () => Navigator.pop(context),
                   // context.pop()은 GoRouter의 pop이어서 홈 화면으로 나가짐
                   isCancelButton: true,
                 ),
-                const SizedBox(width: 20),
+                const SizedBox(width: 8),
                 AppExpandedButton(
-                  buttonText: "네",
+                  buttonText: "확정",
                   onPressed: () {
                     firestoreWriter.saveAttendanceStatus(
                         currentSemester, userAttendanceStatus, true);

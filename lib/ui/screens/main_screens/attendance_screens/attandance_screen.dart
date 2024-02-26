@@ -5,6 +5,7 @@ import 'package:snulife_internal/logics/providers/firebase_states.dart';
 
 import '../../../../logics/app_tabs.dart';
 import '../../../../logics/common_instances.dart';
+import '../../../../logics/utils/map_util.dart';
 import 'check_attendance_screen.dart';
 import 'clerk_screen.dart';
 
@@ -29,16 +30,20 @@ class AttendancePage extends StatelessWidget {
 
           return tab.text! == '출석 체크'
               ? FutureBuilder(
-                  future: firestoreReader.getUserList(),
+                  future: Future.wait([
+                    firestoreReader.getUserList(),
+                    firestoreReader.checkHasMeetingStarted()
+                  ]),
                   builder:
                       (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                     if (snapshot.hasData) {
                       return ChangeNotifierProvider(
                         create: (context) =>
-                            CheckAttendanceState(userList: snapshot.data),
+                            CheckAttendanceState(userList: snapshot.data[0]),
                         builder: ((context, _) => CheckAttendancePage(
                               isClerk: isClerk,
-                              userList: snapshot.data,
+                              hasMeetingStarted: snapshot.data[1],
+                              userList: snapshot.data[0],
                               currentSemester: currentSemester,
                             )),
                       );
@@ -48,7 +53,7 @@ class AttendancePage extends StatelessWidget {
                   },
                 )
               : FutureBuilder(
-                  future: firestoreReader.getClerkMap(),
+                  future: _getClerkMap(),
                   builder:
                       (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                     if (snapshot.hasData) {
@@ -69,3 +74,9 @@ class AttendancePage extends StatelessWidget {
         }).toList());
   }
 }
+
+Future _getClerkMap() async => memoizer.runOnce(() async {
+      final clerkCollection =
+          await firebaseInstance.db.collection('clerks').get();
+      return MapUtil.orderClerksByCount(clerkCollection);
+    });

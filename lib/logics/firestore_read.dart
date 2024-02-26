@@ -9,20 +9,9 @@ import 'common_instances.dart';
 class FirestoreReader {
   final _db = firebaseInstance.db;
 
-  getClerkMap() async {
-    QuerySnapshot<Map<String, dynamic>> clerkCollection;
-
+  Future getUserList() async {
     return memoizer.runOnce(() async {
-      clerkCollection = await _db.collection('clerks').get();
-      return MapUtil.orderClerksByCount(clerkCollection);
-    });
-  }
-
-  getUserList() async {
-    DocumentSnapshot<Map<String, dynamic>> userListDocument;
-
-    return memoizer.runOnce(() async {
-      userListDocument =
+      final userListDocument =
           await _db.collection('informations').doc('userList').get();
       return userListDocument.data()!['names'];
     });
@@ -35,6 +24,22 @@ class FirestoreReader {
         .collection('dates')
         .doc(date)
         .snapshots();
+  }
+
+  Future checkHasMeetingStarted() async {
+    final now = DateUtil.getLocalNow();
+    late final hour = now.hour.toString().padLeft(2, '0');
+    late final minute = now.minute.toString().padLeft(2, '0');
+    late final currentTime = hour + minute;
+
+    return memoizer.runOnce(() async {
+      final meetingTimeInfo = await firebaseInstance.db
+          .collection('informations')
+          .doc('meetingTime')
+          .get();
+      final meetingTime = meetingTimeInfo.data()!['time'];
+      return int.parse(currentTime) >= int.parse(meetingTime);
+    });
   }
 
   Future<List<String>> getCurrentAndUpcomingSemesters() async {

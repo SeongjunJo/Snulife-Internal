@@ -148,7 +148,6 @@ class FirestoreWriter {
     late final String summaryAttendance;
 
     for (final user in userAttendanceStatus.keys) {
-      if (user != '김신입') continue;
       attendance = userAttendanceStatus[user]!.first;
       isAuthorized = userAttendanceStatus[user]!.last;
       switch (attendance) {

@@ -51,7 +51,7 @@ class _AttendanceListItemState extends State<AttendanceListItem> {
         isTagSelected = false;
       }
       context.read<CheckAttendanceState>().updateUserAttendanceStatus(
-          widget.name, initialStatus, isTagSelected);
+          widget.name, initialStatus, isTagSelected, false);
     }
 
     return Container(
@@ -74,7 +74,7 @@ class _AttendanceListItemState extends State<AttendanceListItem> {
                       context
                           .read<CheckAttendanceState>()
                           .updateUserAttendanceStatus(
-                              widget.name, null, isTagSelected);
+                              widget.name, null, isTagSelected, true);
                     });
                   }
                 : () {},
@@ -104,7 +104,7 @@ class _AttendanceListItemState extends State<AttendanceListItem> {
                       context
                           .read<CheckAttendanceState>()
                           .updateUserAttendanceStatus(
-                              widget.name, isSelected ? '출석' : '', true);
+                              widget.name, isSelected ? '출석' : '', true, true);
                       index = isSelected ? 1 : null;
                       isTagSelected = false;
                     });
@@ -122,7 +122,7 @@ class _AttendanceListItemState extends State<AttendanceListItem> {
                       context
                           .read<CheckAttendanceState>()
                           .updateUserAttendanceStatus(
-                              widget.name, isSelected ? '지각' : '', false);
+                              widget.name, isSelected ? '지각' : '', false, true);
                       index = isSelected ? 2 : null;
                       isTagSelected = false;
                     });
@@ -140,7 +140,7 @@ class _AttendanceListItemState extends State<AttendanceListItem> {
                       context
                           .read<CheckAttendanceState>()
                           .updateUserAttendanceStatus(
-                              widget.name, isSelected ? '결석' : '', false);
+                              widget.name, isSelected ? '결석' : '', false, true);
                       index = isSelected ? 3 : null;
                       isTagSelected = false;
                     });
