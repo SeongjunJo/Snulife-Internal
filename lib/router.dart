@@ -92,7 +92,11 @@ final appRouter = GoRouter(
             GoRoute(
               name: AppRoutePath.management,
               path: 'management',
-              builder: (context, state) => const ManagementPage(),
+              builder: (context, state) => Consumer<FirebaseStates>(
+                builder: (context, value, _) => ManagementPage(
+                  currentSemester: value.currentSemester,
+                ),
+              ),
             ),
           ],
         ),

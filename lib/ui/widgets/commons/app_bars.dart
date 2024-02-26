@@ -74,8 +74,6 @@ class SubScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
       case "운영":
         tabController = AppTab.managementTabController;
         appTabs = AppTab.managementTabs;
-      default:
-        throw Exception('$title페이지의 탭 컨트롤러를 설정해주세요');
     }
 
     return AppBar(

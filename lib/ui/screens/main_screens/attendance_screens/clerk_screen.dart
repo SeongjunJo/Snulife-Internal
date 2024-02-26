@@ -81,7 +81,7 @@ class _ClerkPageState extends State<ClerkPage> {
               Row(
                 children: [
                   Text(
-                    "오늘의 서기는 ",
+                    "이번 주 서기는 ",
                     style: appFonts.b2.copyWith(color: appColors.grey7),
                   ),
                   Text(
@@ -100,7 +100,7 @@ class _ClerkPageState extends State<ClerkPage> {
               Row(
                 children: [
                   Text(
-                    "다음 서기는 ",
+                    "다음 주 서기는 ",
                     style: appFonts.b2.copyWith(color: appColors.grey7),
                   ),
                   Text(

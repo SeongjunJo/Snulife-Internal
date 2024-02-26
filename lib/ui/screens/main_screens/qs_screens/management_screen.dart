@@ -5,7 +5,9 @@ import 'package:snulife_internal/ui/screens/main_screens/qs_screens/qs_screen.da
 import '../../../../logics/app_tabs.dart';
 
 class ManagementPage extends StatelessWidget {
-  const ManagementPage({super.key});
+  const ManagementPage({super.key, required this.currentSemester});
+
+  final String currentSemester;
 
   @override
   Widget build(BuildContext context) {
@@ -13,8 +15,8 @@ class ManagementPage extends StatelessWidget {
       controller: AppTab.managementTabController,
       children: AppTab.managementTabs.map((Tab tab) {
         return tab.text! == 'QS 관리'
-            ? const QSPage()
-            : const ManageMeetingPage();
+            ? QSPage(currentSemester: currentSemester)
+            : ManageMeetingPage(currentSemester: currentSemester);
       }).toList(),
     );
   }

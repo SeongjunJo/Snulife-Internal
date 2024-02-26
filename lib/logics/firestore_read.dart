@@ -44,13 +44,13 @@ class FirestoreReader {
     late final DocumentSnapshot upcomingSemester;
 
     academicCalendarHtml = await httpLogic.getAcademicCalendar();
-    List<String> semesterDuration =
+    final List<String> semesterDuration =
         HtmlUtil.getSemesterDuration(academicCalendarHtml);
-    List<DateTime> semesterDatetime =
+    final List<DateTime> semesterDatetime =
         StringUtil.getSemesterDatetime(semesterDuration);
 
-    DateTime now = DateUtil.getLocalNow();
-    int yearText = now.year;
+    final DateTime now = DateUtil.getLocalNow();
+    final yearText = now.year;
 
     for (int i = 0; i < semesterDatetime.length; i++) {
       if (now.isBefore(semesterDatetime[i])) {
@@ -119,12 +119,10 @@ class FirestoreReader {
           .doc('summary')
           .get();
 
-  Future<List> getMyAttendanceHistory(
-    String semester,
-    List<AttendanceStatus> attendanceHistory,
-  ) async {
-    var temp = <AttendanceStatus>[];
-    attendanceHistory.clear();
+  Future<List> getMyAttendanceHistory(String semester) async {
+    List<AttendanceStatus> temp = [];
+    List<AttendanceStatus> attendanceHistory;
+
     final attendanceCollection = await firebaseInstance.db
         .collection('attendances')
         .doc(semester)

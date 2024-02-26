@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../../logics/common_instances.dart';
 
 class ManageMeetingPage extends StatelessWidget {
-  const ManageMeetingPage({super.key});
+  const ManageMeetingPage({super.key, required this.currentSemester});
+
+  final String currentSemester;
 
   @override
   Widget build(BuildContext context) {

@@ -50,7 +50,7 @@ class FirebaseStates extends ChangeNotifier {
         )
             .listen((doc) {
           _clerk = doc.data()!['clerk'];
-          if (_clerk.isEmpty) _clerk = '미정';
+          if (_clerk.isEmpty) _clerk = '(미정)';
           notifyListeners();
         });
       } else {

@@ -18,7 +18,7 @@ class MapUtil {
   static String getNextClerk(Map<String, dynamic> map, String clerk) {
     // value가 int인 map 대상
     String nextClerk = '';
-    if (clerk.isEmpty) return '미정';
+    if (clerk.isEmpty) return '(미정)';
     List<MapEntry<String, dynamic>> clerkList = map.entries.toList();
     clerkList.removeWhere((element) => element.key == clerk); // 서기 2주 연속 금지
     Map<String, dynamic> newMap = Map.fromEntries(clerkList);

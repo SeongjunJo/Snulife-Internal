@@ -197,11 +197,8 @@ class _BottomModal extends StatefulWidget {
 
 class _BottomModalState extends State<_BottomModal> {
   final now = DateUtil.getLocalNow();
-  late final month = now.month.toString().padLeft(2, '0');
-  late final day = now.day.toString().padLeft(2, '0');
   late final hour = now.hour.toString().padLeft(2, '0');
   late final minute = now.minute.toString().padLeft(2, '0');
-  late final today = month + day;
   late final currentTime = hour + minute;
 
   @override
@@ -303,7 +300,7 @@ class _BottomModalState extends State<_BottomModal> {
                     onPressed: _isLate != null
                         ? () async {
                             if (_lateAbsenceList
-                                .any((element) => element.date == today)) {
+                                .any((element) => element.date == localToday)) {
                               if (_isLate!) {
                                 // 회의 시간 넘기면 지각 신청 불가
                                 int.parse(currentTime) >=

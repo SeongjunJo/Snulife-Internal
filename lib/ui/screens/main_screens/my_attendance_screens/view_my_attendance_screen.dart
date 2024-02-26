@@ -21,6 +21,7 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
 
   @override
   Widget build(BuildContext context) {
+    attendanceHistory.clear();
     List<String> semesters = [
       ..._getLastTwoSemesters(widget.currentSemester),
       widget.currentSemester
@@ -31,20 +32,11 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
         return FutureBuilder(
           future: Future.wait([
             firestoreReader.getMyAttendanceSummary(value.selectedSemester),
-            firestoreReader.getMyAttendanceHistory(
-              value.selectedSemester,
-              attendanceHistory,
-            ),
-            firebaseInstance.db
-                .collection('informations')
-                .doc('meetingTime')
-                .get(),
+            firestoreReader.getMyAttendanceHistory(value.selectedSemester),
           ]),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             if (snapshot.hasData) {
               attendanceHistory = snapshot.data[1];
-              final List<String> meetingRestDates =
-                  snapshot.data[2].data()['rest'].cast<String>();
 
               return Container(
                 color: appColors.grey0,
@@ -155,8 +147,8 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: attendanceHistory.length,
                       itemBuilder: (BuildContext context, int index) {
-                        bool isRestDate = meetingRestDates
-                            .contains(attendanceHistory[index].date);
+                        bool isRestDate =
+                            attendanceHistory[index].attendance == '휴회';
 
                         return MyAttendanceListItem(
                           week: index + 1,
