@@ -3,17 +3,33 @@ import 'package:snulife_internal/logics/common_instances.dart';
 import 'map_util.dart';
 
 class StringUtil {
-  static List<DateTime> getSemesterDatetime(List<String> semesterDuration) {
-    List<DateTime> semesterDatetime = [];
+  static String convertDateTimeToString(DateTime dateTime, bool isDate) {
+    final month = dateTime.month.toString().padLeft(2, '0');
+    final day = dateTime.day.toString().padLeft(2, '0');
+    final hour = dateTime.hour.toString().padLeft(2, '0');
+    final minute = dateTime.minute.toString().padLeft(2, '0');
+
+    return isDate ? month + day : hour + minute;
+  }
+
+  static DateTime convertStringToDateTime(int year, String string) {
+    final month = int.parse(string.substring(0, 2));
+    final day = int.parse(string.substring(2, 4));
+
+    return DateTime(year, month, day);
+  }
+
+  static List<DateTime> getSemesterDateTime(List<String> semesterDuration) {
+    List<DateTime> semesterDateTimeList = [];
 
     for (var semester in semesterDuration) {
       final year = int.parse(semester.substring(0, 4));
       final month = int.parse(semester.substring(5, 7));
       final day = int.parse(semester.substring(8, 10));
-      semesterDatetime.add(DateTime(year, month, day));
+      semesterDateTimeList.add(DateTime(year, month, day));
     }
 
-    return semesterDatetime;
+    return semesterDateTimeList;
   }
 
   static List<AttendanceStatus> adjustListWithDate(

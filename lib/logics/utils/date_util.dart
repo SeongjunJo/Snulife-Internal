@@ -1,3 +1,5 @@
+import 'package:snulife_internal/logics/utils/string_util.dart';
+
 class DateUtil extends DateTime {
   DateUtil(super.year);
   static DateTime getLocalNow() {
@@ -6,10 +8,7 @@ class DateUtil extends DateTime {
 
   static String getLocalToday() {
     final now = DateUtil.getLocalNow();
-    final month = now.month.toString().padLeft(2, '0');
-    final day = now.day.toString().padLeft(2, '0');
-
-    return month + day;
+    return StringUtil.convertDateTimeToString(now, true);
   }
 
   static List<DateTime> getMeetingTimeList(

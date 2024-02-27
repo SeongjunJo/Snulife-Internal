@@ -17,7 +17,8 @@ class FirestoreReader {
     });
   }
 
-  getPeopleAttendanceAndClerkStream(String semester, String date) {
+  Stream<DocumentSnapshot<Map>> getPeopleAttendanceAndClerkStream(
+      String semester, String date) {
     return firebaseInstance.db
         .collection('attendances')
         .doc(semester)
@@ -28,9 +29,7 @@ class FirestoreReader {
 
   Future checkHasMeetingStarted() async {
     final now = DateUtil.getLocalNow();
-    late final hour = now.hour.toString().padLeft(2, '0');
-    late final minute = now.minute.toString().padLeft(2, '0');
-    late final currentTime = hour + minute;
+    late final currentTime = StringUtil.convertDateTimeToString(now, false);
 
     return memoizer.runOnce(() async {
       final meetingTimeInfo = await firebaseInstance.db
@@ -42,23 +41,23 @@ class FirestoreReader {
     });
   }
 
+  Future getSemesterDateTimeList() async {
+    final academicCalendarHtml = await httpLogic.getAcademicCalendar();
+    final semesterDurationList =
+        HtmlUtil.getSemesterDuration(academicCalendarHtml);
+    return StringUtil.getSemesterDateTime(semesterDurationList);
+  }
+
   Future<List<String>> getCurrentAndUpcomingSemesters() async {
-    late final String academicCalendarHtml;
     late List<String> semesters;
     Index index = Index.winter; // 디폴트 값
-    late final DocumentSnapshot upcomingSemester;
 
-    academicCalendarHtml = await httpLogic.getAcademicCalendar();
-    final List<String> semesterDuration =
-        HtmlUtil.getSemesterDuration(academicCalendarHtml);
-    final List<DateTime> semesterDatetime =
-        StringUtil.getSemesterDatetime(semesterDuration);
-
+    final List<DateTime> semesterDateTimeList = await getSemesterDateTimeList();
     final DateTime now = DateUtil.getLocalNow();
     final yearText = now.year;
 
-    for (int i = 0; i < semesterDatetime.length; i++) {
-      if (now.isBefore(semesterDatetime[i])) {
+    for (int i = 0; i < semesterDateTimeList.length; i++) {
+      if (now.isBefore(semesterDateTimeList[i])) {
         index = Index.values[i];
         break;
       }
@@ -77,7 +76,7 @@ class FirestoreReader {
         semesters = ['$yearText-W', '${yearText + 1}-1'];
     }
 
-    upcomingSemester =
+    final upcomingSemester =
         await _db.collection('attendances').doc(semesters[1]).get();
 
     if (!upcomingSemester.exists) semesters.removeAt(1);

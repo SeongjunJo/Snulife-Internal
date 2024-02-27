@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:snulife_internal/logics/utils/date_util.dart';
+import 'package:snulife_internal/logics/utils/html_util.dart';
 import 'package:snulife_internal/logics/utils/map_util.dart';
+import 'package:snulife_internal/logics/utils/string_util.dart';
 
 import 'common_instances.dart';
 
@@ -44,9 +47,8 @@ class FirestoreWriter {
     String nextClerk,
   ) async {
     final nextWeekDate = DateTime.now().add(const Duration(days: 7, hours: 9));
-    final month = nextWeekDate.month.toString().padLeft(2, '0');
-    final day = nextWeekDate.day.toString().padLeft(2, '0');
-    final nextWeekDateId = month + day;
+    final nextWeekDateId =
+        StringUtil.convertDateTimeToString(nextWeekDate, true);
     String nextSemesterDateId = '9999'; // 충분히 큰 4자리 숫자
 
     final todayClerkDocumentRef = _db
@@ -202,4 +204,110 @@ class FirestoreWriter {
 
     return Future.wait(updateList);
   }
+
+  Future createNextMeeting(
+      String currentSemester, String startDate, String time) async {
+    final yearText = currentSemester.split('-').first;
+    final semesterText = currentSemester.split('-').last;
+    late final String nextSemester;
+    final batch = _db.batch(); // 한 번에 500번 쓰기 가능; 회의 평균 15회 * 동아리원 20명 이하
+
+    switch (semesterText) {
+      case '1':
+        nextSemester = '$yearText-S';
+      case 'S':
+        nextSemester = '$yearText-2';
+      case '2':
+        nextSemester = '$yearText-W';
+      case 'W':
+        nextSemester = '${int.parse(yearText) + 1}-1';
+    }
+
+    final futureList = await Future.wait([
+      // TODO nextSemester로 바꾸기
+      _createMeetingTimeList(startDate, '2025-1'),
+      firestoreReader.getUserList()
+    ]);
+    final List<String> meetingTimeList = futureList[0].cast<String>();
+    final List<String> userList = futureList[1].cast<String>();
+
+    // TODO nextSemester로 바꾸기
+    final nextSemesterRef = _db.collection('attendances').doc('2025-1');
+    await nextSemesterRef.set({}); // 상위 문서를 생성해둬야 함
+
+    batch.set(_db.collection('informations').doc('meetingTime'), {
+      'rest': [],
+      'time': time,
+    });
+
+    for (final meetingTime in meetingTimeList) {
+      batch.set(nextSemesterRef.collection('dates').doc(meetingTime), {
+        'present': [],
+        'absent': [],
+        'late': [],
+        'badAbsent': [],
+        'badLate': [],
+        'clerk': '',
+        'hasAttendanceConfirmed': false,
+        'hasClerkConfirmed': false,
+      });
+    }
+
+    for (final user in userList) {
+      for (final meetingTime in meetingTimeList) {
+        batch.set(nextSemesterRef.collection(user).doc(meetingTime), {
+          'attendance': '',
+          'isAuthorized': false,
+        });
+        batch.set(nextSemesterRef.collection(user).doc('summary'), {
+          'present': 0,
+          'absent': 0,
+          'late': 0,
+          'badAbsent': 0,
+          'badLate': 0,
+          'sum': 0,
+        });
+      }
+    }
+
+    await batch.commit();
+  }
+}
+
+Future<List<String>> _createMeetingTimeList(
+    String startDate, String nextSemester) async {
+  final academicCalendarHtml = await httpLogic.getAcademicCalendar();
+  final semesterDurationList =
+      HtmlUtil.getSemesterDuration(academicCalendarHtml);
+  final semesterDateTimeList =
+      StringUtil.getSemesterDateTime(semesterDurationList);
+
+  final currentYear = DateUtil.getLocalNow().year;
+  final DateTime startDateTime =
+      StringUtil.convertStringToDateTime(currentYear, startDate);
+  late final DateTime endDateTime;
+  DateTime meetingTime = startDateTime;
+  final List<String> meetingTimeList = [];
+
+  switch (nextSemester.split('-').last) {
+    case '1':
+      endDateTime = semesterDateTimeList[1]
+          .add(const Duration(days: 1)); // 1학기 종강일자는 회의일 가능
+    case 'S':
+      endDateTime = semesterDateTimeList[2]; // 2학기 개강일자는 회의일 불가능
+    case '2':
+      endDateTime = semesterDateTimeList[3]
+          .add(const Duration(days: 1)); // 2학기 종강일자는 회의일 가능
+    case 'W':
+      final int nextYear = currentYear + 1;
+      // 내년 1학기 개강일자는 올해 학사일정에 안 나와서 내년 3월 1일을 기준으로 함; 3월 2일 전까지 회의일 가능
+      endDateTime = DateTime(nextYear, 3, 2);
+  }
+
+  while (meetingTime.isBefore(endDateTime)) {
+    meetingTimeList.add(StringUtil.convertDateTimeToString(meetingTime, true));
+    meetingTime = meetingTime.add(const Duration(days: 7));
+  }
+
+  return meetingTimeList;
 }

@@ -197,9 +197,7 @@ class _BottomModal extends StatefulWidget {
 
 class _BottomModalState extends State<_BottomModal> {
   final now = DateUtil.getLocalNow();
-  late final hour = now.hour.toString().padLeft(2, '0');
-  late final minute = now.minute.toString().padLeft(2, '0');
-  late final currentTime = hour + minute;
+  late final currentTime = StringUtil.convertDateTimeToString(now, false);
 
   @override
   void initState() {

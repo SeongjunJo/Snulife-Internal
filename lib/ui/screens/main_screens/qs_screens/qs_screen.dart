@@ -27,7 +27,7 @@ class _QSPageState extends State<QSPage> {
               foregroundColor: appColors.slBlue,
               backgroundColor: appColors.subBlue2,
             ),
-            onPressed: () async {
+            onPressed: () {
               setState(() => isLoading = true);
               firestoreWriter
                   .confirmRestDate(widget.currentSemester, '0229')
