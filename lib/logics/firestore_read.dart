@@ -115,7 +115,7 @@ class FirestoreReader {
     });
   }
 
-  Future<DocumentSnapshot<Map>> getPersonalAttendanceSummary(
+  Future<DocumentSnapshot<Map>> getMyAttendanceSummary(
           String semester, String name) async =>
       firebaseInstance.db
           .collection('attendances')
@@ -124,8 +124,7 @@ class FirestoreReader {
           .doc('summary')
           .get();
 
-  Future<List> getPersonalAttendanceHistory(
-      String semester, String name) async {
+  Future<List> getMyAttendanceHistory(String semester, String name) async {
     List<AttendanceStatus> temp = [];
     List<AttendanceStatus> attendanceHistory;
 

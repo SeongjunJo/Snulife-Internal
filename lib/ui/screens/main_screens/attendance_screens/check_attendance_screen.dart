@@ -6,6 +6,7 @@ import 'package:snulife_internal/ui/widgets/commons/button_widgets.dart';
 
 import '../../../../logics/common_instances.dart';
 import '../../../../logics/providers/check_attendance_state.dart';
+import '../../../widgets/commons/modal_widgets.dart';
 import '../../../widgets/screen_specified/attendance_widget.dart';
 
 class CheckAttendancePage extends StatelessWidget {
@@ -114,10 +115,23 @@ class CheckAttendancePage extends StatelessWidget {
                                 !attendanceListener.hasUpdated
                             ? () => showDialog(
                                   context: context,
-                                  builder: (context) => AttendanceDialog(
-                                      currentSemester: currentSemester,
-                                      userAttendanceStatus: attendanceListener
-                                          .userAttendanceStatus),
+                                  builder: (context) => ConfirmDialog(
+                                    title: "출석체크 내역을 확정하시겠어요?",
+                                    content:
+                                        "확정 이후에는 출결을 변경할 수 없어요.\n꼭 회의가 끝난 뒤 확정해주세요.",
+                                    onPressed: () {
+                                      firestoreWriter.saveAttendanceStatus(
+                                          currentSemester,
+                                          attendanceListener
+                                              .userAttendanceStatus,
+                                          true);
+                                      firestoreWriter.confirmAttendanceStatus(
+                                          currentSemester,
+                                          attendanceListener
+                                              .userAttendanceStatus);
+                                      Navigator.pop(context);
+                                    },
+                                  ),
                                   useRootNavigator: false, // 뒤로 가기 버튼이 제대로 먹히게
                                 )
                             : null,
@@ -130,72 +144,6 @@ class CheckAttendancePage extends StatelessWidget {
             return const SizedBox();
           }
         },
-      ),
-    );
-  }
-}
-
-class AttendanceDialog extends StatelessWidget {
-  const AttendanceDialog({
-    super.key,
-    required this.currentSemester,
-    required this.userAttendanceStatus,
-  });
-
-  final String currentSemester;
-  final Map<String, List<dynamic>> userAttendanceStatus;
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      child: Container(
-        constraints: const BoxConstraints(maxWidth: 320),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          color: appColors.white,
-        ),
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 24,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              "출석체크 내역을 확정하시겠어요?",
-              style: appFonts.h3,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              "출석 확정 이후에는 출결을 변경할 수 없어요.\n꼭 회의가 끝난 뒤 확정해주세요,",
-              style: appFonts.b2.copyWith(color: appColors.grey7),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
-            Row(
-              children: [
-                AppExpandedButton(
-                  buttonText: "취소",
-                  onPressed: () => Navigator.pop(context),
-                  // context.pop()은 GoRouter의 pop이어서 홈 화면으로 나가짐
-                  isCancelButton: true,
-                ),
-                const SizedBox(width: 8),
-                AppExpandedButton(
-                  buttonText: "확정",
-                  onPressed: () {
-                    firestoreWriter.saveAttendanceStatus(
-                        currentSemester, userAttendanceStatus, true);
-                    firestoreWriter.confirmAttendanceStatus(
-                        currentSemester, userAttendanceStatus);
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-            ),
-          ],
-        ),
       ),
     );
   }

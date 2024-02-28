@@ -27,9 +27,9 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
       builder: (BuildContext context, value, _) {
         return FutureBuilder(
           future: Future.wait([
-            firestoreReader.getPersonalAttendanceSummary(
+            firestoreReader.getMyAttendanceSummary(
                 value.selectedSemester, firebaseInstance.userName!),
-            firestoreReader.getPersonalAttendanceHistory(
+            firestoreReader.getMyAttendanceHistory(
                 value.selectedSemester, firebaseInstance.userName!),
           ]),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {

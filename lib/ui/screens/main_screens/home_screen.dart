@@ -132,7 +132,7 @@ class HomePage extends StatelessWidget {
                     PrimaryTab(
                       primaryTabName: PrimaryTabName.management,
                       primaryTabContent: Text(
-                        "운영",
+                        "QS 확인 및 회의 \n관리가 가능해요",
                         style: appFonts.t4.copyWith(color: appColors.grey8),
                       ),
                       primaryTabIcon: Padding(
@@ -148,7 +148,7 @@ class HomePage extends StatelessWidget {
               PrimaryTab(
                 primaryTabName: PrimaryTabName.receipt,
                 primaryTabContent: Text(
-                  "지출 내역을\n기록 해주세요.",
+                  "지출 내역을\n기록 해주세요",
                   style: appFonts.t4.copyWith(color: appColors.grey8),
                 ),
                 primaryTabIcon: Padding(

@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../logics/common_instances.dart';
-import '../../../../logics/utils/map_util.dart';
 
 class QSPage extends StatefulWidget {
   const QSPage({super.key, required this.currentSemester});
@@ -39,17 +38,29 @@ class _QSPageState extends State<QSPage> {
               // firestoreWriter
               //     .confirmRestDate(widget.currentSemester, '0229')
               //     .then((_) => setState(() => isLoading = false));
-              preSummary = await firestoreReader.getPersonalAttendanceSummary(
-                  '2023-W', '김신입');
-              postSummary = await firestoreReader.getPersonalAttendanceSummary(
-                  '2024-1', '김신입');
-              preSummaryMap = preSummary.data()! as Map<String, dynamic>;
-              postSummary.exists
-                  ? postSummaryMap = postSummary.data()! as Map<String, dynamic>
-                  : {};
-              temp = MapUtil.calculateAttendanceRateAndReward(
-                      preSummaryMap, postSummaryMap)
-                  .toString();
+
+              // preSummary =
+              //     await firestoreReader.getMyAttendanceSummary('2023-W', '김신입');
+              // postSummary =
+              //     await firestoreReader.getMyAttendanceSummary('2024-1', '김신입');
+              // preSummaryMap = preSummary.data()! as Map<String, dynamic>;
+              // postSummary.exists
+              //     ? postSummaryMap = postSummary.data()! as Map<String, dynamic>
+              //     : {};
+              // temp = MapUtil.calculateAttendanceRateAndReward(
+              //         preSummaryMap, postSummaryMap)
+              //     .toString();
+
+              // showDialog(
+              //     context: context,
+              //     builder: (context) {
+              //       return ConfirmDialog(
+              //         title: '12월 12일을 휴회일로 \n지정하시겠어요?',
+              //         content: '휴회 확정 이후에는 날짜를 변경할 수 없어요',
+              //         onPressed: () => Navigator.of(context).pop(),
+              //       );
+              //     });
+
               setState(() => isLoading = false);
             },
             child: const Text('휴회 지정'),
