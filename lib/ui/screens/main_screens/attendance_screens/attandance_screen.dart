@@ -8,16 +8,19 @@ import '../../../../logics/common_instances.dart';
 import '../../../../logics/utils/map_util.dart';
 import 'check_attendance_screen.dart';
 import 'clerk_screen.dart';
+import 'no_meeting_today_screen.dart';
 
 class AttendancePage extends StatelessWidget {
   const AttendancePage({
     super.key,
     required this.currentSemester,
     required this.clerk,
+    required this.isLeader,
   });
 
   final String currentSemester;
   final String clerk;
+  final bool isLeader;
 
   @override
   Widget build(BuildContext context) {
@@ -30,23 +33,44 @@ class AttendancePage extends StatelessWidget {
 
           return tab.text! == '출석 체크'
               ? FutureBuilder(
-                  future: Future.wait([
-                    firestoreReader.getUserList(),
-                    firestoreReader.checkHasMeetingStarted()
-                  ]),
+                  future: _getIsTodayMeeting(currentSemester),
                   builder:
                       (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                     if (snapshot.hasData) {
-                      return ChangeNotifierProvider(
-                        create: (context) =>
-                            CheckAttendanceState(userList: snapshot.data[0]),
-                        builder: ((context, _) => CheckAttendancePage(
-                              isClerk: isClerk,
-                              hasMeetingStarted: snapshot.data[1],
-                              userList: snapshot.data[0],
-                              currentSemester: currentSemester,
-                            )),
-                      );
+                      return !snapshot.data // 오늘 회의가 없으면 디폴트 화면
+                          ? const NoMeetingTodayPage()
+                          : FutureBuilder(
+                              future: Future.wait([
+                                firestoreReader.getUserList(),
+                                firestoreReader.checkHasMeetingStarted(),
+                                _getTeamMeetingTime(),
+                              ]),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<dynamic> snapshot) {
+                                if (snapshot.hasData) {
+                                  bool isTeamMeeting = snapshot.data[2]
+                                      .cast<String>()
+                                      .contains(localToday);
+
+                                  return ChangeNotifierProvider(
+                                    create: (context) => CheckAttendanceState(
+                                        userList: snapshot.data[0]),
+                                    builder: ((context, _) =>
+                                        CheckAttendancePage(
+                                          isClerk: isClerk,
+                                          // 팀별 회의 때는 팀장들이 출석 체크
+                                          doesLeaderCheck:
+                                              isLeader && isTeamMeeting,
+                                          hasMeetingStarted: snapshot.data[1],
+                                          userList: snapshot.data[0],
+                                          currentSemester: currentSemester,
+                                        )),
+                                  );
+                                } else {
+                                  return Container(color: appColors.grey0);
+                                }
+                              },
+                            );
                     } else {
                       return Container(color: appColors.grey0);
                     }
@@ -79,4 +103,23 @@ Future _getClerkMap() async => memoizer.runOnce(() async {
       final clerkCollection =
           await firebaseInstance.db.collection('clerks').get();
       return MapUtil.orderClerksByCount(clerkCollection);
+    });
+
+Future _getIsTodayMeeting(String currentSemester) async =>
+    memoizer.runOnce(() async {
+      final doc = await firebaseInstance.db
+          .collection('attendances')
+          .doc(currentSemester)
+          .collection('dates')
+          .doc(localToday)
+          .get();
+      return doc.exists;
+    });
+
+Future _getTeamMeetingTime() async => memoizer.runOnce(() async {
+      final doc = await firebaseInstance.db
+          .collection('information')
+          .doc('meetingTime')
+          .get();
+      return doc.data()!['teamMeeting'];
     });

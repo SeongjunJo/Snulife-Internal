@@ -71,7 +71,7 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
 
     return FutureBuilder(
       future: memoizer.runOnce(() => firebaseInstance.db
-          .collection('informations')
+          .collection('information')
           .doc('meetingTime')
           .get()),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {

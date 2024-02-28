@@ -12,18 +12,23 @@ class CheckAttendancePage extends StatelessWidget {
   const CheckAttendancePage({
     super.key,
     required this.isClerk,
+    required this.doesLeaderCheck,
     required this.hasMeetingStarted,
     required this.currentSemester,
     required this.userList,
   });
 
   final bool isClerk;
+  final bool doesLeaderCheck;
   final bool hasMeetingStarted;
   final String currentSemester;
   final List<dynamic> userList;
 
   @override
   Widget build(BuildContext context) {
+    bool canModify =
+        doesLeaderCheck ? true : isClerk; // 팀별 회의 때는 팀장만 체크 가능, 아니면 서기만 체크 가능
+
     final today = DateUtil.getLocalNow();
     final attendanceListener = context.watch<CheckAttendanceState>();
     bool unCompleted = false;
@@ -67,7 +72,7 @@ class CheckAttendancePage extends StatelessWidget {
                     itemCount: userList.length,
                     itemBuilder: (BuildContext context, int index) {
                       return AttendanceListItem(
-                        canModify: isClerk &&
+                        canModify: canModify &&
                             !hasAttendanceConfirmed &&
                             hasMeetingStarted, // 회의 시작 후, 서기이면서 확정하지 않은 상태만 수정 가능
                         name: userList[index],
@@ -79,10 +84,10 @@ class CheckAttendancePage extends StatelessWidget {
                     },
                   ),
                 ),
-                isClerk
+                canModify
                     ? const SizedBox(height: 70)
                     : const SizedBox(), // ListView 때문에 Column으로 못 함
-                isClerk
+                canModify
                     ? AppExpandedButton(
                         buttonText: "저장하기",
                         // 확정을 안 했고 수정 사항이 생길 때만 저장 가능
@@ -99,8 +104,8 @@ class CheckAttendancePage extends StatelessWidget {
                             : null,
                       )
                     : const SizedBox(),
-                isClerk ? const SizedBox(height: 20) : const SizedBox(),
-                isClerk
+                canModify ? const SizedBox(height: 20) : const SizedBox(),
+                canModify
                     ? AppExpandedButton(
                         buttonText: "확정하기",
                         // 확정을 안 했고, 출석 체크는 전부 했고, 저장도 한 경우만 확정 가능

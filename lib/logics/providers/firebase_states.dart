@@ -15,6 +15,9 @@ class FirebaseStates extends ChangeNotifier {
   bool _isManager = false;
   bool get isManager => _isManager;
 
+  bool _isLeader = false;
+  bool get isLeader => _isLeader;
+
   late String _currentSemester;
   String get currentSemester => _currentSemester;
   late String? _upcomingSemester;
@@ -36,6 +39,7 @@ class FirebaseStates extends ChangeNotifier {
         _userInfo!['position'].contains('대표')
             ? _isManager = true
             : _isManager = false;
+        _userInfo!['position'] == '팀장' ? _isLeader = true : _isLeader = false;
 
         final semesters =
             await firestoreReader.getCurrentAndUpcomingSemesters(); // 학기 fetch
@@ -44,14 +48,12 @@ class FirebaseStates extends ChangeNotifier {
 
         firestoreReader
             .getPeopleAttendanceAndClerkStream(
-          _currentSemester,
-          // TODO localToday로 바꾸기
-          '0229',
-        )
+                _currentSemester,
+                // TODO localToday로 바꾸기
+                '0229')
             .listen((doc) {
           _clerk = doc.data()!['clerk'];
           if (_clerk.isEmpty) _clerk = '(미정)';
-          notifyListeners();
         });
       } else {
         _loggedIn = false;

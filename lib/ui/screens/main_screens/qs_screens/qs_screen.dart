@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../logics/common_instances.dart';
+import '../../../../logics/utils/map_util.dart';
 
 class QSPage extends StatefulWidget {
   const QSPage({super.key, required this.currentSemester});
@@ -13,6 +15,11 @@ class QSPage extends StatefulWidget {
 
 class _QSPageState extends State<QSPage> {
   bool isLoading = false;
+  late DocumentSnapshot<Map> preSummary;
+  late DocumentSnapshot<Map> postSummary;
+  Map<String, dynamic> preSummaryMap = {};
+  Map<String, dynamic> postSummaryMap = {};
+  String temp = '';
 
   @override
   Widget build(BuildContext context) {
@@ -27,16 +34,30 @@ class _QSPageState extends State<QSPage> {
               foregroundColor: appColors.slBlue,
               backgroundColor: appColors.subBlue2,
             ),
-            onPressed: () {
+            onPressed: () async {
               setState(() => isLoading = true);
-              firestoreWriter
-                  .confirmRestDate(widget.currentSemester, '0229')
-                  .then((_) => setState(() => isLoading = false));
+              // firestoreWriter
+              //     .confirmRestDate(widget.currentSemester, '0229')
+              //     .then((_) => setState(() => isLoading = false));
+              preSummary = await firestoreReader.getPersonalAttendanceSummary(
+                  '2023-W', '김신입');
+              postSummary = await firestoreReader.getPersonalAttendanceSummary(
+                  '2024-1', '김신입');
+              preSummaryMap = preSummary.data()! as Map<String, dynamic>;
+              postSummary.exists
+                  ? postSummaryMap = postSummary.data()! as Map<String, dynamic>
+                  : {};
+              temp = MapUtil.calculateAttendanceRateAndReward(
+                      preSummaryMap, postSummaryMap)
+                  .toString();
+              setState(() => isLoading = false);
             },
             child: const Text('휴회 지정'),
           ),
           const SizedBox(height: 40),
           if (isLoading) const CircularProgressIndicator(),
+          const SizedBox(height: 40),
+          Text(temp),
         ],
       ),
     );

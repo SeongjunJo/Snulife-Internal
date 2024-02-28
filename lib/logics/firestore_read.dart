@@ -12,7 +12,7 @@ class FirestoreReader {
   Future getUserList() async {
     return memoizer.runOnce(() async {
       final userListDocument =
-          await _db.collection('informations').doc('userList').get();
+          await _db.collection('information').doc('userList').get();
       return userListDocument.data()!['names'];
     });
   }
@@ -33,7 +33,7 @@ class FirestoreReader {
 
     return memoizer.runOnce(() async {
       final meetingTimeInfo = await firebaseInstance.db
-          .collection('informations')
+          .collection('information')
           .doc('meetingTime')
           .get();
       final meetingTime = meetingTimeInfo.data()!['time'];
@@ -115,22 +115,24 @@ class FirestoreReader {
     });
   }
 
-  Future<DocumentSnapshot> getMyAttendanceSummary(String semester) async =>
+  Future<DocumentSnapshot<Map>> getPersonalAttendanceSummary(
+          String semester, String name) async =>
       firebaseInstance.db
           .collection('attendances')
           .doc(semester)
-          .collection(firebaseInstance.userName!)
+          .collection(name)
           .doc('summary')
           .get();
 
-  Future<List> getMyAttendanceHistory(String semester) async {
+  Future<List> getPersonalAttendanceHistory(
+      String semester, String name) async {
     List<AttendanceStatus> temp = [];
     List<AttendanceStatus> attendanceHistory;
 
     final attendanceCollection = await firebaseInstance.db
         .collection('attendances')
         .doc(semester)
-        .collection(firebaseInstance.userName!)
+        .collection(name)
         .where('attendance', isNull: false)
         .get(); // 컬렉션에서 summary 문서는 제외
     for (var doc in attendanceCollection.docs) {

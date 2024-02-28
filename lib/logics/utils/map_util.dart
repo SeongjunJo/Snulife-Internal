@@ -16,7 +16,6 @@ class MapUtil {
   }
 
   static String getNextClerk(Map<String, dynamic> map, String clerk) {
-    // value가 int인 map 대상
     String nextClerk = '';
     if (clerk.isEmpty) return '(미정)';
     List<MapEntry<String, dynamic>> clerkList = map.entries.toList();
@@ -33,6 +32,82 @@ class MapUtil {
       }
     }
     return nextClerk;
+  }
+
+  static Map<String, String> calculateAttendanceRateAndReward(
+    Map<String, dynamic> preSemesterSummary,
+    Map<String, dynamic> postSemesterSummary,
+  ) {
+    final Map<String, dynamic> emptySummaryTemplate = {
+      'present': 0,
+      'absent': 0,
+      'late': 0,
+      'badAbsent': 0,
+      'badLate': 0,
+      'sum': 0,
+    };
+    // 1, 3분기의 경우 2, 4분기라는 post summary가 없어서 빈 map이 들어옴
+    if (postSemesterSummary.isEmpty) postSemesterSummary = emptySummaryTemplate;
+    final List<Map<String, dynamic>> summaryList = [
+      preSemesterSummary,
+      postSemesterSummary
+    ];
+    final Map<String, dynamic> totalSummaryResult = emptySummaryTemplate;
+    final Map<String, String> result = {'attendanceRate': '', 'reward': ''};
+    late final double attendanceRate;
+    late final double totalAbsence;
+    late double reward;
+    late final int penaltyPoint;
+
+    for (final summary in summaryList) {
+      if (summary['absent'] - 2 < 0) {
+        // 분기당 사유 결석 2회까지 봐주고, 2회 미만이면 사유 지각을 0.5회로 쳐서 남은 횟수만큼 봐줌
+        int absentBonus = 2 - (summary['absent'] as int);
+        summary['absent'] = 0;
+        summary['late'] - absentBonus * 2 < 0
+            ? summary['late'] = 0
+            : summary['late'] -= absentBonus * 2;
+      } else {
+        summary['absent'] -= 2;
+      }
+      totalSummaryResult['present'] += summary['present'];
+      totalSummaryResult['absent'] += summary['absent'];
+      totalSummaryResult['late'] += summary['late'];
+      totalSummaryResult['badAbsent'] += summary['badAbsent'];
+      totalSummaryResult['badLate'] += summary['badLate'];
+      totalSummaryResult['sum'] += summary['sum'];
+    }
+
+    totalAbsence = totalSummaryResult['absent'] +
+        totalSummaryResult['badAbsent'] +
+        totalSummaryResult['late'] / 2 +
+        totalSummaryResult['badLate'] / 2;
+    attendanceRate = (totalSummaryResult['sum'] - totalAbsence) /
+        totalSummaryResult['sum'] *
+        100;
+
+    penaltyPoint = totalSummaryResult['badAbsent'] * 10 +
+        totalSummaryResult['absent'] * 5 +
+        totalSummaryResult['badLate'] * 2 +
+        totalSummaryResult['late'];
+
+    switch (attendanceRate) {
+      case 100:
+        reward = 8;
+      case >= 90:
+        reward = 5;
+      case >= 80:
+        reward = 2;
+      default:
+        reward = 0;
+    }
+    reward *= (100 - penaltyPoint) / 100;
+
+    result['attendanceRate'] =
+        attendanceRate.toStringAsFixed(2); // 소수점 셋째자리에서 반올림
+    result['reward'] = reward.toStringAsFixed(2); // 부동 소수점 문제로 반올림
+
+    return result;
   }
 }
 

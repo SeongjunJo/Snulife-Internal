@@ -4,7 +4,6 @@ import 'package:snulife_internal/logics/providers/select_semester_states.dart';
 import 'package:snulife_internal/ui/widgets/screen_specified/my_attendance_widget.dart';
 
 import '../../../../logics/common_instances.dart';
-import '../../../../logics/utils/map_util.dart';
 import '../../../widgets/commons/button_widgets.dart';
 
 class ViewMyAttendancePage extends StatefulWidget {
@@ -17,13 +16,10 @@ class ViewMyAttendancePage extends StatefulWidget {
 }
 
 class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
-  List<AttendanceStatus> attendanceHistory = [];
-
   @override
   Widget build(BuildContext context) {
-    attendanceHistory.clear();
     List<String> semesters = [
-      ..._getLastTwoSemesters(widget.currentSemester),
+      ..._getLastThreeSemesters(widget.currentSemester),
       widget.currentSemester
     ];
 
@@ -31,12 +27,15 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
       builder: (BuildContext context, value, _) {
         return FutureBuilder(
           future: Future.wait([
-            firestoreReader.getMyAttendanceSummary(value.selectedSemester),
-            firestoreReader.getMyAttendanceHistory(value.selectedSemester),
+            firestoreReader.getPersonalAttendanceSummary(
+                value.selectedSemester, firebaseInstance.userName!),
+            firestoreReader.getPersonalAttendanceHistory(
+                value.selectedSemester, firebaseInstance.userName!),
           ]),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             if (snapshot.hasData) {
-              attendanceHistory = snapshot.data[1];
+              final attendanceSummary = snapshot.data[0];
+              final attendanceHistory = snapshot.data[1];
 
               return Container(
                 color: appColors.grey0,
@@ -59,7 +58,7 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
                             style: appFonts.b1.copyWith(color: appColors.grey7),
                           ),
                           Text(
-                            "${snapshot.data[0]['sum']}",
+                            "${attendanceSummary['sum']}",
                             style: appFonts.b1.copyWith(
                               color: appColors.grey7,
                               fontWeight: FontWeight.w700,
@@ -86,7 +85,7 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
                                     style: appFonts.b1
                                         .copyWith(color: appColors.grey7)),
                                 Text(
-                                  "${snapshot.data[0]['present']}",
+                                  "${attendanceSummary['present']}",
                                   style: appFonts.b1.copyWith(
                                     color: appColors.grey7,
                                     fontWeight: FontWeight.w700,
@@ -102,7 +101,7 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
                                     style: appFonts.b1
                                         .copyWith(color: appColors.grey7)),
                                 Text(
-                                  '${snapshot.data[0]['late'] + snapshot.data[0]['badLate']}', // 일반 동아리원은 사유 여부 안 보여줌
+                                  '${attendanceSummary['late'] + attendanceSummary['badLate']}', // 일반 동아리원은 사유 여부 안 보여줌
                                   style: appFonts.b1.copyWith(
                                     color: appColors.grey7,
                                     fontWeight: FontWeight.w700,
@@ -118,7 +117,7 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
                                     style: appFonts.b1
                                         .copyWith(color: appColors.grey7)),
                                 Text(
-                                  "${snapshot.data[0]['absent'] + snapshot.data[0]['badAbsent']}", // 일반 동아리원은 사유 여부 안 보여줌
+                                  "${attendanceSummary['absent'] + attendanceSummary['badAbsent']}", // 일반 동아리원은 사유 여부 안 보여줌
                                   style: appFonts.b1.copyWith(
                                     color: appColors.grey7,
                                     fontWeight: FontWeight.w700,
@@ -178,21 +177,37 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
   }
 }
 
-List<String> _getLastTwoSemesters(String semester) {
+List<String> _getLastThreeSemesters(String semester) {
   final currentYear = int.parse(semester.split("-")[0]);
   final currentSemester = semester.split("-")[1];
-  late List<String> lastTwoSemesters;
+  late List<String> lastThreeSemesters;
 
   switch (currentSemester) {
     case "1":
-      lastTwoSemesters = ["${currentYear - 1}-2", "${currentYear - 1}-W"];
+      lastThreeSemesters = [
+        "${currentYear - 1}-S",
+        "${currentYear - 1}-2",
+        "${currentYear - 1}-W"
+      ];
     case "S":
-      lastTwoSemesters = ["${currentYear - 1}-W", "$currentYear-1"];
+      lastThreeSemesters = [
+        "${currentYear - 1}-2",
+        "${currentYear - 1}-W",
+        "$currentYear-1"
+      ];
     case "2":
-      lastTwoSemesters = ["$currentYear -1", "$currentYear-S"];
+      lastThreeSemesters = [
+        "${currentYear - 1}-W",
+        "$currentYear -1",
+        "$currentYear-S"
+      ];
     case "W":
-      lastTwoSemesters = ["$currentYear-S", "$currentYear-2"];
+      lastThreeSemesters = [
+        "$currentYear -1",
+        "$currentYear-S",
+        "$currentYear-2"
+      ];
   }
 
-  return lastTwoSemesters;
+  return lastThreeSemesters;
 }

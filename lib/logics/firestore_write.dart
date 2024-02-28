@@ -189,7 +189,7 @@ class FirestoreWriter {
     final List<dynamic> userList = await firestoreReader.getUserList();
     final List<Future<void>> updateList = [];
 
-    updateList.add(_db.collection('informations').doc('meetingTime').update({
+    updateList.add(_db.collection('information').doc('meetingTime').update({
       'rest': FieldValue.arrayUnion([date])
     }));
 
@@ -235,8 +235,9 @@ class FirestoreWriter {
     final nextSemesterRef = _db.collection('attendances').doc('2025-1');
     await nextSemesterRef.set({}); // 상위 문서를 생성해둬야 함
 
-    batch.set(_db.collection('informations').doc('meetingTime'), {
+    batch.set(_db.collection('information').doc('meetingTime'), {
       'rest': [],
+      'teamMeeting': [],
       'time': time,
     });
 
