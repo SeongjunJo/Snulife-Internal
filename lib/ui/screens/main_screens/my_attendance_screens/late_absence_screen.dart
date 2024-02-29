@@ -134,6 +134,7 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
                           lateOrAbsence: !isRestDate
                               ? semesterStatus[index].attendance
                               : "휴회", // 지각/결석/휴회가 아니라면 (= 특수 상황 아니면) 빈 문자열이 넘어감
+                          isReadOnly: false,
                         ),
                       );
                     },
@@ -148,7 +149,6 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
                   onPressed: _selectedIndexes.isNotEmpty
                       ? () {
                           _isLate.value = null;
-                          debugPrint("${_isLate.value}");
                           showModalBottomSheet(
                             context: context,
                             builder: (BuildContext context) {

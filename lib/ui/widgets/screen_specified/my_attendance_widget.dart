@@ -9,15 +9,17 @@ class MyAttendanceListItem extends StatelessWidget {
     required this.date,
     required this.isSelected,
     required this.lateOrAbsence,
-    this.isReadOnly = false,
+    this.isAuthorized, // 출결 현황에서 bool, 지각/결석에서 null
+    this.isReadOnly = true, // 출결 현황에서 true, 지각/결석에서 false
   });
 
   final int week;
   final String date;
   final bool isSelected;
   final String lateOrAbsence;
+  final bool? isAuthorized;
   final bool isReadOnly;
-  // true: 출결 현황 화면 / false: 지각, 결석 신청 화면
+
   @override
   Widget build(BuildContext context) {
     AttendanceChipType chipType;
@@ -70,11 +72,40 @@ class MyAttendanceListItem extends StatelessWidget {
           ),
           if (isReadOnly) // 출결 현황 화면
             if (lateOrAbsence != '휴회') // 출석/지각/결석 chip
-              AttendanceChip(
-                index: null, // index 불필요
-                type: chipType,
-                onSelected: (_) {}, // null 대신 chip 색깔 보정
-                isSelected: true, // 항상 색이 들어온 상태
+              Row(
+                children: [
+                  lateOrAbsence.isNotEmpty
+                      ? ActionChip(
+                          label: Text(isAuthorized! ? '사유' : '무단'),
+                          labelStyle: appFonts.c3.copyWith(
+                              color: isAuthorized!
+                                  ? appColors.slBlue
+                                  : appColors.grey7),
+                          onPressed: () {}, // null로 하면 색상이 너무 흐려짐
+                          backgroundColor: isAuthorized!
+                              ? appColors.subBlue2
+                              : appColors.grey4,
+                          labelPadding:
+                              const EdgeInsets.symmetric(vertical: -6.5),
+                          padding: const EdgeInsets.symmetric(horizontal: 6.3),
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(width: 0, color: appColors.white),
+                            borderRadius: BorderRadius.circular(9),
+                          ),
+                        )
+                      : const SizedBox(),
+                  lateOrAbsence.isNotEmpty
+                      ? const SizedBox(width: 12)
+                      : const SizedBox(),
+                  AttendanceChip(
+                    index: null, // index 불필요
+                    type: chipType,
+                    onSelected: (_) {}, // null 대신 chip 색깔 보정
+                    isSelected: true, // 항상 색이 들어온 상태
+                  ),
+                ],
               )
             else // 휴회 텍스트
               SizedBox(

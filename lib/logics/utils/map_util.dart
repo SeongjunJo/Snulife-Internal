@@ -35,8 +35,8 @@ class MapUtil {
   }
 
   static Map<String, String> calculateAttendanceRateAndReward(
-    Map<String, dynamic> preSemesterSummary,
-    Map<String, dynamic> postSemesterSummary,
+    Map<String, dynamic> originalPreSemesterSummary,
+    Map<String, dynamic> originalPostSemesterSummary,
   ) {
     final Map<String, dynamic> emptySummaryTemplate = {
       'present': 0,
@@ -47,12 +47,19 @@ class MapUtil {
       'sum': 0,
     };
     // 1, 3분기의 경우 2, 4분기라는 post summary가 없어서 빈 map이 들어옴
-    if (postSemesterSummary.isEmpty) postSemesterSummary = emptySummaryTemplate;
+    final Map<String, dynamic> preSemesterSummary =
+        Map.from(originalPreSemesterSummary);
+    final Map<String, dynamic> postSemesterSummary =
+        originalPostSemesterSummary.isEmpty
+            ? Map.from(emptySummaryTemplate)
+            : Map.from(originalPostSemesterSummary);
+    // 복사 안하면 인자로 들어온 기존 데이터가 수정됨
     final List<Map<String, dynamic>> summaryList = [
       preSemesterSummary,
       postSemesterSummary
     ];
-    final Map<String, dynamic> totalSummaryResult = emptySummaryTemplate;
+    final Map<String, dynamic> totalSummaryResult =
+        Map.from(emptySummaryTemplate);
     final Map<String, String> result = {'attendanceRate': '', 'reward': ''};
     late final double attendanceRate;
     late final double totalAbsence;

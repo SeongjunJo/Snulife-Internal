@@ -30,7 +30,10 @@ class MyAttendancePage extends StatelessWidget {
               : ChangeNotifierProvider(
                   create: (context) =>
                       SelectSemesterStatus(currentSemester: currentSemester),
-                  child: ViewMyAttendancePage(currentSemester: currentSemester),
+                  child: ViewMyAttendancePage(
+                    isManager: false, // '내 출결 관리'에서 접근하면 무조건 false
+                    currentSemester: currentSemester,
+                  ),
                 );
         }).toList());
   }

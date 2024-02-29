@@ -72,7 +72,7 @@ class CheckAttendancePage extends StatelessWidget {
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: userList.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return AttendanceListItem(
+                      return CheckAttendanceListItem(
                         canModify: canModify &&
                             !hasAttendanceConfirmed &&
                             hasMeetingStarted, // 회의 시작 후, 서기이면서 확정하지 않은 상태만 수정 가능

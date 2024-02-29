@@ -4,8 +4,8 @@ import 'package:snulife_internal/logics/common_instances.dart';
 import 'package:snulife_internal/logics/providers/check_attendance_state.dart';
 import 'package:snulife_internal/ui/widgets/commons/button_widgets.dart';
 
-class AttendanceListItem extends StatefulWidget {
-  const AttendanceListItem({
+class CheckAttendanceListItem extends StatefulWidget {
+  const CheckAttendanceListItem({
     super.key,
     required this.canModify,
     required this.name,
@@ -17,10 +17,11 @@ class AttendanceListItem extends StatefulWidget {
   final Map<String, dynamic> attendanceStatus;
 
   @override
-  State<AttendanceListItem> createState() => _AttendanceListItemState();
+  State<CheckAttendanceListItem> createState() =>
+      _CheckAttendanceListItemState();
 }
 
-class _AttendanceListItemState extends State<AttendanceListItem> {
+class _CheckAttendanceListItemState extends State<CheckAttendanceListItem> {
   int? index;
   bool isTagSelected = false;
   String? initialStatus;

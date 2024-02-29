@@ -4,11 +4,19 @@ import 'package:snulife_internal/logics/providers/select_semester_states.dart';
 import 'package:snulife_internal/ui/widgets/screen_specified/my_attendance_widget.dart';
 
 import '../../../../logics/common_instances.dart';
+import '../../../../logics/utils/map_util.dart';
 import '../../../widgets/commons/button_widgets.dart';
 
 class ViewMyAttendancePage extends StatefulWidget {
-  const ViewMyAttendancePage({super.key, required this.currentSemester});
+  const ViewMyAttendancePage({
+    super.key,
+    required this.isManager,
+    this.name, // isManager가 true일 때만 필요
+    required this.currentSemester,
+  });
 
+  final bool isManager;
+  final String? name;
   final String currentSemester;
 
   @override
@@ -34,8 +42,11 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
           ]),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             if (snapshot.hasData) {
-              final attendanceSummary = snapshot.data[0];
+              final attendanceSummary =
+                  snapshot.data[0].data()! as Map<String, dynamic>;
               final attendanceHistory = snapshot.data[1];
+              final qsSummary = MapUtil.calculateAttendanceRateAndReward(
+                  attendanceSummary, {}); // 분기에 대해서만 계산
 
               return Container(
                 color: appColors.grey0,
@@ -43,91 +54,29 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
                 child: ListView(
                   children: [
                     const SizedBox(height: 24),
-                    Container(
-                      height: 60,
-                      decoration: BoxDecoration(
-                        color: appColors.white,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "총 회의 수 ",
-                            style: appFonts.b1.copyWith(color: appColors.grey7),
-                          ),
-                          Text(
-                            "${attendanceSummary['sum']}",
-                            style: appFonts.b1.copyWith(
-                              color: appColors.grey7,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
-                      ),
+                    widget.isManager
+                        ? Text(widget.name!, style: appFonts.h1)
+                        : const SizedBox(),
+                    SizedBox(height: widget.isManager ? 20 : 0),
+                    _AttendanceSummaryContainer(
+                      isQSSummary: true, // 상단 박스
+                      firstSummary: attendanceSummary['sum'].toString(),
+                      secondSummary:
+                          '${qsSummary['attendanceRate'].toString()}%',
+                      thirdSummary: qsSummary['reward'].toString(),
                     ),
                     const SizedBox(height: 12),
-                    Container(
-                      height: 60,
-                      decoration: BoxDecoration(
-                        color: appColors.white,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Row(
-                              children: [
-                                Text("출석 ",
-                                    style: appFonts.b1
-                                        .copyWith(color: appColors.grey7)),
-                                Text(
-                                  "${attendanceSummary['present']}",
-                                  style: appFonts.b1.copyWith(
-                                    color: appColors.grey7,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Container(
-                                width: 1, height: 16, color: appColors.grey5),
-                            Row(
-                              children: [
-                                Text("지각 ",
-                                    style: appFonts.b1
-                                        .copyWith(color: appColors.grey7)),
-                                Text(
-                                  '${attendanceSummary['late'] + attendanceSummary['badLate']}', // 일반 동아리원은 사유 여부 안 보여줌
-                                  style: appFonts.b1.copyWith(
-                                    color: appColors.grey7,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Container(
-                                width: 1, height: 16, color: appColors.grey5),
-                            Row(
-                              children: [
-                                Text("결석 ",
-                                    style: appFonts.b1
-                                        .copyWith(color: appColors.grey7)),
-                                Text(
-                                  "${attendanceSummary['absent'] + attendanceSummary['badAbsent']}", // 일반 동아리원은 사유 여부 안 보여줌
-                                  style: appFonts.b1.copyWith(
-                                    color: appColors.grey7,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
+                    _AttendanceSummaryContainer(
+                      isQSSummary: false, // 하단 박스
+                      firstSummary: attendanceSummary['present'].toString(),
+                      secondSummary: (attendanceSummary['late'] +
+                              attendanceSummary['badLate'])
+                          .toString(),
+                      badLate: attendanceSummary['badLate'].toString(),
+                      thirdSummary: (attendanceSummary['absent'] +
+                              attendanceSummary['badAbsent'])
+                          .toString(),
+                      badAbsent: attendanceSummary['badAbsent'].toString(),
                     ),
                     const SizedBox(height: 16),
                     // right end drop down
@@ -156,7 +105,7 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
                           lateOrAbsence: !isRestDate
                               ? attendanceHistory[index].attendance
                               : "휴회",
-                          isReadOnly: true,
+                          isAuthorized: attendanceHistory[index].isAuthorized,
                         );
                       },
                       separatorBuilder: (BuildContext context, int index) {
@@ -173,6 +122,142 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
           },
         );
       },
+    );
+  }
+}
+
+class _AttendanceSummaryContainer extends StatelessWidget {
+  const _AttendanceSummaryContainer({
+    required this.isQSSummary,
+    required this.firstSummary,
+    required this.secondSummary,
+    this.badLate,
+    required this.thirdSummary,
+    this.badAbsent,
+  });
+
+  final bool isQSSummary; // 상단 박스인지 하단 박스인지
+  final String firstSummary;
+  final String secondSummary;
+  final String? badLate; // 무단 지각
+  final String thirdSummary;
+  final String? badAbsent; // 무단 결석
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 60,
+      decoration: BoxDecoration(
+        color: appColors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          SizedBox(
+            width: 88,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  isQSSummary ? '총 회의 ' : '출석 ',
+                  style: appFonts.b1.copyWith(color: appColors.grey7),
+                ),
+                Text(
+                  firstSummary,
+                  style: appFonts.b1.copyWith(
+                    color: appColors.grey7,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(width: 1, height: 16, color: appColors.grey5),
+          SizedBox(
+            width: 88,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  isQSSummary ? '' : '지각 ',
+                  style: appFonts.b1.copyWith(color: appColors.grey7),
+                ),
+                Text(
+                  secondSummary,
+                  style: appFonts.b1.copyWith(
+                    color: appColors.grey7,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                isQSSummary
+                    ? const SizedBox()
+                    : Row(
+                        children: [
+                          Text(
+                            ' (',
+                            style: appFonts.b1.copyWith(color: appColors.grey7),
+                          ),
+                          Text(
+                            badLate!,
+                            style: appFonts.b1.copyWith(
+                              color: appColors.failure,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          Text(
+                            ')',
+                            style: appFonts.b1.copyWith(color: appColors.grey7),
+                          ),
+                        ],
+                      ),
+              ],
+            ),
+          ),
+          Container(width: 1, height: 16, color: appColors.grey5),
+          SizedBox(
+            width: 88,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  isQSSummary ? 'QS비 ' : '결석 ',
+                  style: appFonts.b1.copyWith(color: appColors.grey7),
+                ),
+                Text(
+                  thirdSummary,
+                  style: appFonts.b1.copyWith(
+                    color: appColors.grey7,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                isQSSummary
+                    ? const SizedBox()
+                    : Row(
+                        children: [
+                          Text(
+                            ' (',
+                            style: appFonts.b1.copyWith(color: appColors.grey7),
+                          ),
+                          Text(
+                            badAbsent!,
+                            style: appFonts.b1.copyWith(
+                              color: appColors.failure,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          Text(
+                            ')',
+                            style: appFonts.b1.copyWith(color: appColors.grey7),
+                          ),
+                        ],
+                      ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
