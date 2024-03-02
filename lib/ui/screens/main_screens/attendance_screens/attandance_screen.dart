@@ -26,76 +26,58 @@ class AttendancePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isClerk = firebaseInstance.userName == clerk;
 
-    return TabBarView(
-        controller: AppTab.attendanceTabController,
-        children: AppTab.attendanceTabs.map((Tab tab) {
-          // 별도 Widget으로 분리하면 memoizer로 캐싱할 수 없음
+    return FutureBuilder(
+      future: Future.wait([
+        _getIsTodayMeeting(currentSemester),
+        _getClerkMap(),
+        // 아래 3개 future는 오늘이 회의일 때만 필요하지만, 사람들은 대부분 회의인 날만 이 화면에 접속할 것이므로
+        // 미리 다 받아서 Tab 전환 랜더링 시간을 줄임
+        firestoreReader.getUserList(),
+        firestoreReader.checkHasMeetingStarted(),
+        _getTeamMeetingTime(),
+      ]),
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        if (snapshot.hasData) {
+          final isTodayMeeting = snapshot.data[0];
+          final clerkMap = snapshot.data[1];
+          final userList = snapshot.data[2];
+          final hasMeetingStarted = snapshot.data[3];
+          final isTeamMeeting =
+              snapshot.data[4].cast<String>().contains(localToday);
 
-          return tab.text! == '출석 체크'
-              ? FutureBuilder(
-                  future: _getIsTodayMeeting(currentSemester),
-                  builder:
-                      (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                    if (snapshot.hasData) {
-                      return !snapshot.data // 오늘 회의가 없으면 디폴트 화면
-                          ? const NoMeetingTodayPage()
-                          : FutureBuilder(
-                              future: Future.wait([
-                                firestoreReader.getUserList(),
-                                firestoreReader.checkHasMeetingStarted(),
-                                _getTeamMeetingTime(),
-                              ]),
-                              builder: (BuildContext context,
-                                  AsyncSnapshot<dynamic> snapshot) {
-                                if (snapshot.hasData) {
-                                  bool isTeamMeeting = snapshot.data[2]
-                                      .cast<String>()
-                                      .contains(localToday);
-
-                                  return ChangeNotifierProvider(
-                                    create: (context) => CheckAttendanceState(
-                                        userList: snapshot.data[0]),
-                                    builder: ((context, _) =>
-                                        CheckAttendancePage(
-                                          isClerk: isClerk,
-                                          // 팀별 회의 때는 팀장들이 출석 체크
-                                          doesLeaderCheck:
-                                              isLeader && isTeamMeeting,
-                                          hasMeetingStarted: snapshot.data[1],
-                                          userList: snapshot.data[0],
-                                          currentSemester: currentSemester,
-                                        )),
-                                  );
-                                } else {
-                                  return Container(color: appColors.grey0);
-                                }
-                              },
-                            );
-                    } else {
-                      return Container(color: appColors.grey0);
-                    }
-                  },
-                )
-              : FutureBuilder(
-                  future: _getClerkMap(),
-                  builder:
-                      (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                    if (snapshot.hasData) {
-                      return Consumer<FirebaseStates>(
+          return TabBarView(
+              controller: AppTab.attendanceTabController,
+              children: AppTab.attendanceTabs.map((Tab tab) {
+                return tab.text! == '출석 체크'
+                    ? !isTodayMeeting // 오늘 회의가 없으면 디폴트 화면
+                        ? const NoMeetingTodayPage()
+                        : ChangeNotifierProvider(
+                            create: (context) =>
+                                CheckAttendanceState(userList: userList),
+                            builder: ((context, _) => CheckAttendancePage(
+                                  isClerk: isClerk,
+                                  // 팀별 회의 때는 팀장들이 출석 체크
+                                  doesLeaderCheck: isLeader && isTeamMeeting,
+                                  hasMeetingStarted: hasMeetingStarted,
+                                  userList: userList,
+                                  currentSemester: currentSemester,
+                                )),
+                          )
+                    : Consumer<FirebaseStates>(
                         builder: (context, value, _) => ClerkPage(
                           isManager: value.isManager,
                           clerk: value.clerk,
-                          clerkMap: snapshot.data,
+                          clerkMap: clerkMap,
                           currentSemester: value.currentSemester,
                           upcomingSemester: value.upcomingSemester,
                         ),
                       );
-                    } else {
-                      return Container(color: appColors.grey0);
-                    }
-                  },
-                );
-        }).toList());
+              }).toList());
+        } else {
+          return Container(color: appColors.grey0);
+        }
+      },
+    );
   }
 }
 
