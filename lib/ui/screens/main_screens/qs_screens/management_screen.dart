@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:snulife_internal/ui/screens/main_screens/qs_screens/manage_meeting_screen.dart';
 import 'package:snulife_internal/ui/screens/main_screens/qs_screens/qs_screen.dart';
 
 import '../../../../logics/app_tabs.dart';
 import '../../../../logics/common_instances.dart';
+import '../../../../logics/providers/select_semester_states.dart';
 
 class ManagementPage extends StatelessWidget {
   const ManagementPage({super.key, required this.currentSemester});
@@ -18,15 +20,20 @@ class ManagementPage extends StatelessWidget {
         final userList = snapshot.data;
 
         if (snapshot.hasData) {
+          final lastTwoHalf = _getLastTwoHalf(currentSemester);
+
           return TabBarView(
             controller: AppTab.managementTabController,
             children: AppTab.managementTabs.map((Tab tab) {
               return tab.text! == '회의 관리'
                   ? ManageMeetingPage(currentSemester: currentSemester)
-                  : QSPage(
-                      currentSemester: currentSemester,
-                      userList: userList,
-                    );
+                  : ChangeNotifierProvider(
+                      create: (context) => SelectSemesterStatus(
+                          currentSemester: lastTwoHalf.last),
+                      child: QSPage(
+                        userList: userList,
+                        lastTwoHalf: lastTwoHalf,
+                      ));
             }).toList(),
           );
         } else {
@@ -35,4 +42,21 @@ class ManagementPage extends StatelessWidget {
       },
     );
   }
+}
+
+List<String> _getLastTwoHalf(String semester) {
+  final currentYear = int.parse(semester.split('-')[0]);
+  final currentSemester = semester.split('-')[1];
+  late final List<String> lastTwoHalf;
+
+  switch (currentSemester) {
+    case '1':
+      lastTwoHalf = ['${currentYear - 1}년 상반기', '${currentYear - 1}년 하반기'];
+    case 'S' || '2':
+      lastTwoHalf = ['${currentYear - 1}년 하반기', '$currentYear년 상반기'];
+    case 'W':
+      lastTwoHalf = ['$currentYear년 상반기', '$currentYear년 하반기'];
+  }
+  // TODO lastTwoHalf으로 바꾸기
+  return ['2023년 하반기', '2024년 상반기'];
 }

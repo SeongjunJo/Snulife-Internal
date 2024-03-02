@@ -283,12 +283,12 @@ List<String> _getLastThreeSemesters(String semester) {
     case "2":
       lastThreeSemesters = [
         "${currentYear - 1}-W",
-        "$currentYear -1",
+        "$currentYear-1",
         "$currentYear-S"
       ];
     case "W":
       lastThreeSemesters = [
-        "$currentYear -1",
+        "$currentYear-1",
         "$currentYear-S",
         "$currentYear-2"
       ];
