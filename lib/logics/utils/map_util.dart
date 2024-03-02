@@ -60,7 +60,11 @@ class MapUtil {
     ];
     final Map<String, dynamic> totalSummaryResult =
         Map.from(emptySummaryTemplate);
-    final Map<String, String> result = {'attendanceRate': '', 'reward': ''};
+    final Map<String, String> result = {
+      'attendanceRate': '',
+      'reward': '',
+      'totalMeeting': ''
+    };
     late final double attendanceRate;
     late final double totalAbsence;
     late double reward;
@@ -113,6 +117,7 @@ class MapUtil {
     result['attendanceRate'] =
         attendanceRate.toStringAsFixed(2); // 소수점 셋째자리에서 반올림
     result['reward'] = reward.toStringAsFixed(2); // 부동 소수점 문제로 반올림
+    result['totalMeeting'] = totalSummaryResult['sum'].toString();
 
     return result;
   }
