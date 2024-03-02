@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:snulife_internal/logics/utils/date_util.dart';
 import 'package:snulife_internal/logics/utils/map_util.dart';
 import 'package:snulife_internal/logics/utils/string_util.dart';
+import 'package:snulife_internal/ui/widgets/commons/snackbar_widget.dart';
 
 import '../../../../logics/common_instances.dart';
 import '../../../widgets/commons/button_widgets.dart';
@@ -184,53 +185,33 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
     final now = DateUtil.getLocalNow();
     late final currentTime = StringUtil.convertDateTimeToString(now, false);
 
+    // 오늘 날짜를 선택했을 때 핸들링
     if (_lateAbsenceList.any((element) => element.date == localToday)) {
-      // 오늘 날짜를 선택했을 때 핸들링
       if (_isLate.value!) {
-        // 회의 시간 넘기면 지각 신청 불가
-        int.parse(currentTime) >= int.parse(meetingTime)
-            ? ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Center(
-                    child: Text(
-                      "회의 시작 후에는 지각 신청을 할 수 없어요.",
-                      style: appFonts.b2.copyWith(
-                        color: appColors.white,
-                      ),
-                    ),
-                  ),
-                  backgroundColor: appColors.slBlue,
-                ),
-              )
-            : null;
+        if (int.parse(currentTime) >= int.parse(meetingTime)) {
+          // 회의 시간 넘기면 지각 신청 불가
+          AppSnackBar.showFlushbar(
+              context, "회의 시작 이후에는 지각 신청을 할 수 없어요.", false);
+          return;
+        }
       } else {
         // 회의 날짜 넘기면 결석 신청 불가
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Center(
-              child: Text(
-                "회의 당일에는 결석 신청을 할 수 없어요.",
-                style: appFonts.b2.copyWith(
-                  color: appColors.white,
-                ),
-              ),
-            ),
-            backgroundColor: appColors.slBlue,
-          ),
-        );
+        AppSnackBar.showFlushbar(context, "결석 신청은 전날 자정까지만 가능해요.", false);
+        return;
       }
-    } else {
-      await firestoreWriter.writeMyLateAbsence(
-          widget.currentSemester, _lateAbsenceList, _isLate.value!);
-      widget.upcomingSemester != null
-          ? await firestoreWriter.writeMyLateAbsence(
-              widget.upcomingSemester!, _lateAbsenceList, _isLate.value!)
-          : null;
     }
+
+    await firestoreWriter.writeMyLateAbsence(
+        widget.currentSemester, _lateAbsenceList, _isLate.value!);
+    widget.upcomingSemester != null
+        ? await firestoreWriter.writeMyLateAbsence(
+            widget.upcomingSemester!, _lateAbsenceList, _isLate.value!)
+        : null;
     _selectedIndexes.clear();
     _lateAbsenceList.clear();
     setState(() {});
     if (!mounted) return;
     context.pop();
+    AppSnackBar.showFlushbar(context, "신청되었습니다.", true);
   }
 }

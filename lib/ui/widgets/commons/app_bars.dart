@@ -89,7 +89,7 @@ class SubScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
           IconButton(
             padding: EdgeInsets.zero,
             icon: Image.asset(
-              "assets/images/icon_left_arrow.png",
+              "assets/images/icon_arrow_left.png",
               width: 48,
               height: 48,
             ),

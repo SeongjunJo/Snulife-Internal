@@ -2,6 +2,27 @@ import 'package:flutter/material.dart';
 
 import '../../../logics/common_instances.dart';
 
+class InfoTag extends StatelessWidget {
+  const InfoTag({
+    super.key,
+    required this.info,
+  });
+
+  final String info;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(4),
+        color: appColors.grey1,
+      ),
+      child: Text(info, style: appFonts.c2.copyWith(color: appColors.grey5)),
+    );
+  }
+}
+
 class AppExpandedButton extends StatelessWidget {
   const AppExpandedButton({
     super.key,
@@ -127,14 +148,14 @@ enum AttendanceChipType {
   clerk,
 }
 
-class SemesterDropDownMenu extends StatelessWidget {
-  const SemesterDropDownMenu({
+class AppDropDownMenu extends StatelessWidget {
+  const AppDropDownMenu({
     super.key,
-    required this.semesters,
+    required this.dropdowns,
     required this.onSelected,
   });
 
-  final List<String> semesters;
+  final List<String> dropdowns;
   final Function(String) onSelected;
 
   @override
@@ -159,14 +180,9 @@ class SemesterDropDownMenu extends StatelessWidget {
           borderSide: BorderSide.none,
         ),
         contentPadding: const EdgeInsets.only(left: 15),
-        constraints: const BoxConstraints(
-          minHeight: 50,
-          maxHeight: 50,
-          minWidth: 130,
-          maxWidth: 130,
-        ),
+        constraints: const BoxConstraints(maxHeight: 50),
       ),
-      initialSelection: semesters.last,
+      initialSelection: dropdowns.last,
       trailingIcon: Image.asset(
         'assets/images/icon_arrow_down.png',
         width: 16,
@@ -183,7 +199,7 @@ class SemesterDropDownMenu extends StatelessWidget {
       onSelected: (String? selectedSemester) {
         onSelected(selectedSemester!);
       },
-      dropdownMenuEntries: semesters
+      dropdownMenuEntries: dropdowns
           .map(
             (String semester) => DropdownMenuEntry(
               value: semester,
@@ -192,7 +208,6 @@ class SemesterDropDownMenu extends StatelessWidget {
                 textStyle: MaterialStateProperty.all(appFonts.t4),
                 foregroundColor: MaterialStateProperty.all(appColors.grey6),
                 backgroundColor: MaterialStateProperty.all(appColors.white),
-                fixedSize: MaterialStateProperty.all(const Size(130, 50)),
                 padding:
                     MaterialStateProperty.all(const EdgeInsets.only(left: 15)),
               ),

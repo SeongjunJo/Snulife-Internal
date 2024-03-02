@@ -83,8 +83,8 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        SemesterDropDownMenu(
-                          semesters: semesters,
+                        AppDropDownMenu(
+                          dropdowns: semesters,
                           onSelected: value.changeSemester,
                         ),
                       ],

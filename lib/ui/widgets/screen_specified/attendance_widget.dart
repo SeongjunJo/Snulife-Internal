@@ -66,7 +66,7 @@ class _CheckAttendanceListItemState extends State<CheckAttendanceListItem> {
           ActionChip(
             label: const Text('사유'),
             labelStyle: appFonts.c3.copyWith(
-                color: isTagSelected ? appColors.slBlue : appColors.grey6),
+                color: isTagSelected ? appColors.slBlue : appColors.grey5),
             onPressed: (widget.canModify && (index == 2 || index == 3))
                 ? () {
                     setState(() {
@@ -80,7 +80,7 @@ class _CheckAttendanceListItemState extends State<CheckAttendanceListItem> {
                   }
                 : () {},
             backgroundColor:
-                isTagSelected ? appColors.subBlue2 : appColors.grey2,
+                isTagSelected ? appColors.subBlue2 : appColors.grey1,
             labelPadding: const EdgeInsets.symmetric(vertical: -6.5),
             padding: const EdgeInsets.symmetric(horizontal: 6.3),
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -89,12 +89,12 @@ class _CheckAttendanceListItemState extends State<CheckAttendanceListItem> {
               borderRadius: BorderRadius.circular(9),
             ),
           ),
-          const Expanded(flex: 2, child: SizedBox()),
+          const SizedBox(width: 14.5),
           Text(
             widget.name,
             style: appFonts.t3.copyWith(color: appColors.grey8),
           ),
-          const Expanded(flex: 2, child: SizedBox(width: 10)),
+          const Expanded(flex: 1, child: SizedBox()),
           AttendanceChip(
             index: index,
             type: AttendanceChipType.presence,
@@ -112,7 +112,7 @@ class _CheckAttendanceListItemState extends State<CheckAttendanceListItem> {
                   }
                 : (_) {},
           ),
-          const Expanded(flex: 1, child: SizedBox(width: 10)),
+          const SizedBox(width: 12),
           AttendanceChip(
             index: index,
             type: AttendanceChipType.late,
@@ -130,7 +130,7 @@ class _CheckAttendanceListItemState extends State<CheckAttendanceListItem> {
                   }
                 : (_) {},
           ),
-          const Expanded(flex: 1, child: SizedBox(width: 10)),
+          const SizedBox(width: 12),
           AttendanceChip(
             index: index,
             type: AttendanceChipType.absence,

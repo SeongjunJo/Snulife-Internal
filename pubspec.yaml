@@ -46,6 +46,7 @@ dependencies:
   async: ^2.11.0
   http: ^1.2.0
   html: ^0.15.4
+  another_flushbar: ^1.12.30
 
 dev_dependencies:
   flutter_test:

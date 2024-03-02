@@ -39,7 +39,7 @@ class RightArrow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Image.asset('assets/images/icon_right_arrow.png',
+    return Image.asset('assets/images/icon_arrow_right.png',
         width: 22, height: 22);
   }
 }

@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../logics/common_instances.dart';
 import '../../../router.dart';
-import '../../widgets/commons/text_widgets.dart';
+import '../../widgets/commons/button_widgets.dart';
 import '../../widgets/screen_specified/home_widget.dart';
 
 class HomePage extends StatelessWidget {
@@ -54,11 +54,16 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 10),
             Row(
               children: [
-                InfoBox(info: userInfo['team']),
+                InfoTag(info: userInfo['position']),
                 const SizedBox(width: 8),
-                InfoBox(info: userInfo['isSenior'] ? '시니어' : '주니어'),
+                InfoTag(info: userInfo['team']),
                 const SizedBox(width: 8),
-                InfoBox(info: userInfo['position']),
+                InfoTag(
+                    info: userInfo['isAlum']
+                        ? '알럼나이'
+                        : userInfo['isSenior']
+                            ? '시니어'
+                            : '주니어'),
               ],
             ),
           ],
@@ -83,7 +88,7 @@ class HomePage extends StatelessWidget {
                     style: appFonts.t3.copyWith(color: appColors.grey7),
                   ),
                   Image.asset(
-                    'assets/images/icon_right_arrow.png',
+                    'assets/images/icon_arrow_right.png',
                     width: 22,
                     height: 22,
                   ),

@@ -30,7 +30,7 @@ class CheckAttendancePage extends StatelessWidget {
     bool canModify =
         doesLeaderCheck ? true : isClerk; // 팀별 회의 때는 팀장만 체크 가능, 아니면 서기만 체크 가능
 
-    final today = DateUtil.getLocalNow();
+    final DateTime today = DateUtil.getLocalNow();
     final attendanceListener = context.watch<CheckAttendanceState>();
     bool unCompleted = false;
 
