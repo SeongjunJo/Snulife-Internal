@@ -211,10 +211,11 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
                           week: index + 1,
                           date: attendanceHistory[index].date,
                           isSelected: false,
-                          lateOrAbsence: !isRestDate
+                          status: !isRestDate
                               ? attendanceHistory[index].attendance
                               : "휴회",
                           isAuthorized: attendanceHistory[index].isAuthorized,
+                          isReadOnly: true,
                         );
                       },
                       separatorBuilder: (BuildContext context, int index) {

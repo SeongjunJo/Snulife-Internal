@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:snulife_internal/ui/screens/main_screens/qs_screens/manage_meeting_screen.dart';
+import 'package:snulife_internal/ui/screens/main_screens/qs_screens/manage_club_screen.dart';
 import 'package:snulife_internal/ui/screens/main_screens/qs_screens/qs_screen.dart';
 
 import '../../../../logics/app_tabs.dart';
@@ -26,7 +26,7 @@ class ManagementPage extends StatelessWidget {
             controller: AppTab.managementTabController,
             children: AppTab.managementTabs.map((Tab tab) {
               return tab.text! == AppTab.managementTabs.first.text
-                  ? ManageMeetingPage(currentSemester: currentSemester)
+                  ? ManageClubPage(currentSemester: currentSemester)
                   : ChangeNotifierProvider(
                       create: (context) => DropdownSelectionStatus(
                           currentSelection: lastTwoHalf.last),

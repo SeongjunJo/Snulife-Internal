@@ -132,10 +132,9 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
                               : currentSemesterWeek + index,
                           date: semesterStatus[index].date,
                           isSelected: _selectedIndexes.contains(index),
-                          lateOrAbsence: !isRestDate
+                          status: !isRestDate
                               ? semesterStatus[index].attendance
                               : "휴회", // 지각/결석/휴회가 아니라면 (= 특수 상황 아니면) 빈 문자열이 넘어감
-                          isReadOnly: false,
                         ),
                       );
                     },
@@ -157,6 +156,9 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
                                 valueListenable: _isLate,
                                 builder: (context, bool? value, _) {
                                   return BottomModal(
+                                      title: "지각/결석 여부를 선택해주세요.",
+                                      firstTapText: "결석",
+                                      secondTapText: "지각",
                                       onFirstTap: () => _isLate.value = false,
                                       onSecondTap: () => _isLate.value = true,
                                       onPressed: _isLate.value != null

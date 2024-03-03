@@ -8,27 +8,27 @@ class MyAttendanceListItem extends StatelessWidget {
     required this.week,
     required this.date,
     required this.isSelected,
-    required this.lateOrAbsence,
-    this.isAuthorized, // 출결 현황에서 bool, 지각/결석에서 null
-    this.isReadOnly = true, // 출결 현황에서 true, 지각/결석에서 false
+    required this.status,
+    this.isAuthorized, // 출결 현황에서만 bool
+    this.isReadOnly = false, // 출결 현황에서만 true
   });
 
   final int week;
   final String date;
   final bool isSelected;
-  final String lateOrAbsence;
+  final String status;
   final bool? isAuthorized;
   final bool isReadOnly;
 
   @override
   Widget build(BuildContext context) {
     AttendanceChipType chipType;
-    switch (lateOrAbsence) {
+    switch (status) {
       case '지각':
         chipType = AttendanceChipType.late;
       case '결석':
         chipType = AttendanceChipType.absence;
-      default: // 출석 or 휴회; 휴회인 경우는 chip 없이 text만 표시됨 (지각/결석 화면 & 출결 현황 화면)
+      default: // 출석 or 휴회 or 팀별 회의; 출석 이외는 chip 없이 text만 표시됨
         chipType = AttendanceChipType.presence;
     }
 
@@ -36,9 +36,9 @@ class MyAttendanceListItem extends StatelessWidget {
       height: 60,
       padding: const EdgeInsets.symmetric(horizontal: 18),
       decoration: BoxDecoration(
-        color: isReadOnly || lateOrAbsence.isEmpty // 지각/결석 신청 완료하면 회색
+        color: (isReadOnly || status != '지각' && status != '결석') // 신청 완료하면 회색
             ? appColors.white
-            : appColors.grey3,
+            : appColors.grey2,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: isSelected ? appColors.slBlue : Colors.transparent,
@@ -55,33 +55,37 @@ class MyAttendanceListItem extends StatelessWidget {
               Text(
                 '정기회의 $week주차',
                 style: appFonts.c3.copyWith(
-                    color: isReadOnly && lateOrAbsence == '휴회'
-                        ? appColors.grey4 // 출결 현황의 휴회만 옅은 회색, 지각/결석의 휴회는 그대로
-                        : appColors.grey6),
+                    color: (status == '휴회' || status == '팀별 회의')
+                        ? appColors.grey4
+                        : // 휴회/팀별 회의면 옅은 회색
+                        (isReadOnly || status.isEmpty)
+                            ? appColors.grey6 // 신청 전 짙은 회색
+                            : appColors.grey5), // 신청 완료하면 회색
               ),
               Text(
                 '${date.substring(0, 2)}/${date.substring(2, 4)}',
                 style: appFonts.h3.copyWith(
-                    color: isReadOnly || lateOrAbsence.isEmpty
-                        ? lateOrAbsence == '휴회'
-                            ? appColors.grey4 // 휴회면 옅은 회색
-                            : appColors.grey8 // 지각/결석 신청 전 검은색
-                        : appColors.grey6), // 지각/결석 신청 완료하면 회색
+                    color: (status == '휴회' || status == '팀별 회의')
+                        ? appColors.grey4
+                        : // 휴회/팀별 회의면 옅은 회색
+                        (isReadOnly || status.isEmpty)
+                            ? appColors.grey8 // 신청 전 검은색
+                            : appColors.grey5), // 신청 완료하면 회색
               ),
             ],
           ),
           if (isReadOnly) // 출결 현황 화면
-            if (lateOrAbsence != '휴회') // 출석/지각/결석 chip
+            if (status != '휴회') // 출석/지각/결석 chip
               Row(
                 children: [
-                  lateOrAbsence == '지각' || lateOrAbsence == '결석'
+                  status == '지각' || status == '결석'
                       ? AppStatusTag(
                           title: Text(isAuthorized! ? '사유' : '무단'),
                           isTurnedOn: isAuthorized!,
                           onPressed: () {},
                         )
                       : const SizedBox(),
-                  lateOrAbsence == '지각' || lateOrAbsence == '결석'
+                  status == '지각' || status == '결석'
                       ? const SizedBox(width: 12)
                       : const SizedBox(),
                   AttendanceChip(
@@ -102,7 +106,7 @@ class MyAttendanceListItem extends StatelessWidget {
                   ),
                 ),
               )
-          else if (lateOrAbsence.isEmpty) // 지각/결석 화면 체크박스
+          else if (status.isEmpty) // 지각/결석 화면 체크박스
             Image.asset(
               'assets/images/icon_check.png',
               color: isSelected ? appColors.slBlue : appColors.grey3,
@@ -111,8 +115,11 @@ class MyAttendanceListItem extends StatelessWidget {
             )
           else // 지각/결석 화면 휴회 텍스트
             Text(
-              lateOrAbsence == '휴회' ? lateOrAbsence : '$lateOrAbsence 예정',
-              style: appFonts.t4.copyWith(color: appColors.grey6),
+              (status == '휴회' || status == '팀별 회의') ? status : '$status 예정',
+              style: appFonts.t4.copyWith(
+                  color: (status == '휴회' || status == '팀별 회의')
+                      ? appColors.grey4
+                      : appColors.grey5),
             ),
         ],
       ),

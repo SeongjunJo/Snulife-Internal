@@ -88,6 +88,40 @@ class AppStatusTag extends StatelessWidget {
   }
 }
 
+class AppTabTag extends StatelessWidget {
+  const AppTabTag({
+    super.key,
+    required this.title,
+    required this.isTurnedOn,
+    required this.onPressed,
+  });
+
+  final String title;
+  final bool isTurnedOn;
+  final Function()? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return ActionChip(
+      label: Text(title),
+      labelStyle: appFonts.t4
+          .copyWith(color: isTurnedOn ? appColors.slBlue : appColors.grey6),
+      onPressed: onPressed,
+      backgroundColor: isTurnedOn ? appColors.subBlue2 : appColors.grey0,
+      labelPadding: const EdgeInsets.symmetric(vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(
+          width: isTurnedOn ? 0 : 1,
+          color: isTurnedOn ? Colors.transparent : appColors.grey3,
+        ),
+        borderRadius: BorderRadius.circular(20),
+      ),
+    );
+  }
+}
+
 class AttendanceChip extends StatefulWidget {
   const AttendanceChip({
     super.key,

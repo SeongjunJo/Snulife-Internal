@@ -13,7 +13,7 @@ class AppSnackBar {
     Flushbar(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       margin:
-          EdgeInsets.symmetric(vertical: isSuccess ? 100 : 340, horizontal: 20),
+          EdgeInsets.symmetric(vertical: isSuccess ? 100 : 330, horizontal: 20),
       backgroundColor: isSuccess ? appColors.subBlue2 : const Color(0xFFFDD3D3),
       borderRadius: BorderRadius.circular(12),
       duration: const Duration(seconds: 2),

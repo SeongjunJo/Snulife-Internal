@@ -70,11 +70,17 @@ class ConfirmDialog extends StatelessWidget {
 class BottomModal extends StatefulWidget {
   const BottomModal({
     super.key,
+    required this.title,
+    required this.firstTapText,
+    required this.secondTapText,
     required this.onFirstTap,
     required this.onSecondTap,
     required this.onPressed,
   });
 
+  final String title;
+  final String firstTapText;
+  final String secondTapText;
   final Function() onFirstTap;
   final Function() onSecondTap;
   final Function()? onPressed;
@@ -84,7 +90,8 @@ class BottomModal extends StatefulWidget {
 }
 
 class _BottomModalState extends State<BottomModal> {
-  int? _modalIndex; // 모달의 결석/지각 체크 박스 인덱스: null이면 선택 안 함, 1이면 결석, 2면 지각
+  int? _modalIndex; // 모달의 체크 박스 인덱스: null이면 선택 안 함, 1이면 결석, 2면 지각
+  late final bool hasHintText = widget.firstTapText.contains("결석");
 
   @override
   void initState() {
@@ -101,12 +108,12 @@ class _BottomModalState extends State<BottomModal> {
         borderRadius: BorderRadius.circular(20),
       ),
       child: SizedBox(
-        height: 312,
+        height: hasHintText ? 312 : 290,
         child: Center(
           child: Column(
             children: [
               const SizedBox(height: 22),
-              Text("지각/결석 여부를 선택해주세요.", style: appFonts.tm),
+              Text(widget.title, style: appFonts.tm),
               const SizedBox(height: 24),
               GestureDetector(
                 onTap: () => setState(() {
@@ -118,7 +125,7 @@ class _BottomModalState extends State<BottomModal> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("결석",
+                      Text(widget.firstTapText,
                           style: appFonts.h3.copyWith(color: appColors.grey8)),
                       Image.asset(
                         "assets/images/icon_check.png",
@@ -143,7 +150,7 @@ class _BottomModalState extends State<BottomModal> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("지각",
+                      Text(widget.secondTapText,
                           style: appFonts.h3.copyWith(color: appColors.grey8)),
                       Image.asset(
                         "assets/images/icon_check.png",
@@ -158,11 +165,13 @@ class _BottomModalState extends State<BottomModal> {
                 ),
               ),
               const SizedBox(height: 12),
-              Text(
-                '신청 후에는 서기만 출결 변경이 가능해요.',
-                style: appFonts.c2.copyWith(color: appColors.grey5),
-              ),
-              const SizedBox(height: 16),
+              hasHintText
+                  ? Text(
+                      '신청 후에는 서기만 출결 변경이 가능해요.',
+                      style: appFonts.c2.copyWith(color: appColors.grey5),
+                    )
+                  : const SizedBox(height: 0),
+              SizedBox(height: hasHintText ? 16 : 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

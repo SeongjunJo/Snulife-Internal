@@ -185,21 +185,24 @@ class FirestoreWriter {
     }
   }
 
-  Future<List> confirmRestDate(String semester, String date) async {
+  Future<List> confirmRestDate(String semester, List<String> dates) async {
     final List<dynamic> userList = await firestoreReader.getUserList();
     final List<Future<void>> updateList = [];
 
-    updateList.add(_db.collection('information').doc('meetingTime').update({
-      'rest': FieldValue.arrayUnion([date])
-    }));
+    updateList.add(_db
+        .collection('information')
+        .doc('meetingTime')
+        .update({'rest': FieldValue.arrayUnion(dates)}));
 
     for (final user in userList) {
-      updateList.add(_db
-          .collection('attendances')
-          .doc(semester)
-          .collection(user)
-          .doc(date)
-          .update({'attendance': '휴회', 'isAuthorized': true}));
+      for (final date in dates) {
+        updateList.add(_db
+            .collection('attendances')
+            .doc(semester)
+            .collection(user)
+            .doc(date)
+            .update({'attendance': '휴회', 'isAuthorized': true}));
+      }
     }
 
     return Future.wait(updateList);
