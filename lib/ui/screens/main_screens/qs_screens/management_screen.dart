@@ -25,7 +25,7 @@ class ManagementPage extends StatelessWidget {
           return TabBarView(
             controller: AppTab.managementTabController,
             children: AppTab.managementTabs.map((Tab tab) {
-              return tab.text! == '회의 관리'
+              return tab.text! == AppTab.managementTabs.first.text
                   ? ManageMeetingPage(currentSemester: currentSemester)
                   : ChangeNotifierProvider(
                       create: (context) => DropdownSelectionStatus(
@@ -57,6 +57,5 @@ List<String> _getLastTwoHalf(String semester) {
     case 'W':
       lastTwoHalf = ['$currentYear년 상반기', '$currentYear년 하반기'];
   }
-  // TODO lastTwoHalf으로 바꾸기
-  return ['2023년 하반기', '2024년 상반기'];
+  return lastTwoHalf;
 }

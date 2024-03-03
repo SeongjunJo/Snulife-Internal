@@ -121,6 +121,8 @@ final appRouter = GoRouter(
                           isQSSummary: true, // 'QS 관리'에서 접근하면 무조건 true
                           currentSemester:
                               state.uri.queryParameters['currentHalf']!,
+                          hasQSConfirmed:
+                              state.uri.queryParameters['hasQSConfirmed']!,
                         ),
                       ),
                     );

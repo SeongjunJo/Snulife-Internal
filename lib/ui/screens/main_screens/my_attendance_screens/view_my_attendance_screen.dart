@@ -13,11 +13,13 @@ class ViewMyAttendancePage extends StatefulWidget {
     required this.userInfo,
     required this.isQSSummary,
     required this.currentSemester,
+    this.hasQSConfirmed = 'false', // QS 화면에서 넘어갈 때만 필요
   });
 
   final Map userInfo;
   final bool isQSSummary;
   final String currentSemester;
+  final String hasQSConfirmed;
 
   @override
   State<ViewMyAttendancePage> createState() => _ViewMyAttendancePageState();
@@ -26,6 +28,7 @@ class ViewMyAttendancePage extends StatefulWidget {
 class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
   @override
   Widget build(BuildContext context) {
+    final bool hasQSConfirmed = widget.hasQSConfirmed == 'true';
     final bool isSenior = widget.userInfo['isSenior'];
     final bool isAlum = widget.userInfo['isAlum'];
     final int promotionCount = widget.userInfo['promotionCount'];
@@ -74,7 +77,7 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
               final String attendanceRate = qsSummary?['attendanceRate'] ?? '0';
               final bool isWorth = double.parse(attendanceRate) >= 75;
 
-              if (isWorth) {
+              if (isWorth && !hasQSConfirmed) {
                 if (promotionCount == 1 && !isSenior) {
                   canPromote = true;
                   promotion = '시니어';

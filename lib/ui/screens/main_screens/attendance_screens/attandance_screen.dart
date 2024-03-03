@@ -48,7 +48,7 @@ class AttendancePage extends StatelessWidget {
           return TabBarView(
               controller: AppTab.attendanceTabController,
               children: AppTab.attendanceTabs.map((Tab tab) {
-                return tab.text! == '출석 체크'
+                return tab.text! == AppTab.attendanceTabs.first.text
                     ? !isTodayMeeting // 오늘 회의가 없으면 디폴트 화면
                         ? const NoMeetingTodayPage()
                         : ChangeNotifierProvider(

@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:snulife_internal/logics/providers/select_semester_states.dart';
 import 'package:snulife_internal/logics/utils/string_util.dart';
+import 'package:snulife_internal/ui/widgets/commons/modal_widgets.dart';
 
 import '../../../../logics/common_instances.dart';
 import '../../../../router.dart';
@@ -27,16 +29,25 @@ class _QSPageState extends State<QSPage> {
   Widget build(BuildContext context) {
     return Consumer<DropdownSelectionStatus>(
       builder: (context, value, child) {
+        final String lastSemester =
+            StringUtil.convertHalfToQuarters(widget.lastTwoHalf.last).last;
         List<String> semesters =
             StringUtil.convertHalfToQuarters(value.selectedSelection);
         List<Map<String, String>> userQSMapList = [];
 
         return FutureBuilder(
-            future: firestoreReader.getQSMapList(
-                widget.userList, semesters[0], semesters[1]),
+            future: Future.wait([
+              firestoreReader.getQSMapList(
+                  widget.userList, semesters[0], semesters[1]),
+              firebaseInstance.db
+                  .collection('attendances')
+                  .doc(lastSemester)
+                  .get(),
+            ]),
             builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
               if (snapshot.hasData) {
-                userQSMapList = snapshot.data;
+                userQSMapList = snapshot.data[0];
+                final hasQSConfirmed = snapshot.data[1]['hasQSConfirmed'];
                 final totalMeeting = userQSMapList
                     .map((element) => int.parse(element['totalMeeting']!))
                     .reduce((value, e) => value > e ? value : e)
@@ -115,7 +126,29 @@ class _QSPageState extends State<QSPage> {
                       } else if (index == widget.userList.length + 2) {
                         return AppExpandedButton(
                           buttonText: 'QS 확정하기',
-                          onPressed: () {},
+                          onPressed: !hasQSConfirmed
+                              ? () => showDialog(
+                                    context: context,
+                                    useRootNavigator: false,
+                                    builder: (context) => ConfirmDialog(
+                                      title: 'QS 정산을 확정하시겠어요?',
+                                      content: '반드시 동아리원들 승급을\n마무리한 후 확정해주세요.',
+                                      onPressed: () async {
+                                        Future.wait([
+                                          _updatePeoplePromotionCount(
+                                              widget.userList, userQSMapList),
+                                          firebaseInstance.db
+                                              .collection('attendances')
+                                              .doc(lastSemester)
+                                              .update({'hasQSConfirmed': true}),
+                                        ]).then((_) {
+                                          Navigator.pop(context);
+                                          setState(() {});
+                                        });
+                                      },
+                                    ),
+                                  )
+                              : null,
                         );
                       } else if (index == widget.userList.length + 3) {
                         return const SizedBox();
@@ -135,7 +168,8 @@ class _QSPageState extends State<QSPage> {
                             context.pushNamed(
                               AppRoutePath.personalAttendance,
                               queryParameters: {
-                                'currentHalf': value.selectedSelection
+                                'currentHalf': value.selectedSelection,
+                                'hasQSConfirmed': hasQSConfirmed.toString(),
                               },
                               extra: userInfo,
                             );
@@ -203,6 +237,28 @@ class _QSPageState extends State<QSPage> {
             });
       },
     );
+  }
+}
+
+Future _updatePeoplePromotionCount(
+  List<dynamic> userList,
+  List<Map<String, String>> userQSMapList,
+) async {
+  final List<String> promoteUserList = [];
+
+  for (var i = 0; i < userList.length; i++) {
+    double.parse(userQSMapList[i]['attendanceRate']!) >= 75
+        ? promoteUserList.add(userList[i])
+        : null;
+  }
+
+  for (final user in promoteUserList) {
+    final userQuery = await firebaseInstance.db
+        .collection('users')
+        .where('name', isEqualTo: user)
+        .get();
+    userQuery.docs.first.reference
+        .update({'promotionCount': FieldValue.increment(1)});
   }
 }
 

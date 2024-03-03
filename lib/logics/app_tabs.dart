@@ -16,7 +16,7 @@ class AppTab {
   ];
 
   static const List<Tab> managementTabs = <Tab>[
-    Tab(text: '회의 관리'),
-    Tab(text: 'QS 관리'),
+    Tab(text: '동아리 관리'),
+    Tab(text: 'QS'),
   ];
 }

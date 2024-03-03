@@ -24,7 +24,7 @@ class MyAttendancePage extends StatelessWidget {
         controller: AppTab.myAttendanceTabController,
         children: AppTab.myAttendanceTabs.map((Tab tab) {
           // 별도 Widget으로 분리하면 memoizer로 캐싱할 수 없음
-          return tab.text! == '지각/결석'
+          return tab.text! == AppTab.myAttendanceTabs.first.text
               ? LateAbsencePage(
                   currentSemester: currentSemester,
                   upcomingSemester: upcomingSemester,

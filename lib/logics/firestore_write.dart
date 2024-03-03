@@ -241,6 +241,12 @@ class FirestoreWriter {
       'time': time,
     });
 
+    batch.set(nextSemesterRef, {
+      'hasQSConfirmed':
+          int.tryParse(nextSemester.split('-').last) == null ? false : true
+      // 반기의 마지막 학기면 false, 아니면 true
+    });
+
     for (final meetingTime in meetingTimeList) {
       batch.set(nextSemesterRef.collection('dates').doc(meetingTime), {
         'present': [],
