@@ -64,6 +64,9 @@ class _InternalAppScaffoldState extends State<InternalAppScaffold>
         case AppRoutePath.management:
           title = '운영';
           isTabView = true;
+        case AppRoutePath.personalAttendance:
+          title = '운영';
+          isTabView = false;
         default:
           throw Exception('scaffold에서 신규 라우트를 설정해주세요: ${widget.screenPath}');
       }

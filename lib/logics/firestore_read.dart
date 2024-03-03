@@ -17,6 +17,12 @@ class FirestoreReader {
     });
   }
 
+  Future getUserInfo(String name) async {
+    final userListDocument =
+        await _db.collection('users').where('name', isEqualTo: name).get();
+    return userListDocument.docs.first.data();
+  }
+
   Stream<DocumentSnapshot<Map>> getPeopleAttendanceAndClerkStream(
       String semester, String date) {
     return firebaseInstance.db
@@ -30,15 +36,16 @@ class FirestoreReader {
   Future checkHasMeetingStarted() async {
     final now = DateUtil.getLocalNow();
     late final currentTime = StringUtil.convertDateTimeToString(now, false);
+    late final DocumentSnapshot meetingTimeInfo;
 
-    return memoizer.runOnce(() async {
-      final meetingTimeInfo = await firebaseInstance.db
+    await memoizer.runOnce(() async {
+      meetingTimeInfo = await firebaseInstance.db
           .collection('information')
           .doc('meetingTime')
           .get();
-      final meetingTime = meetingTimeInfo.data()!['time'];
-      return int.parse(currentTime) >= int.parse(meetingTime);
     });
+
+    return int.parse(currentTime) >= int.parse(meetingTimeInfo['time']);
   }
 
   Future getSemesterDateTimeList() async {
@@ -141,6 +148,33 @@ class FirestoreReader {
     attendanceHistory.sort((a, b) => a.date.compareTo(b.date));
 
     return attendanceHistory;
+  }
+
+  Future getQSMapList(
+      List userList, String preSemester, String postSemester) async {
+    final List<Map<String, String>> userQSMapList = [];
+
+    for (final user in userList) {
+      late final DocumentSnapshot<Map> preSummary;
+      late final DocumentSnapshot<Map> postSummary;
+      late final Map<String, dynamic> preSummaryMap;
+      late final Map<String, dynamic> postSummaryMap;
+
+      final futureList = await Future.wait([
+        // TODO user로 바꾸기
+        firestoreReader.getMyAttendanceSummary(preSemester, '홍신입'),
+        firestoreReader.getMyAttendanceSummary(postSemester, '홍신입'),
+      ]);
+      preSummary = futureList[0];
+      postSummary = futureList[1];
+      preSummaryMap = preSummary.data()! as Map<String, dynamic>;
+      postSummary.exists
+          ? postSummaryMap = postSummary.data()! as Map<String, dynamic>
+          : {};
+      userQSMapList.add(MapUtil.calculateAttendanceRateAndReward(
+          preSummaryMap, postSummaryMap));
+    }
+    return userQSMapList;
   }
 }
 

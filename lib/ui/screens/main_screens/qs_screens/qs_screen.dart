@@ -1,10 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:snulife_internal/logics/providers/select_semester_states.dart';
+import 'package:snulife_internal/logics/utils/string_util.dart';
 
 import '../../../../logics/common_instances.dart';
-import '../../../../logics/utils/map_util.dart';
+import '../../../../router.dart';
 import '../../../widgets/commons/button_widgets.dart';
 
 class QSPage extends StatefulWidget {
@@ -24,13 +25,15 @@ class QSPage extends StatefulWidget {
 class _QSPageState extends State<QSPage> {
   @override
   Widget build(BuildContext context) {
-    return Consumer<SelectSemesterStatus>(
+    return Consumer<DropdownSelectionStatus>(
       builder: (context, value, child) {
-        List<String> semesters = _convertHalfToQuarters(value.selectedSemester);
+        List<String> semesters =
+            StringUtil.convertHalfToQuarters(value.selectedSelection);
         List<Map<String, String>> userQSMapList = [];
 
         return FutureBuilder(
-            future: _getQSMapList(widget.userList, semesters[0], semesters[1]),
+            future: firestoreReader.getQSMapList(
+                widget.userList, semesters[0], semesters[1]),
             builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
               if (snapshot.hasData) {
                 userQSMapList = snapshot.data;
@@ -55,14 +58,14 @@ class _QSPageState extends State<QSPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const SizedBox(height: 24),
-                            Text('${value.selectedSemester} QS',
+                            Text('${value.selectedSelection} QS',
                                 style: appFonts.h1),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 AppDropDownMenu(
                                   dropdowns: widget.lastTwoHalf,
-                                  onSelected: value.changeSemester,
+                                  onSelected: value.changeSelection,
                                 ),
                               ],
                             ),
@@ -118,53 +121,67 @@ class _QSPageState extends State<QSPage> {
                         return const SizedBox();
                       } else if (index == widget.userList.length + 4) {
                         return AppExpandedButton(
-                          buttonText: '${value.selectedSemester} QS 파일 다운받기',
+                          buttonText: '${value.selectedSelection} QS 파일 다운받기',
                           onPressed: () {},
                         );
                       } else if (index == widget.userList.length + 5) {
                         return const SizedBox(height: 12);
                       } else {
-                        return Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 18, vertical: 20),
-                          decoration: BoxDecoration(
-                            color: appColors.white,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                widget.userList[index - 2],
-                                style: appFonts.t3.copyWith(
-                                  color: appColors.grey7,
-                                  fontWeight: FontWeight.w700,
+                        return GestureDetector(
+                          onTap: () async {
+                            final userInfo = await firestoreReader
+                                .getUserInfo(widget.userList[index - 2]);
+                            if (!mounted) return;
+                            context.pushNamed(
+                              AppRoutePath.personalAttendance,
+                              queryParameters: {
+                                'currentHalf': value.selectedSelection
+                              },
+                              extra: userInfo,
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 18, vertical: 20),
+                            decoration: BoxDecoration(
+                              color: appColors.white,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  widget.userList[index - 2],
+                                  style: appFonts.t3.copyWith(
+                                    color: appColors.grey7,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
-                              ),
-                              Row(
-                                children: [
-                                  _QSPersonalSummaryBox(
-                                      title: '출석률',
-                                      content:
-                                          '${userQSMapList[index - 2]['attendanceRate']}%'),
-                                  const SizedBox(width: 10),
-                                  Container(
-                                      width: 1,
-                                      height: 16,
-                                      color: appColors.grey3),
-                                  const SizedBox(width: 10),
-                                  _QSPersonalSummaryBox(
-                                      title: 'QS비',
-                                      content:
-                                          '${userQSMapList[index - 2]['reward']}만원'),
-                                  const SizedBox(width: 8),
-                                  Image.asset(
-                                      'assets/images/icon_arrow_right.png',
-                                      width: 20,
-                                      height: 20),
-                                ],
-                              ),
-                            ],
+                                Row(
+                                  children: [
+                                    _QSPersonalSummaryBox(
+                                        title: '출석률',
+                                        content:
+                                            '${userQSMapList[index - 2]['attendanceRate']}%'),
+                                    const SizedBox(width: 10),
+                                    Container(
+                                        width: 1,
+                                        height: 16,
+                                        color: appColors.grey3),
+                                    const SizedBox(width: 10),
+                                    _QSPersonalSummaryBox(
+                                        title: 'QS비',
+                                        content:
+                                            '${userQSMapList[index - 2]['reward']}만원'),
+                                    const SizedBox(width: 8),
+                                    Image.asset(
+                                        'assets/images/icon_arrow_right.png',
+                                        width: 20,
+                                        height: 20),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         );
                       }
@@ -187,45 +204,6 @@ class _QSPageState extends State<QSPage> {
       },
     );
   }
-}
-
-List<String> _convertHalfToQuarters(String half) {
-  final currentYear = int.parse(half.substring(0, 4));
-  final currentHalf = half.split(' ')[1];
-  late final List<String> quarters;
-
-  currentHalf == '상반기'
-      ? quarters = ['$currentYear-1', '$currentYear-S']
-      : quarters = ['$currentYear-2', '$currentYear-W'];
-
-  return quarters;
-}
-
-Future _getQSMapList(
-    List userList, String preSemester, String postSemester) async {
-  final List<Map<String, String>> userQSMapList = [];
-
-  for (final user in userList) {
-    late final DocumentSnapshot<Map> preSummary;
-    late final DocumentSnapshot<Map> postSummary;
-    late final Map<String, dynamic> preSummaryMap;
-    late final Map<String, dynamic> postSummaryMap;
-
-    final futureList = await Future.wait([
-      // TODO user로 바꾸기
-      firestoreReader.getMyAttendanceSummary(preSemester, '홍신입'),
-      firestoreReader.getMyAttendanceSummary(postSemester, '홍신입'),
-    ]);
-    preSummary = futureList[0];
-    postSummary = futureList[1];
-    preSummaryMap = preSummary.data()! as Map<String, dynamic>;
-    postSummary.exists
-        ? postSummaryMap = postSummary.data()! as Map<String, dynamic>
-        : {};
-    userQSMapList.add(MapUtil.calculateAttendanceRateAndReward(
-        preSummaryMap, postSummaryMap));
-  }
-  return userQSMapList;
 }
 
 class _QSTotalSummaryBox extends StatelessWidget {

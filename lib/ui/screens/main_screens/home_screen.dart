@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -16,7 +15,7 @@ class HomePage extends StatelessWidget {
   });
 
   final bool isManager;
-  final DocumentSnapshot userInfo;
+  final Map userInfo;
   final String clerk;
 
   @override

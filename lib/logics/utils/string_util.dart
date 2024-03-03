@@ -47,4 +47,16 @@ class StringUtil {
     }
     return adjustedList;
   }
+
+  static List<String> convertHalfToQuarters(String half) {
+    final currentYear = int.parse(half.substring(0, 4));
+    final currentHalf = half.split(' ')[1];
+    late final List<String> quarters;
+
+    currentHalf == '상반기'
+        ? quarters = ['$currentYear-1', '$currentYear-S']
+        : quarters = ['$currentYear-2', '$currentYear-W'];
+
+    return quarters;
+  }
 }

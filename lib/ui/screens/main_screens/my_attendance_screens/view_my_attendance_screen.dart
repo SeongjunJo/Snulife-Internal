@@ -1,11 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:snulife_internal/logics/providers/select_semester_states.dart';
 import 'package:snulife_internal/ui/widgets/screen_specified/my_attendance_widget.dart';
 
 import '../../../../logics/common_instances.dart';
-import '../../../../logics/utils/map_util.dart';
+import '../../../../logics/utils/string_util.dart';
 import '../../../widgets/commons/button_widgets.dart';
 
 class ViewMyAttendancePage extends StatefulWidget {
@@ -16,7 +15,7 @@ class ViewMyAttendancePage extends StatefulWidget {
     required this.currentSemester,
   });
 
-  final DocumentSnapshot userInfo;
+  final Map userInfo;
   final bool isQSSummary;
   final String currentSemester;
 
@@ -27,27 +26,63 @@ class ViewMyAttendancePage extends StatefulWidget {
 class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
   @override
   Widget build(BuildContext context) {
-    List<String> semesters = [
-      ..._getLastThreeSemesters(widget.currentSemester),
-      widget.currentSemester
-    ];
+    final bool isSenior = widget.userInfo['isSenior'];
+    final bool isAlum = widget.userInfo['isAlum'];
+    final int promotionCount = widget.userInfo['promotionCount'];
+    final String info = widget.userInfo['isAlum']
+        ? '알럼나이'
+        : widget.userInfo['isSenior']
+            ? '시니어'
+            : '주니어';
+    String promotion = info;
+    bool canPromote = false;
+    List<String> semesters = widget.isQSSummary
+        ? []
+        : [
+            ..._getLastThreeSemesters(widget.currentSemester),
+            widget.currentSemester
+          ];
 
-    return Consumer<SelectSemesterStatus>(
+    return Consumer<DropdownSelectionStatus>(
       builder: (BuildContext context, value, _) {
+        semesters = widget.isQSSummary
+            ? StringUtil.convertHalfToQuarters(widget.currentSemester)
+            : semesters;
+
+        Future getAttendanceSummary() async => widget.isQSSummary
+            ? firestoreReader.getQSMapList(
+                [widget.userInfo['name']],
+                semesters.first,
+                semesters.last,
+              )
+            : null;
+
         return FutureBuilder(
           future: Future.wait([
             firestoreReader.getMyAttendanceSummary(
-                value.selectedSemester, firebaseInstance.userName!),
+                value.selectedSelection, widget.userInfo['name']),
             firestoreReader.getMyAttendanceHistory(
-                value.selectedSemester, firebaseInstance.userName!),
+                value.selectedSelection, widget.userInfo['name']),
+            getAttendanceSummary(),
           ]),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             if (snapshot.hasData) {
               final attendanceSummary =
                   snapshot.data[0].data()! as Map<String, dynamic>;
               final attendanceHistory = snapshot.data[1];
-              final qsSummary = MapUtil.calculateAttendanceRateAndReward(
-                  attendanceSummary, {}); // 분기에 대해서만 계산
+              final Map? qsSummary = snapshot.data[2]?.first;
+              final String attendanceRate = qsSummary?['attendanceRate'] ?? '0';
+              final bool isWorth = double.parse(attendanceRate) >= 75;
+
+              if (isWorth) {
+                if (promotionCount == 1 && !isSenior) {
+                  canPromote = true;
+                  promotion = '시니어';
+                } else if (promotionCount == 2 && !isAlum) {
+                  canPromote = true;
+                  promotion = '알럼나이';
+                }
+              }
 
               return Container(
                 color: appColors.grey0,
@@ -63,12 +98,7 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
                         const SizedBox(width: 8),
                         InfoTag(info: widget.userInfo['team']),
                         const SizedBox(width: 8),
-                        InfoTag(
-                            info: widget.userInfo['isAlum']
-                                ? '알럼나이'
-                                : widget.userInfo['isSenior']
-                                    ? '시니어'
-                                    : '주니어'),
+                        InfoTag(info: info),
                       ],
                     ),
                     const SizedBox(height: 32),
@@ -76,12 +106,13 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
                         ? Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('2023년 상반기 QS 요약', style: appFonts.tm),
+                              Text('${widget.currentSemester} QS 요약',
+                                  style: appFonts.tm),
                               const SizedBox(height: 12),
                               _AttendanceSummaryContainer(
                                 isQSSummary: true, // 상단 박스
                                 firstSummary:
-                                    '${attendanceSummary['sum'].toString()}번',
+                                    '${qsSummary!['totalMeeting'].toString()}번',
                                 secondSummary:
                                     '${qsSummary['attendanceRate'].toString()}%',
                                 thirdSummary:
@@ -96,7 +127,9 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
                                   color: appColors.white,
                                   borderRadius: BorderRadius.circular(10),
                                   border: Border.all(
-                                    color: appColors.slBlue,
+                                    color: canPromote
+                                        ? appColors.slBlue
+                                        : appColors.white,
                                     width: 1,
                                   ),
                                 ),
@@ -115,13 +148,14 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
                                           MainAxisAlignment.center,
                                       children: [
                                         AppStatusTag(
-                                          title: const Text('승격'),
-                                          isTurnedOn: true,
+                                          title:
+                                              Text(canPromote ? '승격' : '미변동'),
+                                          isTurnedOn: canPromote,
                                           onPressed: () {},
                                         ),
                                         const SizedBox(width: 8),
                                         Text(
-                                          '알럼나이',
+                                          promotion,
                                           style: appFonts.b1.copyWith(
                                             color: appColors.grey7,
                                             fontWeight: FontWeight.w700,
@@ -157,7 +191,7 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
                       children: [
                         AppDropDownMenu(
                           dropdowns: semesters,
-                          onSelected: value.changeSemester,
+                          onSelected: value.changeSelection,
                         ),
                       ],
                     ),

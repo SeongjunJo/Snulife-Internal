@@ -28,8 +28,8 @@ class ManagementPage extends StatelessWidget {
               return tab.text! == '회의 관리'
                   ? ManageMeetingPage(currentSemester: currentSemester)
                   : ChangeNotifierProvider(
-                      create: (context) => SelectSemesterStatus(
-                          currentSemester: lastTwoHalf.last),
+                      create: (context) => DropdownSelectionStatus(
+                          currentSelection: lastTwoHalf.last),
                       child: QSPage(
                         userList: userList,
                         lastTwoHalf: lastTwoHalf,

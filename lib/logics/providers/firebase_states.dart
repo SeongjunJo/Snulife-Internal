@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -23,8 +22,8 @@ class FirebaseStates extends ChangeNotifier {
   late String? _upcomingSemester;
   String? get upcomingSemester => _upcomingSemester;
 
-  late DocumentSnapshot? _userInfo; // 유저가 (부)대표인지 확인하는 과정에서 필요
-  DocumentSnapshot? get userInfo => _userInfo; // 기왕 받는 김에 홈화면에 넘겨줌
+  late Map? _userInfo; // 유저가 (부)대표인지 확인하는 과정에서 필요
+  Map? get userInfo => _userInfo; // 기왕 받는 김에 홈화면에 넘겨줌
   String _clerk = '';
   String get clerk => _clerk;
 
@@ -32,10 +31,11 @@ class FirebaseStates extends ChangeNotifier {
     FirebaseAuth.instance.userChanges().listen((User? user) async {
       if (user != null) {
         _loggedIn = true;
-        _userInfo = await firebaseInstance.db // 유저가 (부)대표인지 확인
+        await firebaseInstance.db // 유저가 (부)대표인지 확인
             .collection('users')
             .doc(firebaseInstance.userId)
-            .get();
+            .get()
+            .then((value) => _userInfo = value.data());
         _userInfo!['position'].contains('대표')
             ? _isManager = true
             : _isManager = false;
