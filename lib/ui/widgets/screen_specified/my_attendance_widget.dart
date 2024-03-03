@@ -74,29 +74,14 @@ class MyAttendanceListItem extends StatelessWidget {
             if (lateOrAbsence != '휴회') // 출석/지각/결석 chip
               Row(
                 children: [
-                  lateOrAbsence.isNotEmpty
-                      ? ActionChip(
-                          label: Text(isAuthorized! ? '사유' : '무단'),
-                          labelStyle: appFonts.c3.copyWith(
-                              color: isAuthorized!
-                                  ? appColors.slBlue
-                                  : appColors.grey7),
-                          onPressed: () {}, // null로 하면 색상이 너무 흐려짐
-                          backgroundColor: isAuthorized!
-                              ? appColors.subBlue2
-                              : appColors.grey4,
-                          labelPadding:
-                              const EdgeInsets.symmetric(vertical: -6.5),
-                          padding: const EdgeInsets.symmetric(horizontal: 6.3),
-                          materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(width: 0, color: appColors.white),
-                            borderRadius: BorderRadius.circular(9),
-                          ),
+                  lateOrAbsence == '지각' || lateOrAbsence == '결석'
+                      ? AppStatusTag(
+                          title: Text(isAuthorized! ? '사유' : '무단'),
+                          isTurnedOn: isAuthorized!,
+                          onPressed: () {},
                         )
                       : const SizedBox(),
-                  lateOrAbsence.isNotEmpty
+                  lateOrAbsence == '지각' || lateOrAbsence == '결석'
                       ? const SizedBox(width: 12)
                       : const SizedBox(),
                   AttendanceChip(

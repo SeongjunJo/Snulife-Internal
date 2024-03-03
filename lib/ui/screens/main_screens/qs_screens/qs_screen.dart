@@ -48,7 +48,7 @@ class _QSPageState extends State<QSPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   color: appColors.grey0,
                   child: ListView.separated(
-                    itemCount: widget.userList.length + 4,
+                    itemCount: widget.userList.length + 6,
                     itemBuilder: (context, index) {
                       if (index == 0) {
                         return Column(
@@ -111,10 +111,17 @@ class _QSPageState extends State<QSPage> {
                         );
                       } else if (index == widget.userList.length + 2) {
                         return AppExpandedButton(
-                          buttonText: '엑셀 파일 다운받기',
+                          buttonText: 'QS 확정하기',
                           onPressed: () {},
                         );
                       } else if (index == widget.userList.length + 3) {
+                        return const SizedBox();
+                      } else if (index == widget.userList.length + 4) {
+                        return AppExpandedButton(
+                          buttonText: '${value.selectedSemester} QS 파일 다운받기',
+                          onPressed: () {},
+                        );
+                      } else if (index == widget.userList.length + 5) {
                         return const SizedBox(height: 12);
                       } else {
                         return Container(
@@ -165,6 +172,8 @@ class _QSPageState extends State<QSPage> {
                     separatorBuilder: (context, index) {
                       if (index == widget.userList.length + 1) {
                         return const SizedBox(height: 73);
+                      } else if (index == widget.userList.length + 2) {
+                        return const SizedBox();
                       } else {
                         return const SizedBox(height: 12);
                       }
@@ -230,19 +239,22 @@ class _QSTotalSummaryBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text(title, style: appFonts.b5.copyWith(color: appColors.grey7)),
-        const SizedBox(height: 12),
-        Text(
-          content,
-          style: appFonts.b1.copyWith(
-            color: appColors.grey7,
-            fontWeight: FontWeight.w700,
+    return SizedBox(
+      width: 100,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(title, style: appFonts.b5.copyWith(color: appColors.grey7)),
+          const SizedBox(height: 12),
+          Text(
+            content,
+            style: appFonts.b1.copyWith(
+              color: appColors.grey7,
+              fontWeight: FontWeight.w700,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

@@ -63,10 +63,9 @@ class _CheckAttendanceListItemState extends State<CheckAttendanceListItem> {
       ),
       child: Row(
         children: [
-          ActionChip(
-            label: const Text('사유'),
-            labelStyle: appFonts.c3.copyWith(
-                color: isTagSelected ? appColors.slBlue : appColors.grey5),
+          AppStatusTag(
+            title: const Text('사유'),
+            isTurnedOn: isTagSelected,
             onPressed: (widget.canModify && (index == 2 || index == 3))
                 ? () {
                     setState(() {
@@ -79,15 +78,6 @@ class _CheckAttendanceListItemState extends State<CheckAttendanceListItem> {
                     });
                   }
                 : () {},
-            backgroundColor:
-                isTagSelected ? appColors.subBlue2 : appColors.grey1,
-            labelPadding: const EdgeInsets.symmetric(vertical: -6.5),
-            padding: const EdgeInsets.symmetric(horizontal: 6.3),
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            shape: RoundedRectangleBorder(
-              side: BorderSide(width: 0, color: appColors.white),
-              borderRadius: BorderRadius.circular(9),
-            ),
           ),
           const SizedBox(width: 14.5),
           Text(

@@ -57,6 +57,37 @@ class AppExpandedButton extends StatelessWidget {
   }
 }
 
+class AppStatusTag extends StatelessWidget {
+  const AppStatusTag({
+    super.key,
+    required this.title,
+    required this.isTurnedOn,
+    required this.onPressed,
+  });
+
+  final Widget title;
+  final bool isTurnedOn;
+  final Function() onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return ActionChip(
+      label: title,
+      labelStyle: appFonts.c3
+          .copyWith(color: isTurnedOn ? appColors.slBlue : appColors.grey5),
+      onPressed: onPressed, // null로 하면 색상이 너무 흐려짐
+      backgroundColor: isTurnedOn ? appColors.subBlue2 : appColors.grey1,
+      labelPadding: const EdgeInsets.symmetric(vertical: -6.5),
+      padding: const EdgeInsets.symmetric(horizontal: 6.3),
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(width: 0, color: appColors.white),
+        borderRadius: BorderRadius.circular(9),
+      ),
+    );
+  }
+}
+
 class AttendanceChip extends StatefulWidget {
   const AttendanceChip({
     super.key,
@@ -180,7 +211,7 @@ class AppDropDownMenu extends StatelessWidget {
           borderSide: BorderSide.none,
         ),
         contentPadding: const EdgeInsets.only(left: 15),
-        constraints: const BoxConstraints(maxHeight: 50),
+        constraints: const BoxConstraints(maxHeight: 40),
       ),
       initialSelection: dropdowns.last,
       trailingIcon: Image.asset(
@@ -205,11 +236,17 @@ class AppDropDownMenu extends StatelessWidget {
               value: semester,
               label: semester,
               style: ButtonStyle(
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                visualDensity: VisualDensity.comfortable,
                 textStyle: MaterialStateProperty.all(appFonts.t4),
                 foregroundColor: MaterialStateProperty.all(appColors.grey6),
                 backgroundColor: MaterialStateProperty.all(appColors.white),
                 padding:
                     MaterialStateProperty.all(const EdgeInsets.only(left: 15)),
+                minimumSize:
+                    MaterialStateProperty.all(const Size(double.infinity, 40)),
+                maximumSize:
+                    MaterialStateProperty.all(const Size(double.infinity, 40)),
               ),
             ),
           )

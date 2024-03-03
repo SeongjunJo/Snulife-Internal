@@ -87,6 +87,7 @@ final appRouter = GoRouter(
                 builder: (context, value, _) => MyAttendancePage(
                   currentSemester: value.currentSemester,
                   upcomingSemester: value.upcomingSemester,
+                  userInfo: value.userInfo!,
                 ),
               ),
             ),

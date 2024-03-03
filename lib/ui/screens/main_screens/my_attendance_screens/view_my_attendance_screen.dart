@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:snulife_internal/logics/providers/select_semester_states.dart';
@@ -10,13 +11,13 @@ import '../../../widgets/commons/button_widgets.dart';
 class ViewMyAttendancePage extends StatefulWidget {
   const ViewMyAttendancePage({
     super.key,
-    required this.isManager,
-    this.name, // isManager가 true일 때만 필요
+    required this.userInfo,
+    required this.isQSSummary,
     required this.currentSemester,
   });
 
-  final bool isManager;
-  final String? name;
+  final DocumentSnapshot userInfo;
+  final bool isQSSummary;
   final String currentSemester;
 
   @override
@@ -54,20 +55,91 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
                 child: ListView(
                   children: [
                     const SizedBox(height: 24),
-                    widget.isManager
-                        ? Text(widget.name!, style: appFonts.h1)
-                        : const SizedBox(),
-                    SizedBox(height: widget.isManager ? 20 : 0),
-                    _AttendanceSummaryContainer(
-                      isQSSummary: true, // 상단 박스
-                      firstSummary: attendanceSummary['sum'].toString(),
-                      secondSummary:
-                          '${qsSummary['attendanceRate'].toString()}%',
-                      thirdSummary: qsSummary['reward'].toString(),
+                    Text(widget.userInfo['name'], style: appFonts.h1),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        InfoTag(info: widget.userInfo['position']),
+                        const SizedBox(width: 8),
+                        InfoTag(info: widget.userInfo['team']),
+                        const SizedBox(width: 8),
+                        InfoTag(
+                            info: widget.userInfo['isAlum']
+                                ? '알럼나이'
+                                : widget.userInfo['isSenior']
+                                    ? '시니어'
+                                    : '주니어'),
+                      ],
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 32),
+                    widget.isQSSummary
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('2023년 상반기 QS 요약', style: appFonts.tm),
+                              const SizedBox(height: 12),
+                              _AttendanceSummaryContainer(
+                                isQSSummary: true, // 상단 박스
+                                firstSummary:
+                                    '${attendanceSummary['sum'].toString()}번',
+                                secondSummary:
+                                    '${qsSummary['attendanceRate'].toString()}%',
+                                thirdSummary:
+                                    '${qsSummary['reward'].toString()} 만원',
+                              ),
+                              const SizedBox(height: 12),
+                              Container(
+                                height: 98,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 19),
+                                decoration: BoxDecoration(
+                                  color: appColors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: appColors.slBlue,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      '회원 단계',
+                                      style: appFonts.b5.copyWith(
+                                        color: appColors.grey7,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        AppStatusTag(
+                                          title: const Text('승격'),
+                                          isTurnedOn: true,
+                                          onPressed: () {},
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          '알럼나이',
+                                          style: appFonts.b1.copyWith(
+                                            color: appColors.grey7,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 48),
+                            ],
+                          )
+                        : const SizedBox(),
+                    Text('분기별 출석 현황', style: appFonts.tm),
+                    const SizedBox(height: 14),
                     _AttendanceSummaryContainer(
-                      isQSSummary: false, // 하단 박스
+                      isQSSummary: false,
                       firstSummary: attendanceSummary['present'].toString(),
                       secondSummary: (attendanceSummary['late'] +
                               attendanceSummary['badLate'])
@@ -78,7 +150,7 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
                           .toString(),
                       badAbsent: attendanceSummary['badAbsent'].toString(),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 14),
                     // right end drop down
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -89,7 +161,7 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 14),
                     ListView.separated(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
@@ -146,24 +218,23 @@ class _AttendanceSummaryContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 60,
       decoration: BoxDecoration(
         color: appColors.white,
         borderRadius: BorderRadius.circular(10),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 19),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           SizedBox(
-            width: 88,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            width: 70,
+            child: Column(
               children: [
                 Text(
-                  isQSSummary ? '총 회의 ' : '출석 ',
-                  style: appFonts.b1.copyWith(color: appColors.grey7),
+                  isQSSummary ? '총 회의' : '출석',
+                  style: appFonts.b5.copyWith(color: appColors.grey7),
                 ),
+                const SizedBox(height: 12),
                 Text(
                   firstSummary,
                   style: appFonts.b1.copyWith(
@@ -174,85 +245,43 @@ class _AttendanceSummaryContainer extends StatelessWidget {
               ],
             ),
           ),
-          Container(width: 1, height: 16, color: appColors.grey5),
+          Container(width: 1, height: 39, color: appColors.grey3),
           SizedBox(
-            width: 88,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            width: 70,
+            child: Column(
               children: [
                 Text(
-                  isQSSummary ? '' : '지각 ',
-                  style: appFonts.b1.copyWith(color: appColors.grey7),
+                  isQSSummary ? '출석률' : '지각(무단)',
+                  style: appFonts.b5.copyWith(color: appColors.grey7),
                 ),
+                const SizedBox(height: 12),
                 Text(
-                  secondSummary,
+                  '$secondSummary ${badLate != null ? '($badLate)' : ''}',
                   style: appFonts.b1.copyWith(
                     color: appColors.grey7,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                isQSSummary
-                    ? const SizedBox()
-                    : Row(
-                        children: [
-                          Text(
-                            ' (',
-                            style: appFonts.b1.copyWith(color: appColors.grey7),
-                          ),
-                          Text(
-                            badLate!,
-                            style: appFonts.b1.copyWith(
-                              color: appColors.failure,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          Text(
-                            ')',
-                            style: appFonts.b1.copyWith(color: appColors.grey7),
-                          ),
-                        ],
-                      ),
               ],
             ),
           ),
-          Container(width: 1, height: 16, color: appColors.grey5),
+          Container(width: 1, height: 39, color: appColors.grey3),
           SizedBox(
-            width: 88,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            width: 70,
+            child: Column(
               children: [
                 Text(
-                  isQSSummary ? 'QS비 ' : '결석 ',
-                  style: appFonts.b1.copyWith(color: appColors.grey7),
+                  isQSSummary ? 'QS비' : '결석(무단)',
+                  style: appFonts.b5.copyWith(color: appColors.grey7),
                 ),
+                const SizedBox(height: 12),
                 Text(
-                  thirdSummary,
+                  '$thirdSummary ${badAbsent != null ? '($badAbsent)' : ''}',
                   style: appFonts.b1.copyWith(
                     color: appColors.grey7,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                isQSSummary
-                    ? const SizedBox()
-                    : Row(
-                        children: [
-                          Text(
-                            ' (',
-                            style: appFonts.b1.copyWith(color: appColors.grey7),
-                          ),
-                          Text(
-                            badAbsent!,
-                            style: appFonts.b1.copyWith(
-                              color: appColors.failure,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          Text(
-                            ')',
-                            style: appFonts.b1.copyWith(color: appColors.grey7),
-                          ),
-                        ],
-                      ),
               ],
             ),
           ),

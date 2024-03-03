@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:snulife_internal/ui/screens/main_screens/my_attendance_screens/late_absence_screen.dart';
@@ -11,10 +12,12 @@ class MyAttendancePage extends StatelessWidget {
     super.key,
     required this.currentSemester,
     required this.upcomingSemester,
+    required this.userInfo,
   });
 
   final String currentSemester;
   final String? upcomingSemester;
+  final DocumentSnapshot userInfo;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +34,8 @@ class MyAttendancePage extends StatelessWidget {
                   create: (context) =>
                       SelectSemesterStatus(currentSemester: currentSemester),
                   child: ViewMyAttendancePage(
-                    isManager: false, // '내 출결 관리'에서 접근하면 무조건 false
+                    userInfo: userInfo,
+                    isQSSummary: false, // '내 출결 관리'에서 접근하면 무조건 false
                     currentSemester: currentSemester,
                   ),
                 );
