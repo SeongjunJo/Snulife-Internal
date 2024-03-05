@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:snulife_internal/logics/providers/firebase_states.dart';
 
@@ -26,6 +27,14 @@ class InternalApp extends StatelessWidget {
     return MaterialApp.router(
       theme: ThemeData(useMaterial3: true),
       routerConfig: appRouter,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en', ''),
+        Locale('ko', ''),
+      ],
     );
   }
 }

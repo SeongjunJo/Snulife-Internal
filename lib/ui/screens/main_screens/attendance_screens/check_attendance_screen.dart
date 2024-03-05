@@ -86,7 +86,7 @@ class CheckAttendancePage extends StatelessWidget {
                   ),
                 ),
                 canModify
-                    ? const SizedBox(height: 70)
+                    ? const SizedBox(height: 37)
                     : const SizedBox(), // ListView 때문에 Column으로 못 함
                 canModify
                     ? AppExpandedButton(
@@ -137,7 +137,7 @@ class CheckAttendancePage extends StatelessWidget {
                             : null,
                       )
                     : const SizedBox(),
-                const SizedBox(height: 40),
+                const SizedBox(height: 24),
               ],
             );
           } else {

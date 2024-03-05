@@ -48,7 +48,8 @@ class FirebaseStates extends ChangeNotifier {
 
         firestoreReader
             .getPeopleAttendanceAndClerkStream(
-                _currentSemester,
+                // TODO _currentSemester로 바꾸기
+                '2023-W',
                 // TODO localToday로 바꾸기
                 '0229')
             .listen((doc) {

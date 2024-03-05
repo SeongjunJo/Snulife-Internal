@@ -158,7 +158,7 @@ class _QSPageState extends State<QSPage> {
                           onPressed: () {},
                         );
                       } else if (index == widget.userList.length + 5) {
-                        return const SizedBox(height: 50);
+                        return const SizedBox(height: 12);
                       } else {
                         return GestureDetector(
                           onTap: () async {

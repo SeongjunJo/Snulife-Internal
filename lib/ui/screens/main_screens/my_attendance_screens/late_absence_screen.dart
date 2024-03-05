@@ -171,7 +171,7 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
                         }
                       : null,
                 ),
-                const SizedBox(height: 62),
+                const SizedBox(height: 24),
               ],
             ),
           );

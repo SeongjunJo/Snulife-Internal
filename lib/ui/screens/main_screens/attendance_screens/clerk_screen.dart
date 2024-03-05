@@ -137,7 +137,7 @@ class _ClerkPageState extends State<ClerkPage> {
                 );
               },
               separatorBuilder: (BuildContext context, int index) {
-                return const SizedBox(height: 8);
+                return const SizedBox(height: 12);
               },
             ),
           ),
@@ -173,7 +173,7 @@ class _ClerkPageState extends State<ClerkPage> {
                 )
               : const SizedBox(),
           widget.isManager // ListView 때문에 Column으로 못 묶음
-              ? const SizedBox(height: 40)
+              ? const SizedBox(height: 24)
               : const SizedBox(),
         ],
       ),
