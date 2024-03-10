@@ -25,15 +25,15 @@ class HomeScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Image.asset(
-              "assets/images/icon_snulife.png",
-              width: 23.77,
-              height: 25.46,
+              "assets/images/icon_logo.png",
+              width: 31.26,
+              height: 36,
             ),
             IconButton(
               icon: Image.asset(
                 "assets/images/icon_person.png",
-                width: 30,
-                height: 30,
+                width: 32,
+                height: 32,
               ),
               onPressed: () => context.pushNamed(AppRoutePath.settings),
             ),

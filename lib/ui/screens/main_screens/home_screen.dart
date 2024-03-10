@@ -125,7 +125,7 @@ class HomePage extends StatelessWidget {
                 ),
                 primaryTabIcon: Padding(
                   padding: const EdgeInsets.all(16),
-                  child: Image.asset("assets/images/icon_qs.png",
+                  child: Image.asset("assets/images/icon_attendance.png",
                       width: 124, height: 130),
                 ),
               ),
@@ -141,9 +141,9 @@ class HomePage extends StatelessWidget {
                       ),
                       primaryTabIcon: Padding(
                         padding: const EdgeInsets.only(
-                            top: 9, left: 9, right: 14, bottom: 7),
-                        child: Image.asset("assets/images/icon_snulife.png",
-                            width: 131, height: 138),
+                            top: 13, left: 0, right: 7, bottom: 13),
+                        child: Image.asset("assets/images/icon_management.png",
+                            width: 131, height: 112),
                       ),
                     ),
                   ],
