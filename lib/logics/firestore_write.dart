@@ -227,15 +227,13 @@ class FirestoreWriter {
     }
 
     final futureList = await Future.wait([
-      // TODO nextSemester로 바꾸기
-      _createMeetingTimeList(startDate, '2025-1'),
+      _createMeetingTimeList(startDate, nextSemester),
       firestoreReader.getUserList()
     ]);
     final List<String> meetingTimeList = futureList[0].cast<String>();
     final List<String> userList = futureList[1].cast<String>();
 
-    // TODO nextSemester로 바꾸기
-    final nextSemesterRef = _db.collection('attendances').doc('2025-1');
+    final nextSemesterRef = _db.collection('attendances').doc(nextSemester);
     await nextSemesterRef.set({}); // 상위 문서를 생성해둬야 함
 
     batch.set(_db.collection('information').doc('meetingTime'), {

@@ -50,19 +50,19 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAa6tCjhEqgFNpUVF_o-TeN2x3UgHTd6k0',
-    appId: '1:555330865633:android:cbc417a5e2c175bb83aaa0',
-    messagingSenderId: '555330865633',
-    projectId: 'snulife-internal',
-    storageBucket: 'snulife-internal.appspot.com',
+    apiKey: 'AIzaSyAZ4tfczbiu9g_YDKDVxImIZC3XLsBKobw',
+    appId: '1:900658840670:android:daeca533627641552ce0cf',
+    messagingSenderId: '900658840670',
+    projectId: 'snulife-internal-app',
+    storageBucket: 'snulife-internal-app.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDCqBpPJEGeRyq2-l57y1WQjCZW7DTAFYg',
-    appId: '1:555330865633:ios:3040f03e7bc490bf83aaa0',
-    messagingSenderId: '555330865633',
-    projectId: 'snulife-internal',
-    storageBucket: 'snulife-internal.appspot.com',
+    apiKey: 'AIzaSyCgqtTyD9dpDg7dQLGNIqjOkDWcvaBP7W8',
+    appId: '1:900658840670:ios:5520098b435ca7fb2ce0cf',
+    messagingSenderId: '900658840670',
+    projectId: 'snulife-internal-app',
+    storageBucket: 'snulife-internal-app.appspot.com',
     iosBundleId: 'com.example.snulifeInternal',
   );
 }

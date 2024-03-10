@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "555330865633",
-    "project_id": "snulife-internal",
-    "storage_bucket": "snulife-internal.appspot.com"
+    "project_number": "900658840670",
+    "project_id": "snulife-internal-app",
+    "storage_bucket": "snulife-internal-app.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:555330865633:android:cbc417a5e2c175bb83aaa0",
+        "mobilesdk_app_id": "1:900658840670:android:daeca533627641552ce0cf",
         "android_client_info": {
           "package_name": "com.example.snulife_internal"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAa6tCjhEqgFNpUVF_o-TeN2x3UgHTd6k0"
+          "current_key": "AIzaSyAZ4tfczbiu9g_YDKDVxImIZC3XLsBKobw"
         }
       ],
       "services": {
