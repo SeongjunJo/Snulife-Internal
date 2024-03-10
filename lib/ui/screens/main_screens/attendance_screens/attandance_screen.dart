@@ -68,6 +68,7 @@ class AttendancePage extends StatelessWidget {
                     : Consumer<FirebaseStates>(
                         builder: (context, value, _) => ClerkPage(
                           isManager: value.isManager,
+                          thisWeekClerkDate: value.thisWeekClerkDate,
                           clerk: value.clerk,
                           clerkMap: clerkMap,
                           currentSemester: value.currentSemester,

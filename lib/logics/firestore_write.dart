@@ -42,27 +42,29 @@ class FirestoreWriter {
     // 이번 & 다음 서기 기록, 서기인 사람 count 증가
     String currentSemester, // nextClerk 써야 하는데 다음주 id의 문서가 없으면 다음 학기 첫 문서에 씀
     String? upcomingSemester,
+    String thisWeekClerkDate,
     String clerk,
     String nextClerk,
   ) async {
-    final today = StringUtil.convertDateTimeToString(DateTime.now(), true);
-    final nextWeekDate = DateTime.now().add(const Duration(days: 7, hours: 9));
-    final nextWeekDateId =
-        StringUtil.convertDateTimeToString(nextWeekDate, true);
-    String nextSemesterDateId = '9999'; // 충분히 큰 4자리 숫자
+    final year = int.parse(thisWeekClerkDate) >= 1225
+        ? DateTime.now().year + 1 // 다음주가 내년인 경우 (12월 25일 ~ 12월 31일)
+        : DateTime.now().year;
+    final thisWeekDateTime =
+        StringUtil.convertStringToDateTime(year, thisWeekClerkDate);
+    final nextWeekDateId = StringUtil.convertDateTimeToString(
+        thisWeekDateTime.add(const Duration(days: 7)), true);
+    String nextSemesterDateId = '9999'; // 충분히 큰 숫자
 
     final todayClerkDocumentRef = _db
         .collection('attendances')
         .doc(currentSemester)
         .collection('dates')
-        // TODO today로 바꾸기
-        .doc('0229');
+        .doc(thisWeekClerkDate);
     final nextClerkDocumentRef = _db
         .collection('attendances')
         .doc(currentSemester)
         .collection('dates')
-        // TODO nextWeekDateId로 바꾸기
-        .doc('0301');
+        .doc(nextWeekDateId);
 
     todayClerkDocumentRef.update({'clerk': clerk}); // 오늘 서기 확정해서 기록
     _db
@@ -132,8 +134,7 @@ class FirestoreWriter {
         .collection('attendances')
         .doc(semester)
         .collection('dates')
-        // TODO today로 바꾸기
-        .doc('0215')
+        .doc(today)
         .update({
       'present': presentList,
       'late': lateList,
@@ -171,8 +172,7 @@ class FirestoreWriter {
           .collection('attendances')
           .doc(semester)
           .collection(user)
-          // TODO today로 바꾸기
-          .doc('0215')
+          .doc(today)
           .set({'attendance': attendance, 'isAuthorized': isAuthorized});
 
       _db

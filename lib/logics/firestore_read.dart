@@ -22,6 +22,28 @@ class FirestoreReader {
     return userListDocument.docs.first.data();
   }
 
+  Future findClerkDate(String currentSemester, String? upcomingSemester) async {
+    final today = StringUtil.convertDateTimeToString(DateTime.now(), true);
+
+    final meetingDatesQuery = await firebaseInstance.db
+        .collection('attendances')
+        .doc(currentSemester)
+        .collection('dates')
+        .get();
+
+    for (final date in meetingDatesQuery.docs) {
+      // 다음 회의 문서 찾기
+      if (int.parse(date.id) >= int.parse(today)) return date.id;
+    }
+    // 분기가 바뀌어서 return 못했으면 다음 학기의 첫 회의 문서 찾기
+    final nextMeetingDatesQuery = await firebaseInstance.db
+        .collection('attendances')
+        .doc(upcomingSemester)
+        .collection('dates')
+        .get();
+    return nextMeetingDatesQuery.docs.first.id;
+  }
+
   Stream<DocumentSnapshot<Map>> getPeopleAttendanceAndClerkStream(
       String semester, String date) {
     return firebaseInstance.db

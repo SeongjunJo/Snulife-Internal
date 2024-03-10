@@ -12,6 +12,7 @@ class ClerkPage extends StatefulWidget {
   const ClerkPage({
     super.key,
     required this.isManager,
+    required this.thisWeekClerkDate,
     required this.clerk,
     required this.clerkMap,
     required this.currentSemester,
@@ -19,6 +20,7 @@ class ClerkPage extends StatefulWidget {
   });
 
   final bool isManager;
+  final String thisWeekClerkDate;
   final String clerk;
   final Map<String, dynamic> clerkMap;
   final String currentSemester;
@@ -53,8 +55,7 @@ class _ClerkPageState extends State<ClerkPage> {
         .collection('attendances')
         .doc(widget.currentSemester)
         .collection('dates')
-        // TODO today로 바꾸기
-        .doc('0229')
+        .doc(widget.thisWeekClerkDate)
         .snapshots()
         .listen((event) => hasConfirmed = event.data()!['hasClerkConfirmed']);
   }
@@ -121,7 +122,7 @@ class _ClerkPageState extends State<ClerkPage> {
               ),
             ],
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 20),
           Expanded(
             child: ListView.separated(
               // 전체 위젯이 한번에 빌드되지만, 인원수가 많지 않고 index는 필요하므로 builder 사용
@@ -161,13 +162,13 @@ class _ClerkPageState extends State<ClerkPage> {
                               .collection('attendances')
                               .doc(widget.currentSemester)
                               .collection('dates')
-                              // TODO today로 바꾸기
-                              .doc('0229')
+                              .doc(widget.thisWeekClerkDate)
                               .update({'hasClerkConfirmed': true});
 
                           firestoreWriter.writeConfirmedClerk(
                             widget.currentSemester,
                             widget.upcomingSemester,
+                            widget.thisWeekClerkDate,
                             clerkList[selectedIndex].key,
                             nextClerk,
                           );
