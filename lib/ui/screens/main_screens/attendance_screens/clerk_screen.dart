@@ -145,6 +145,21 @@ class _ClerkPageState extends State<ClerkPage> {
               },
             ),
           ),
+          const SizedBox(height: 16),
+          Container(
+            decoration: BoxDecoration(
+              color: appColors.grey1,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 10,
+            ),
+            child: Text(
+              "서기 횟수가 가장 적은 순으로 오늘의 서기가 지정돼요.",
+              style: appFonts.c3.copyWith(color: appColors.grey6),
+            ),
+          ),
           const SizedBox(height: 70),
           widget.isManager
               ? AppExpandedButton(

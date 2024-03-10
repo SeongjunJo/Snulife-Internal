@@ -172,9 +172,13 @@ class _ClerkListItemState extends State<ClerkListItem> {
     return GestureDetector(
       onTap: widget.onSelected,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 18),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
         decoration: BoxDecoration(
-          color: isSelected ? appColors.subBlue2 : appColors.white,
+          color: appColors.white,
+          border: Border.all(
+            color: isSelected ? appColors.slBlue : Colors.transparent,
+            width: 1,
+          ),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
@@ -182,16 +186,25 @@ class _ClerkListItemState extends State<ClerkListItem> {
           children: [
             Text(
               widget.name,
-              style: appFonts.h3.copyWith(
-                  color: isSelected ? appColors.slBlue : appColors.grey8),
+              style: appFonts.b1.copyWith(
+                color: appColors.grey7,
+                fontWeight: FontWeight.w700,
+              ),
             ),
-            AttendanceChip(
-              index: null, // clerk chip은 index 필요 없음
-              type: AttendanceChipType.clerk,
-              // clerk chip 단독 터치 불가, 색상 보정을 위해 isSelected 일 때 onSelected 필요
-              onSelected: isSelected ? (_) {} : null,
-              isSelected: isSelected, // clerk chip 전용 변수
-              clerkCount: widget.clerkCount,
+            Row(
+              children: [
+                Text(
+                  '서기 횟수 ',
+                  style: appFonts.t5.copyWith(color: appColors.grey7),
+                ),
+                Text(
+                  '${widget.clerkCount}회',
+                  style: appFonts.t5.copyWith(
+                    color: appColors.grey7,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
             ),
           ],
         ),

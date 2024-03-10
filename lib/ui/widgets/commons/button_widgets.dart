@@ -128,14 +128,14 @@ class AttendanceChip extends StatefulWidget {
     required this.index,
     required this.type,
     required this.onSelected,
-    this.isSelected,
+    this.isSelected = false,
     this.clerkCount = 100, // default value
   });
 
   final int? index;
   final AttendanceChipType type;
+  final bool isSelected;
   final Function(bool)? onSelected;
-  final bool? isSelected; // clerk chip 전용 변수
   final int clerkCount;
 
   @override
@@ -167,26 +167,16 @@ class _AttendanceChipState extends State<AttendanceChip> {
         text = "결석";
         textColor = appColors.failure;
         selectedColor = const Color(0xFFFBEEEE);
-      case AttendanceChipType.clerk:
-        _index = null; // clerk chip은 index 필요 없이 전달 받은 isSelected 사용
-        text = widget.clerkCount == 100 ? "임시" : "${widget.clerkCount} 번";
-        textColor = appColors.white;
-        selectedColor = appColors.slBlue;
     }
-    // 전달 받은 isSelected가 null이면 다른 chip => index로 판단
-    isSelected = widget.isSelected ?? _index == widget.index;
+    // 내 출결 현황의 chip은 항상 선택된 상태 (불이 들어온 상태)
+    isSelected = widget.isSelected ? true : _index == widget.index;
 
     return ChoiceChip(
-      label: Text(text),
-      labelStyle: appFonts.t4.copyWith(
-        color: isSelected
-            ? textColor
-            : widget.onSelected != null
-                ? appColors.grey5
-                : appColors.grey8, // clerk chip 텍스트 색상 보정
-      ),
-      labelPadding: const EdgeInsets.symmetric(vertical: 0),
-      padding: const EdgeInsets.symmetric(horizontal: 15),
+      label: SizedBox(width: 50, height: 34, child: Center(child: Text(text))),
+      labelStyle:
+          appFonts.t5.copyWith(color: isSelected ? textColor : appColors.grey5),
+      labelPadding: const EdgeInsets.all(0),
+      padding: const EdgeInsets.all(0),
       selected: isSelected,
       onSelected: widget.onSelected,
       selectedColor: selectedColor,
@@ -194,24 +184,14 @@ class _AttendanceChipState extends State<AttendanceChip> {
       disabledColor: appColors.grey1,
       showCheckmark: false,
       shape: RoundedRectangleBorder(
-        side: BorderSide(
-          width: 0,
-          color: isSelected & (widget.type == AttendanceChipType.clerk)
-              ? appColors.subBlue2 // clerk chip 활성화 배경 색상
-              : appColors.white,
-        ),
-        borderRadius: BorderRadius.circular(10),
+        side: BorderSide(width: 0, color: appColors.white),
+        borderRadius: BorderRadius.circular(8),
       ),
     );
   }
 }
 
-enum AttendanceChipType {
-  presence,
-  absence,
-  late,
-  clerk,
-}
+enum AttendanceChipType { presence, absence, late }
 
 class AppDropDownMenu extends StatelessWidget {
   const AppDropDownMenu({
