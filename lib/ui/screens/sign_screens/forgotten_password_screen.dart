@@ -46,14 +46,13 @@ class _ForgottenPasswordPageState extends State<ForgottenPasswordPage> {
               await FirebaseAuth.instance
                   .sendPasswordResetEmail(email: _emailController.text);
             } on FirebaseAuthException catch (e) {
-              switch (e.code) {
-                case 'invalid-email':
-                  _fieldStatus = FirebaseAuthErrorTypes.invalidEmail;
-                case 'network-request-failed':
-                  _fieldStatus = FirebaseAuthErrorTypes.networkRequestFailed;
-                default:
-                  _fieldStatus = FirebaseAuthErrorTypes.unknownError;
-              }
+              _fieldStatus = switch (e.code) {
+                'invalid-email' => _fieldStatus =
+                    FirebaseAuthErrorTypes.invalidEmail,
+                'network-request-failed' => _fieldStatus =
+                    FirebaseAuthErrorTypes.networkRequestFailed,
+                _ => _fieldStatus = FirebaseAuthErrorTypes.unknownError,
+              };
               setState(() {});
               return;
             }

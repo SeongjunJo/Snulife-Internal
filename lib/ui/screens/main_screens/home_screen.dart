@@ -28,7 +28,7 @@ class HomePage extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       children: [
-        // 홈 화면은 스택에 남아 있어서 빌드 1번만 하니 future 캐싱 안 해도 됨
+        // 홈 화면은 빌드 1번만 하니 future 캐싱 안 해도 됨
         Column(
           children: [
             const SizedBox(height: 48),

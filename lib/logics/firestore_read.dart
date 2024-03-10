@@ -182,9 +182,8 @@ class FirestoreReader {
       late final Map<String, dynamic> postSummaryMap;
 
       final futureList = await Future.wait([
-        // TODO user로 바꾸기
-        firestoreReader.getMyAttendanceSummary(preSemester, '홍신입'),
-        firestoreReader.getMyAttendanceSummary(postSemester, '홍신입'),
+        firestoreReader.getMyAttendanceSummary(preSemester, user),
+        firestoreReader.getMyAttendanceSummary(postSemester, user),
       ]);
       preSummary = futureList[0];
       postSummary = futureList[1];

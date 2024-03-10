@@ -70,20 +70,16 @@ class _LogInScreenState extends State<LogInScreen> {
         password: _passwordController.text,
       );
     } on FirebaseAuthException catch (e) {
-      switch (e.code) {
-        case 'invalid-email':
-          _fieldStatus = FirebaseAuthErrorTypes.invalidEmail;
-        case 'user-disabled':
-          _fieldStatus = FirebaseAuthErrorTypes.userDisabled;
-        case 'channel-error':
-          _fieldStatus = FirebaseAuthErrorTypes.channelError;
-        case 'invalid-credential':
-          _fieldStatus = FirebaseAuthErrorTypes.invalidCredential;
-        case 'network-request-failed':
-          _fieldStatus = FirebaseAuthErrorTypes.networkRequestFailed;
-        default:
-          _fieldStatus = FirebaseAuthErrorTypes.unknownError;
-      }
+      _fieldStatus = switch (e.code) {
+        'invalid-email' => _fieldStatus = FirebaseAuthErrorTypes.invalidEmail,
+        'user-disabled' => _fieldStatus = FirebaseAuthErrorTypes.userDisabled,
+        'channel-error' => _fieldStatus = FirebaseAuthErrorTypes.channelError,
+        'invalid-credential' => _fieldStatus =
+            FirebaseAuthErrorTypes.invalidCredential,
+        'network-request-failed' => _fieldStatus =
+            FirebaseAuthErrorTypes.networkRequestFailed,
+        _ => _fieldStatus = FirebaseAuthErrorTypes.unknownError,
+      };
       setState(() {});
       return;
     }

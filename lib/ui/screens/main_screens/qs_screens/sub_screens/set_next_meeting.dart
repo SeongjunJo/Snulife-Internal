@@ -27,7 +27,7 @@ class _SetNextMeetingState extends State<SetNextMeeting> {
   late Function() pickerConfirmBtnOnPressed;
   final nextMeetingDateTime = <DateTime>[];
   bool isLoading = false;
-  bool showFlushbar = false;
+  bool showFlushBar = false;
 
   @override
   Widget build(BuildContext context) {
@@ -54,10 +54,10 @@ class _SetNextMeetingState extends State<SetNextMeeting> {
           final isAM = hour < 12;
 
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            showFlushbar && snapshot.connectionState == ConnectionState.done
+            showFlushBar && snapshot.connectionState == ConnectionState.done
                 ? {
                     AppSnackBar.showFlushbar(context, '변경되었습니다.', true),
-                    showFlushbar = false
+                    showFlushBar = false
                   }
                 : null;
           });
@@ -256,7 +256,7 @@ class _SetNextMeetingState extends State<SetNextMeeting> {
 
               setState(() {
                 isLoading = false;
-                showFlushbar = true;
+                showFlushBar = true;
               });
             };
         }
@@ -351,16 +351,17 @@ Future _getMeetingStartDate(String semester) async {
   }
 }
 
-String _getDay(final int weekday) =>
-    const {
-      1: '월요일',
-      2: '화요일',
-      3: '수요일',
-      4: '목요일',
-      5: '금요일',
-      6: '토요일',
-      7: '일요일',
-    }[weekday] ??
-    '';
+String _getDay(int weekday) {
+  return switch (weekday) {
+    1 => '월요일',
+    2 => '화요일',
+    3 => '수요일',
+    4 => '목요일',
+    5 => '금요일',
+    6 => '토요일',
+    7 => '일요일',
+    _ => '',
+  };
+}
 
 enum Step { date, time, confirm }

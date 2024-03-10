@@ -96,8 +96,7 @@ Future _getIsTodayMeeting(String currentSemester) async =>
           .collection('attendances')
           .doc(currentSemester)
           .collection('dates')
-          // TODO today로 바꾸기
-          .doc('0229')
+          .doc(today)
           .get();
       return doc.exists;
     });

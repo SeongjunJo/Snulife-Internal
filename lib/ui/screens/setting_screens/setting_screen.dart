@@ -33,7 +33,7 @@ class _SettingPageState extends State<SettingPage> {
           GestureDetector(
             onTap: () async {
               await FirebaseAuth.instance.signOut();
-              if (!mounted) return;
+              if (!context.mounted) return;
               context.goNamed(AppRoutePath.login);
             },
             child: const SettingRow(
