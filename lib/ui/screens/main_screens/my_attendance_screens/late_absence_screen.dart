@@ -155,12 +155,15 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
                                 valueListenable: _isLate,
                                 builder: (context, bool? value, _) {
                                   return BottomModal(
+                                      height: 312,
                                       title: "지각/결석 여부를 선택해주세요.",
-                                      firstTapText: "결석",
-                                      secondTapText: "지각",
-                                      onFirstTap: () => _isLate.value = false,
-                                      onSecondTap: () => _isLate.value = true,
-                                      onPressed: _isLate.value != null
+                                      hintText: '신청 후에는 서기만 출결 변경이 가능해요.',
+                                      tapTexts: const ["결석", "지각"],
+                                      onTapsPressed: [
+                                        () => _isLate.value = false,
+                                        () => _isLate.value = true,
+                                      ],
+                                      onBtnPressed: _isLate.value != null
                                           ? () => _onPressed(meetingTime)
                                           : null);
                                 },

@@ -158,7 +158,7 @@ class ClerkListItem extends StatefulWidget {
   final int index;
   final int selectedIndex;
   final Function() onSelected;
-  final int clerkCount;
+  final int? clerkCount;
 
   @override
   State<ClerkListItem> createState() => _ClerkListItemState();
@@ -191,21 +191,26 @@ class _ClerkListItemState extends State<ClerkListItem> {
                 fontWeight: FontWeight.w700,
               ),
             ),
-            Row(
-              children: [
-                Text(
-                  '서기 횟수 ',
-                  style: appFonts.t5.copyWith(color: appColors.grey7),
-                ),
-                Text(
-                  '${widget.clerkCount}회',
-                  style: appFonts.t5.copyWith(
-                    color: appColors.grey7,
-                    fontWeight: FontWeight.w700,
+            widget.clerkCount != null
+                ? Row(
+                    children: [
+                      Text(
+                        '서기 횟수 ',
+                        style: appFonts.t5.copyWith(color: appColors.grey7),
+                      ),
+                      Text(
+                        '${widget.clerkCount!}회',
+                        style: appFonts.t5.copyWith(
+                          color: appColors.grey7,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  )
+                : Text(
+                    '임시 서기',
+                    style: appFonts.t5.copyWith(color: appColors.grey7),
                   ),
-                ),
-              ],
-            ),
           ],
         ),
       ),

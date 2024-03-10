@@ -45,6 +45,7 @@ class FirestoreWriter {
     String thisWeekClerkDate,
     String clerk,
     String nextClerk,
+    bool isTemporaryClerk,
   ) async {
     final year = int.parse(thisWeekClerkDate) >= 1225
         ? DateTime.now().year + 1 // 다음주가 내년인 경우 (12월 25일 ~ 12월 31일)
@@ -66,11 +67,13 @@ class FirestoreWriter {
         .collection('dates')
         .doc(nextWeekDateId);
 
-    todayClerkDocumentRef.update({'clerk': clerk}); // 오늘 서기 확정해서 기록
-    _db
-        .collection('clerks')
-        .doc(clerk)
-        .update({'count': FieldValue.increment(1)}); // 오늘 서기 횟수 +1
+    todayClerkDocumentRef.update({'clerk': clerk}); // 이번 서기 확정해서 기록
+    !isTemporaryClerk
+        ? _db
+            .collection('clerks')
+            .doc(clerk)
+            .update({'count': FieldValue.increment(1)}) // 이번 서기 횟수 +1
+        : null;
 
     final nextClerkDocument = await nextClerkDocumentRef.get();
     if (nextClerkDocument.exists) {

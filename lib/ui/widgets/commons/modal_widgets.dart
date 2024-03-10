@@ -70,33 +70,36 @@ class ConfirmDialog extends StatelessWidget {
 class BottomModal extends StatefulWidget {
   const BottomModal({
     super.key,
+    required this.height,
     required this.title,
-    required this.firstTapText,
-    required this.secondTapText,
-    required this.onFirstTap,
-    required this.onSecondTap,
-    required this.onPressed,
+    this.hintText,
+    this.canScroll = false,
+    required this.tapTexts,
+    required this.onTapsPressed,
+    required this.onBtnPressed,
   });
 
+  final double height;
   final String title;
-  final String firstTapText;
-  final String secondTapText;
-  final Function() onFirstTap;
-  final Function() onSecondTap;
-  final Function()? onPressed;
+  final String? hintText;
+  final bool canScroll;
+  final List<String> tapTexts;
+  final List<Function()> onTapsPressed;
+  final Function()? onBtnPressed;
 
   @override
   State<BottomModal> createState() => _BottomModalState();
 }
 
 class _BottomModalState extends State<BottomModal> {
-  int? _modalIndex; // 모달의 체크 박스 인덱스: null이면 선택 안 함, 1이면 결석, 2면 지각
-  late final bool hasHintText = widget.firstTapText.contains("결석");
+  int? _modalIndex; // 모달의 체크 박스 인덱스: null이면 선택 안 함
+  late final _scrollController;
 
   @override
   void initState() {
     super.initState();
     _modalIndex = null;
+    _scrollController = ScrollController();
   }
 
   @override
@@ -108,70 +111,46 @@ class _BottomModalState extends State<BottomModal> {
         borderRadius: BorderRadius.circular(20),
       ),
       child: SizedBox(
-        height: hasHintText ? 312 : 290,
+        height: widget.height,
         child: Center(
           child: Column(
             children: [
-              const SizedBox(height: 22),
+              const SizedBox(height: 24),
               Text(widget.title, style: appFonts.tm),
               const SizedBox(height: 24),
-              GestureDetector(
-                onTap: () => setState(() {
-                  _modalIndex = 0;
-                  widget.onFirstTap();
-                }),
-                child: SizedBox(
-                  height: 60,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(widget.firstTapText,
-                          style: appFonts.h3.copyWith(color: appColors.grey8)),
-                      Image.asset(
-                        "assets/images/icon_check.png",
-                        color: _modalIndex == 0
-                            ? appColors.slBlue
-                            : appColors.grey3,
-                        width: 34,
-                        height: 34,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Container(height: 1, color: appColors.grey3),
-              GestureDetector(
-                onTap: () => setState(() {
-                  _modalIndex = 1;
-                  widget.onSecondTap();
-                }),
-                child: SizedBox(
-                  height: 60,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(widget.secondTapText,
-                          style: appFonts.h3.copyWith(color: appColors.grey8)),
-                      Image.asset(
-                        "assets/images/icon_check.png",
-                        color: _modalIndex == 1
-                            ? appColors.slBlue
-                            : appColors.grey3,
-                        width: 34,
-                        height: 34,
-                      ),
-                    ],
+              Expanded(
+                child: RawScrollbar(
+                  controller: _scrollController,
+                  thumbColor: appColors.grey4,
+                  thickness: 5,
+                  thumbVisibility: true,
+                  radius: const Radius.circular(30),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: widget.canScroll ? 18 : 0),
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      controller: _scrollController,
+                      physics: widget.canScroll
+                          ? const AlwaysScrollableScrollPhysics()
+                          : const NeverScrollableScrollPhysics(),
+                      itemCount: widget.tapTexts.length,
+                      itemBuilder: (context, index) =>
+                          buildGestureDetector(index),
+                      separatorBuilder: (context, index) =>
+                          Container(height: 1, color: appColors.grey3),
+                    ),
                   ),
                 ),
               ),
               const SizedBox(height: 12),
-              hasHintText
+              widget.hintText != null
                   ? Text(
-                      '신청 후에는 서기만 출결 변경이 가능해요.',
+                      widget.hintText!,
                       style: appFonts.c2.copyWith(color: appColors.grey5),
                     )
                   : const SizedBox(height: 0),
-              SizedBox(height: hasHintText ? 16 : 12),
+              SizedBox(height: widget.hintText != null ? 16 : 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -182,11 +161,37 @@ class _BottomModalState extends State<BottomModal> {
                   ),
                   const SizedBox(width: 8),
                   AppExpandedButton(
-                      buttonText: '확정', onPressed: widget.onPressed),
+                      buttonText: '확인', onPressed: widget.onBtnPressed),
                 ],
               ),
+              const SizedBox(height: 24),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  GestureDetector buildGestureDetector(int index) {
+    return GestureDetector(
+      onTap: () => setState(() {
+        _modalIndex = index;
+        widget.onTapsPressed[index]();
+      }),
+      child: SizedBox(
+        height: 60,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(widget.tapTexts[index],
+                style: appFonts.h3.copyWith(color: appColors.grey8)),
+            Image.asset(
+              "assets/images/icon_check.png",
+              color: _modalIndex == index ? appColors.slBlue : appColors.grey3,
+              width: 34,
+              height: 34,
+            ),
+          ],
         ),
       ),
     );

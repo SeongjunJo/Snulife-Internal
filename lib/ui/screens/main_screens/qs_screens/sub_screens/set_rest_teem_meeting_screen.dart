@@ -88,13 +88,14 @@ class SetRestOrTeemMeetingPageState extends State<SetRestOrTeemMeetingPage> {
                                   valueListenable: _isRest,
                                   builder: (context, bool? value, _) {
                                     return BottomModal(
+                                        height: 290,
                                         title: '변경 유형을 선택해주세요.',
-                                        firstTapText: '휴회',
-                                        secondTapText: '팀별 회의',
-                                        onFirstTap: () => _isRest.value = true,
-                                        onSecondTap: () =>
-                                            _isRest.value = false,
-                                        onPressed: _isRest.value != null
+                                        tapTexts: const ['휴회', '팀별 회의'],
+                                        onTapsPressed: [
+                                          () => _isRest.value = true,
+                                          () => _isRest.value = false,
+                                        ],
+                                        onBtnPressed: _isRest.value != null
                                             ? () => _onPressed(_isRest.value!,
                                                 widget.currentSemester)
                                             : null);

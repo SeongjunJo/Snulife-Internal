@@ -89,7 +89,7 @@ class CheckAttendancePage extends StatelessWidget {
                     : const SizedBox(), // ListView 때문에 Column으로 못 함
                 canModify
                     ? AppExpandedButton(
-                        buttonText: "저장하기",
+                        buttonText: "저장",
                         // 확정을 안 했고 수정 사항이 생길 때만 저장 가능
                         onPressed: !hasAttendanceConfirmed &&
                                 attendanceListener.hasUpdated
@@ -107,7 +107,7 @@ class CheckAttendancePage extends StatelessWidget {
                 canModify ? const SizedBox(height: 20) : const SizedBox(),
                 canModify
                     ? AppExpandedButton(
-                        buttonText: "확정하기",
+                        buttonText: "확정",
                         // 확정을 안 했고, 출석 체크는 전부 했고, 저장도 한 경우만 확정 가능
                         onPressed: !hasAttendanceConfirmed &&
                                 !unCompleted &&

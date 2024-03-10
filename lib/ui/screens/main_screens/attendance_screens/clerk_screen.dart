@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:snulife_internal/logics/common_instances.dart';
-import 'package:snulife_internal/logics/utils/string_util.dart';
 
 import '../../../../logics/utils/map_util.dart';
 import '../../../widgets/commons/button_widgets.dart';
+import '../../../widgets/commons/modal_widgets.dart';
 import '../../../widgets/screen_specified/attendance_widget.dart';
 
 class ClerkPage extends StatefulWidget {
@@ -31,15 +33,14 @@ class ClerkPage extends StatefulWidget {
 }
 
 class _ClerkPageState extends State<ClerkPage> {
-  final now = DateTime.now();
-  late final today = StringUtil.convertDateTimeToString(now, true);
   late Map<String, dynamic> _clerkMap = widget.clerkMap;
   late final StreamSubscription _clerkMapListener;
-  late List<MapEntry<String, dynamic>> clerkList = _clerkMap.entries.toList();
-  late int selectedIndex =
-      clerkList.indexWhere((element) => element.key == widget.clerk);
-  bool hasConfirmed = false;
+  late List<MapEntry<String, dynamic>> _clerkList = _clerkMap.entries.toList();
+  late int _selectedIndex =
+      _clerkList.indexWhere((element) => element.key == widget.clerk);
+  bool _hasConfirmed = false;
   late final StreamSubscription _clerkConfirmListener;
+  String? _temporaryClerk;
 
   @override
   void initState() {
@@ -49,7 +50,7 @@ class _ClerkPageState extends State<ClerkPage> {
         .snapshots()
         .listen((event) => setState(() {
               _clerkMap = MapUtil.orderClerksByCount(event);
-              clerkList = _clerkMap.entries.toList();
+              _clerkList = _clerkMap.entries.toList();
             }));
     _clerkConfirmListener = firebaseInstance.db
         .collection('attendances')
@@ -57,7 +58,16 @@ class _ClerkPageState extends State<ClerkPage> {
         .collection('dates')
         .doc(widget.thisWeekClerkDate)
         .snapshots()
-        .listen((event) => hasConfirmed = event.data()!['hasClerkConfirmed']);
+        .listen((event) {
+      _hasConfirmed = event.data()!['hasClerkConfirmed'];
+      final String confirmedClerk = event.data()!['clerk'];
+      !_clerkList.any((element) => element.key == confirmedClerk)
+          ? _clerkList
+              .add(MapEntry(confirmedClerk, null)) // 임시 서기가 들어온 경우 clerkList 추가
+          : null;
+      _selectedIndex = _clerkList.indexWhere((element) =>
+          element.key == confirmedClerk); // 임시 서기면 selectedIndex 업데이트 다시 해야 함
+    });
   }
 
   @override
@@ -128,16 +138,90 @@ class _ClerkPageState extends State<ClerkPage> {
               // 전체 위젯이 한번에 빌드되지만, 인원수가 많지 않고 index는 필요하므로 builder 사용
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: clerkList.length,
+              itemCount: _clerkList.length + 1,
               itemBuilder: (BuildContext context, int index) {
+                if (index == _clerkList.length) {
+                  return !(widget.isManager && !_hasConfirmed)
+                      ? null // 일반 동아리원은 안 보임
+                      : _temporaryClerk == null
+                          ? GestureDetector(
+                              onTap: () async {
+                                final userList =
+                                    await firestoreReader.getUserList();
+                                for (final clerk in _clerkList) {
+                                  userList.remove(
+                                      clerk.key); // 서기 목록은 임시 서기 대상자에서 제외
+                                }
+
+                                if (!context.mounted) return;
+                                showModalBottomSheet(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return BottomModal(
+                                      height: 600,
+                                      title: '임시 서기로 지정할 동아리원을 선택해주세요.',
+                                      hintText: '확인 후 \'서기 확정\'을 반드시 눌러주세요.',
+                                      canScroll: true,
+                                      tapTexts: userList.cast<String>(),
+                                      onTapsPressed: [
+                                        for (final user in userList)
+                                          () => _temporaryClerk = user
+                                      ],
+                                      onBtnPressed: () {
+                                        _temporaryClerk != null
+                                            ? _selectedIndex = index
+                                            : null;
+                                        setState(() {});
+                                        context.pop();
+                                      },
+                                    );
+                                  },
+                                );
+                              },
+                              child: DottedBorder(
+                                stackFit: StackFit.passthrough,
+                                padding: const EdgeInsets.all(0),
+                                color: appColors.grey5,
+                                borderType: BorderType.RRect,
+                                radius: const Radius.circular(12),
+                                dashPattern: const [6, 6],
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 18, vertical: 20),
+                                  decoration: const BoxDecoration(
+                                      color: Colors.transparent),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset('assets/images/icon_plus.png',
+                                          width: 24, height: 24),
+                                      const SizedBox(width: 12),
+                                      Text('임시 서기 추가',
+                                          style: appFonts.t5.copyWith(
+                                              color: appColors.grey5)),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            )
+                          : ClerkListItem(
+                              name: _temporaryClerk!,
+                              index: index,
+                              selectedIndex: _selectedIndex,
+                              onSelected: (widget.isManager && !_hasConfirmed)
+                                  ? () => setState(() => _selectedIndex = index)
+                                  : () {},
+                              clerkCount: null,
+                            );
+                }
                 return ClerkListItem(
-                  name: clerkList[index].key,
+                  name: _clerkList[index].key,
                   index: index,
-                  selectedIndex: selectedIndex,
-                  onSelected: (widget.isManager && !hasConfirmed)
-                      ? () => setState(() => selectedIndex = index)
+                  selectedIndex: _selectedIndex,
+                  onSelected: (widget.isManager && !_hasConfirmed)
+                      ? () => setState(() => _selectedIndex = index)
                       : () {},
-                  clerkCount: clerkList[index].value,
+                  clerkCount: _clerkList[index].value,
                 );
               },
               separatorBuilder: (BuildContext context, int index) {
@@ -156,7 +240,7 @@ class _ClerkPageState extends State<ClerkPage> {
               vertical: 10,
             ),
             child: Text(
-              "서기 횟수가 가장 적은 순으로 오늘의 서기가 지정돼요.",
+              "횟수가 가장 적은 순으로 서기가 지정되며, 연속 서기는 불가능해요.",
               style: appFonts.c3.copyWith(color: appColors.grey6),
             ),
           ),
@@ -164,15 +248,9 @@ class _ClerkPageState extends State<ClerkPage> {
           widget.isManager
               ? AppExpandedButton(
                   buttonText: "서기 확정",
-                  onPressed: !hasConfirmed
+                  onPressed: !_hasConfirmed
                       ? () {
-                          hasConfirmed = true;
-
-                          nextClerk = MapUtil.getNextClerk(
-                            _clerkMap,
-                            clerkList[selectedIndex].key,
-                          );
-
+                          _hasConfirmed = true;
                           firebaseInstance.db
                               .collection('attendances')
                               .doc(widget.currentSemester)
@@ -180,13 +258,29 @@ class _ClerkPageState extends State<ClerkPage> {
                               .doc(widget.thisWeekClerkDate)
                               .update({'hasClerkConfirmed': true});
 
-                          firestoreWriter.writeConfirmedClerk(
-                            widget.currentSemester,
-                            widget.upcomingSemester,
-                            widget.thisWeekClerkDate,
-                            clerkList[selectedIndex].key,
-                            nextClerk,
-                          );
+                          if (_temporaryClerk == null) {
+                            nextClerk = MapUtil.getNextClerk(
+                              _clerkMap,
+                              _clerkList[_selectedIndex].key,
+                            );
+                            firestoreWriter.writeConfirmedClerk(
+                              widget.currentSemester,
+                              widget.upcomingSemester,
+                              widget.thisWeekClerkDate,
+                              _clerkList[_selectedIndex].key,
+                              nextClerk,
+                              false,
+                            );
+                          } else {
+                            firestoreWriter.writeConfirmedClerk(
+                              widget.currentSemester,
+                              widget.upcomingSemester,
+                              widget.thisWeekClerkDate,
+                              _temporaryClerk!,
+                              widget.clerk,
+                              true,
+                            );
+                          }
                         }
                       : null,
                 )
