@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:snulife_internal/logics/utils/string_util.dart';
 
 import '../common_instances.dart';
 
@@ -27,6 +28,8 @@ class FirebaseStates extends ChangeNotifier {
   String _clerk = '';
   String get clerk => _clerk;
 
+  late final String _thisWeekClerkDate;
+
   Future<void> _init() async {
     FirebaseAuth.instance.userChanges().listen((User? user) async {
       if (user != null) {
@@ -46,12 +49,11 @@ class FirebaseStates extends ChangeNotifier {
         _currentSemester = semesters[0];
         _upcomingSemester = semesters.length > 1 ? semesters[1] : null;
 
+        _thisWeekClerkDate = await _findClerkDate();
+
         firestoreReader
             .getPeopleAttendanceAndClerkStream(
-                // TODO _currentSemester로 바꾸기
-                '2023-W',
-                // TODO localToday로 바꾸기
-                '0229')
+                _currentSemester, _thisWeekClerkDate)
             .listen((doc) {
           _clerk = doc.data()!['clerk'];
           if (_clerk.isEmpty) _clerk = '(미정)';
@@ -63,5 +65,27 @@ class FirebaseStates extends ChangeNotifier {
       }
       notifyListeners();
     });
+  }
+
+  Future _findClerkDate() async {
+    final today = StringUtil.convertDateTimeToString(DateTime.now(), true);
+
+    final meetingDatesQuery = await firebaseInstance.db
+        .collection('attendances')
+        .doc(_currentSemester)
+        .collection('dates')
+        .get();
+
+    for (final date in meetingDatesQuery.docs) {
+      // 다음 회의 문서 찾기
+      if (int.parse(date.id) >= int.parse(today)) return date.id;
+    }
+    // 분기가 바뀌어서 return 못했으면 다음 학기의 첫 회의 문서 찾기
+    final nextMeetingDatesQuery = await firebaseInstance.db
+        .collection('attendances')
+        .doc(_upcomingSemester)
+        .collection('dates')
+        .get();
+    return nextMeetingDatesQuery.docs.first.id;
   }
 }

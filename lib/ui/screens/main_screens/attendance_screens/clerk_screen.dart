@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:snulife_internal/logics/common_instances.dart';
+import 'package:snulife_internal/logics/utils/string_util.dart';
 
 import '../../../../logics/utils/map_util.dart';
 import '../../../widgets/commons/button_widgets.dart';
@@ -28,6 +29,8 @@ class ClerkPage extends StatefulWidget {
 }
 
 class _ClerkPageState extends State<ClerkPage> {
+  final now = DateTime.now();
+  late final today = StringUtil.convertDateTimeToString(now, true);
   late Map<String, dynamic> _clerkMap = widget.clerkMap;
   late final StreamSubscription _clerkMapListener;
   late List<MapEntry<String, dynamic>> clerkList = _clerkMap.entries.toList();
@@ -50,7 +53,7 @@ class _ClerkPageState extends State<ClerkPage> {
         .collection('attendances')
         .doc(widget.currentSemester)
         .collection('dates')
-        // TODO localToday로 바꾸기
+        // TODO today로 바꾸기
         .doc('0229')
         .snapshots()
         .listen((event) => hasConfirmed = event.data()!['hasClerkConfirmed']);
@@ -158,7 +161,7 @@ class _ClerkPageState extends State<ClerkPage> {
                               .collection('attendances')
                               .doc(widget.currentSemester)
                               .collection('dates')
-                              // TODO localToday로 바꾸기
+                              // TODO today로 바꾸기
                               .doc('0229')
                               .update({'hasClerkConfirmed': true});
 

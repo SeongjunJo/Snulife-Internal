@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:snulife_internal/logics/utils/date_util.dart';
 import 'package:snulife_internal/logics/utils/map_util.dart';
 import 'package:snulife_internal/logics/utils/string_util.dart';
 import 'package:snulife_internal/ui/widgets/commons/snackbar_widget.dart';
@@ -184,11 +183,12 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
 
   // 함수가 길고, 직접 넣으면 들여쓰기로 포맷팅이 과해져서 따로 뺌
   _onPressed(String meetingTime) async {
-    final now = DateUtil.getLocalNow();
-    late final currentTime = StringUtil.convertDateTimeToString(now, false);
+    final now = DateTime.now();
+    final currentDate = StringUtil.convertDateTimeToString(now, true);
+    final currentTime = StringUtil.convertDateTimeToString(now, false);
 
     // 오늘 날짜를 선택했을 때 핸들링
-    if (_lateAbsenceList.any((element) => element.date == localToday)) {
+    if (_lateAbsenceList.any((element) => element.date == currentDate)) {
       if (_isLate.value!) {
         if (int.parse(currentTime) >= int.parse(meetingTime)) {
           // 회의 시간 넘기면 지각 신청 불가

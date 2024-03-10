@@ -1,5 +1,3 @@
-import 'package:snulife_internal/logics/common_instances.dart';
-
 import 'map_util.dart';
 
 class StringUtil {
@@ -36,14 +34,15 @@ class StringUtil {
     List<AttendanceStatus> list,
     bool makeFuture, // 미래만 남길지, 과거만 남길지
   ) {
+    final today = StringUtil.convertDateTimeToString(DateTime.now(), true);
     final List<AttendanceStatus> adjustedList =
         List.from(list); // 복사 안 하면 인자로 받는 list가 바뀜
     if (makeFuture) {
-      adjustedList.removeWhere(
-          (element) => int.parse(element.date) < int.parse(localToday));
+      adjustedList
+          .removeWhere((element) => int.parse(element.date) < int.parse(today));
     } else {
       adjustedList.removeWhere(
-          (element) => int.parse(element.date) >= int.parse(localToday));
+          (element) => int.parse(element.date) >= int.parse(today));
     }
     return adjustedList;
   }

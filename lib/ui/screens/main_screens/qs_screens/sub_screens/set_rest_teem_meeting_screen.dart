@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:snulife_internal/logics/utils/string_util.dart';
 
 import '../../../../../logics/common_instances.dart';
 import '../../../../widgets/commons/button_widgets.dart';
@@ -40,6 +41,8 @@ class SetRestOrTeemMeetingPageState extends State<SetRestOrTeemMeetingPage> {
       ]),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.hasData) {
+          final today =
+              StringUtil.convertDateTimeToString(DateTime.now(), true);
           final List<String> meetingRestDates =
               snapshot.data[0].data()['rest'].cast<String>();
           final List<String> teamMeetingDates =
@@ -55,8 +58,8 @@ class SetRestOrTeemMeetingPageState extends State<SetRestOrTeemMeetingPage> {
             allMeetingDates.add(doc.id);
           }
           originalMeetingDateCount = allMeetingDates.length;
-          allMeetingDates.removeWhere(
-              (element) => int.parse(element) < int.parse(localToday));
+          allMeetingDates
+              .removeWhere((element) => int.parse(element) < int.parse(today));
           adjustedMeetingDateCount = allMeetingDates.length;
 
           return Expanded(
@@ -167,7 +170,7 @@ class SetRestOrTeemMeetingPageState extends State<SetRestOrTeemMeetingPage> {
           selectedIndexes.clear();
           selectedDates.clear();
           setState(() {});
-          if (!mounted) return;
+          if (!context.mounted) return;
           Navigator.pop(context);
           context.pop();
           AppSnackBar.showFlushbar(context, "신청되었습니다.", true);

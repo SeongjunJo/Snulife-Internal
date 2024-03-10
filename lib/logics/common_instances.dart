@@ -1,6 +1,5 @@
 import 'package:async/async.dart';
 import 'package:snulife_internal/logics/firestore_read.dart';
-import 'package:snulife_internal/logics/utils/date_util.dart';
 import 'package:snulife_internal/logics/utils/firebase_util.dart';
 
 import '../ui/styles/colors.dart';
@@ -17,4 +16,3 @@ FirestoreReader get firestoreReader => FirestoreReader();
 FirestoreWriter get firestoreWriter => FirestoreWriter();
 AsyncMemoizer get memoizer => AsyncMemoizer();
 HttpLogic get httpLogic => HttpLogic();
-String get localToday => DateUtil.getLocalToday();

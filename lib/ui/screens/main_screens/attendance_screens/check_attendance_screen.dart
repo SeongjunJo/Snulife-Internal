@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:snulife_internal/logics/utils/date_util.dart';
+import 'package:snulife_internal/logics/utils/string_util.dart';
 import 'package:snulife_internal/ui/widgets/commons/button_widgets.dart';
 
 import '../../../../logics/common_instances.dart';
@@ -30,7 +30,8 @@ class CheckAttendancePage extends StatelessWidget {
     bool canModify =
         doesLeaderCheck ? true : isClerk; // 팀별 회의 때는 팀장만 체크 가능, 아니면 서기만 체크 가능
 
-    final DateTime today = DateUtil.getLocalNow();
+    final DateTime now = DateTime.now();
+    final String today = StringUtil.convertDateTimeToString(now, true);
     final attendanceListener = context.watch<CheckAttendanceState>();
     bool unCompleted = false;
 
@@ -46,9 +47,7 @@ class CheckAttendancePage extends StatelessWidget {
       color: appColors.grey0,
       child: StreamBuilder(
         stream: firestoreReader.getPeopleAttendanceAndClerkStream(
-            // TODO 실제 날짜로 바꾸기
-            currentSemester,
-            '0215'),
+            currentSemester, today),
         builder:
             (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.hasData) {
@@ -61,7 +60,7 @@ class CheckAttendancePage extends StatelessWidget {
               children: [
                 const SizedBox(height: 32),
                 Text(
-                  "${today.month}월 ${today.day}일자 회의\n출석체크를 해주세요.",
+                  "${now.month}월 ${now.day}일자 회의\n출석체크를 해주세요.",
                   style: appFonts.h1,
                 ),
                 const SizedBox(height: 40),

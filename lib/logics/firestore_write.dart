@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:snulife_internal/logics/utils/date_util.dart';
 import 'package:snulife_internal/logics/utils/html_util.dart';
 import 'package:snulife_internal/logics/utils/map_util.dart';
 import 'package:snulife_internal/logics/utils/string_util.dart';
@@ -46,6 +45,7 @@ class FirestoreWriter {
     String clerk,
     String nextClerk,
   ) async {
+    final today = StringUtil.convertDateTimeToString(DateTime.now(), true);
     final nextWeekDate = DateTime.now().add(const Duration(days: 7, hours: 9));
     final nextWeekDateId =
         StringUtil.convertDateTimeToString(nextWeekDate, true);
@@ -55,7 +55,7 @@ class FirestoreWriter {
         .collection('attendances')
         .doc(currentSemester)
         .collection('dates')
-        // TODO localToday로 바꾸기
+        // TODO today로 바꾸기
         .doc('0229');
     final nextClerkDocumentRef = _db
         .collection('attendances')
@@ -105,6 +105,7 @@ class FirestoreWriter {
     Map<String, List<dynamic>> userAttendanceStatus,
     bool isConfirm,
   ) {
+    final today = StringUtil.convertDateTimeToString(DateTime.now(), true);
     final presentList = [];
     final lateList = [];
     final absentList = [];
@@ -131,7 +132,7 @@ class FirestoreWriter {
         .collection('attendances')
         .doc(semester)
         .collection('dates')
-        // TODO localToday로 바꾸기
+        // TODO today로 바꾸기
         .doc('0215')
         .update({
       'present': presentList,
@@ -145,6 +146,7 @@ class FirestoreWriter {
 
   confirmAttendanceStatus(
       String semester, Map<String, List<dynamic>> userAttendanceStatus) {
+    final today = StringUtil.convertDateTimeToString(DateTime.now(), true);
     late final String attendance;
     late final bool isAuthorized;
     late final String summaryAttendance;
@@ -169,7 +171,7 @@ class FirestoreWriter {
           .collection('attendances')
           .doc(semester)
           .collection(user)
-          // TODO localToday로 바꾸기
+          // TODO today로 바꾸기
           .doc('0215')
           .set({'attendance': attendance, 'isAuthorized': isAuthorized});
 
@@ -290,7 +292,7 @@ Future<List<String>> _createMeetingTimeList(
   final semesterDateTimeList =
       StringUtil.getSemesterDateTime(semesterDurationList);
 
-  final currentYear = DateUtil.getLocalNow().year;
+  final currentYear = DateTime.now().year;
   final DateTime startDateTime =
       StringUtil.convertStringToDateTime(currentYear, startDate);
   late final DateTime endDateTime;

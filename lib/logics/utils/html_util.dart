@@ -1,5 +1,4 @@
 import 'package:html/parser.dart';
-import 'package:snulife_internal/logics/utils/date_util.dart';
 
 class HtmlUtil {
   static List<String> getSemesterDuration(String html) {
@@ -10,7 +9,7 @@ class HtmlUtil {
     late final String secondSemesterEndDate;
     final List<String> semesterDuration = [];
 
-    int calendarYear = DateUtil.getLocalNow().year;
+    int calendarYear = DateTime.now().year;
     if (html.contains('${(calendarYear + 2).toString()}년')) calendarYear++;
     String yearText = calendarYear.toString();
 

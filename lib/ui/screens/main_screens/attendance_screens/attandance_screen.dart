@@ -6,9 +6,12 @@ import 'package:snulife_internal/logics/providers/firebase_states.dart';
 import '../../../../logics/app_tabs.dart';
 import '../../../../logics/common_instances.dart';
 import '../../../../logics/utils/map_util.dart';
+import '../../../../logics/utils/string_util.dart';
 import 'check_attendance_screen.dart';
 import 'clerk_screen.dart';
 import 'no_meeting_today_screen.dart';
+
+final today = StringUtil.convertDateTimeToString(DateTime.now(), true);
 
 class AttendancePage extends StatelessWidget {
   const AttendancePage({
@@ -42,8 +45,7 @@ class AttendancePage extends StatelessWidget {
           final clerkMap = snapshot.data[1];
           final userList = snapshot.data[2];
           final hasMeetingStarted = snapshot.data[3];
-          final isTeamMeeting =
-              snapshot.data[4].cast<String>().contains(localToday);
+          final isTeamMeeting = snapshot.data[4].cast<String>().contains(today);
 
           return TabBarView(
               controller: AppTab.attendanceTabController,
@@ -93,7 +95,7 @@ Future _getIsTodayMeeting(String currentSemester) async =>
           .collection('attendances')
           .doc(currentSemester)
           .collection('dates')
-          // TODO localToday로 바꾸기
+          // TODO today로 바꾸기
           .doc('0229')
           .get();
       return doc.exists;

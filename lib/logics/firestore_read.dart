@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:snulife_internal/logics/utils/date_util.dart';
 import 'package:snulife_internal/logics/utils/html_util.dart';
 import 'package:snulife_internal/logics/utils/map_util.dart';
 import 'package:snulife_internal/logics/utils/string_util.dart';
@@ -34,7 +33,7 @@ class FirestoreReader {
   }
 
   Future checkHasMeetingStarted() async {
-    final now = DateUtil.getLocalNow();
+    final now = DateTime.now();
     late final currentTime = StringUtil.convertDateTimeToString(now, false);
     late final DocumentSnapshot meetingTimeInfo;
 
@@ -60,7 +59,7 @@ class FirestoreReader {
     Index index = Index.winter; // 디폴트 값
 
     final List<DateTime> semesterDateTimeList = await getSemesterDateTimeList();
-    final DateTime now = DateUtil.getLocalNow();
+    final DateTime now = DateTime.now();
     final yearText = now.year;
 
     for (int i = 0; i < semesterDateTimeList.length; i++) {
