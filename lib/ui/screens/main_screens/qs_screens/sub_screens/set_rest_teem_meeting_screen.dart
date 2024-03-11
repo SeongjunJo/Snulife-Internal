@@ -87,7 +87,7 @@ class SetRestOrTeemMeetingPageState extends State<SetRestOrTeemMeetingPage> {
                                 return ValueListenableBuilder<bool?>(
                                   valueListenable: _isRest,
                                   builder: (context, bool? value, _) {
-                                    return BottomModal(
+                                    return SelectOnlyBottomModal(
                                         height: 290,
                                         title: '변경 유형을 선택해주세요.',
                                         tapTexts: const ['휴회', '팀별 회의'],

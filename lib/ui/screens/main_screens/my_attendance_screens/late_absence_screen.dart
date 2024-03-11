@@ -154,7 +154,7 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
                               return ValueListenableBuilder<bool?>(
                                 valueListenable: _isLate,
                                 builder: (context, bool? value, _) {
-                                  return BottomModal(
+                                  return SelectOnlyBottomModal(
                                       height: 312,
                                       title: "지각/결석 여부를 선택해주세요.",
                                       hintText: '신청 후에는 서기만 출결 변경이 가능해요.',

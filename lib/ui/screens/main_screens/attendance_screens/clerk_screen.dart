@@ -157,7 +157,7 @@ class _ClerkPageState extends State<ClerkPage> {
                                 showModalBottomSheet(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return BottomModal(
+                                    return SelectOnlyBottomModal(
                                       height: 600,
                                       title: '임시 서기로 지정할 동아리원을 선택해주세요.',
                                       hintText: '확인 후 \'서기 확정\'을 반드시 눌러주세요.',

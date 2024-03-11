@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:snulife_internal/ui/screens/main_screens/qs_screens/sub_screens/manage_people_screen.dart';
 import 'package:snulife_internal/ui/screens/main_screens/qs_screens/sub_screens/set_next_meeting.dart';
 import 'package:snulife_internal/ui/screens/main_screens/qs_screens/sub_screens/set_rest_teem_meeting_screen.dart';
 
@@ -53,7 +54,7 @@ class _ManageClubPageState extends State<ManageClubPage> {
           else if (_tabTagIndex == 2)
             SetNextMeeting(currentSemester: widget.currentSemester)
           else
-            const Text('동아리원 관리'),
+            const ManagePeoplePage(),
         ],
       ),
     );

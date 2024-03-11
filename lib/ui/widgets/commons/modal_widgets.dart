@@ -67,8 +67,8 @@ class ConfirmDialog extends StatelessWidget {
   }
 }
 
-class BottomModal extends StatefulWidget {
-  const BottomModal({
+class SelectOnlyBottomModal extends StatefulWidget {
+  const SelectOnlyBottomModal({
     super.key,
     required this.height,
     required this.title,
@@ -88,12 +88,12 @@ class BottomModal extends StatefulWidget {
   final Function()? onBtnPressed;
 
   @override
-  State<BottomModal> createState() => _BottomModalState();
+  State<SelectOnlyBottomModal> createState() => _SelectOnlyBottomModalState();
 }
 
-class _BottomModalState extends State<BottomModal> {
+class _SelectOnlyBottomModalState extends State<SelectOnlyBottomModal> {
   int? _modalIndex; // 모달의 체크 박스 인덱스: null이면 선택 안 함
-  late final _scrollController;
+  late final ScrollController _scrollController;
 
   @override
   void initState() {

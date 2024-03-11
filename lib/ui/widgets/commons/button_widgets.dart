@@ -2,23 +2,35 @@ import 'package:flutter/material.dart';
 
 import '../../../logics/common_instances.dart';
 
-class InfoTag extends StatelessWidget {
+class InfoTag extends StatefulWidget {
   const InfoTag({
     super.key,
     required this.info,
+    this.isTurnedOn = false,
   });
 
   final String info;
+  final bool isTurnedOn;
 
+  @override
+  State<InfoTag> createState() => _InfoTagState();
+}
+
+class _InfoTagState extends State<InfoTag> {
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(4),
-        color: appColors.grey1,
+        color: widget.isTurnedOn ? appColors.subBlue2 : appColors.grey1,
       ),
-      child: Text(info, style: appFonts.c2.copyWith(color: appColors.grey5)),
+      child: Text(
+        widget.info,
+        style: appFonts.c2.copyWith(
+          color: widget.isTurnedOn ? appColors.slBlue : appColors.grey5,
+        ),
+      ),
     );
   }
 }

@@ -152,3 +152,52 @@ class AttendanceStatus {
     };
   }
 }
+
+class UserInfo {
+  UserInfo({
+    required this.name,
+    required this.position,
+    required this.team,
+    required this.isSenior,
+    required this.isAlum,
+    required this.year,
+    required this.promotionCount,
+    this.isRestUser = false,
+  });
+
+  final String name;
+  final String team;
+  final String position;
+  final bool isSenior;
+  final bool isAlum;
+  final int year;
+  final int promotionCount;
+  bool isRestUser;
+
+  factory UserInfo.fromFirestore(
+      DocumentSnapshot<Map<String, dynamic>> snapshot,
+      SnapshotOptions? options) {
+    final data = snapshot.data();
+    return UserInfo(
+      name: data!['name'],
+      team: data['team'],
+      position: data['position'],
+      isSenior: data['isSenior'],
+      isAlum: data['isAlum'],
+      year: data['year'],
+      promotionCount: data['promotionCount'],
+    );
+  }
+
+  Map<String, dynamic> toFirestore() {
+    return {
+      'name': name,
+      'team': team,
+      'position': position,
+      'isSenior': isSenior,
+      'isAlum': isAlum,
+      'year': year,
+      'promotionCount': promotionCount,
+    };
+  }
+}

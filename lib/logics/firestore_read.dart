@@ -22,6 +22,48 @@ class FirestoreReader {
     return userListDocument.docs.first.data();
   }
 
+  Future getPeopleInfo() async {
+    late final DocumentSnapshot<Map> userListDocument;
+    late final List userList;
+    late final List restUserList;
+    final futureList = <Future>[];
+    late final List queryList;
+    final peopleInfoList = <UserInfo>[];
+
+    userListDocument =
+        await _db.collection('information').doc('userList').get();
+    userList = userListDocument.data()!['names'];
+    restUserList = userListDocument.data()!['rest'];
+
+    void addFutureList(futureList, userList) {
+      for (final user in userList) {
+        futureList.add(firebaseInstance.db
+            .collection('users')
+            .where('name', isEqualTo: user)
+            .withConverter(
+              fromFirestore: UserInfo.fromFirestore,
+              toFirestore: (UserInfo userInfo, _) => userInfo.toFirestore(),
+            )
+            .get());
+      }
+    }
+
+    addFutureList(futureList, userList);
+    addFutureList(futureList, restUserList);
+
+    queryList = await Future.wait(futureList);
+
+    for (final query in queryList) {
+      final data = query.docs.first.data();
+      if (restUserList.contains(data.name)) {
+        data.isRestUser = true;
+      }
+      peopleInfoList.add(data);
+    }
+
+    return peopleInfoList;
+  }
+
   Future findClerkDate(String currentSemester, String? upcomingSemester) async {
     final today = StringUtil.convertDateTimeToString(DateTime.now(), true);
 
