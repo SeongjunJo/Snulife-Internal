@@ -56,7 +56,7 @@ class _SetNextMeetingState extends State<SetNextMeeting> {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             showFlushBar && snapshot.connectionState == ConnectionState.done
                 ? {
-                    AppSnackBar.showFlushbar(context, '변경되었습니다.', true),
+                    AppSnackBar.showFlushBar(context, '변경되었습니다.', 100, true),
                     showFlushBar = false
                   }
                 : null;

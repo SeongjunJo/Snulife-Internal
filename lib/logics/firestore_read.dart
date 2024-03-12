@@ -22,18 +22,15 @@ class FirestoreReader {
     return userListDocument.docs.first.data();
   }
 
-  Future getPeopleInfo() async {
-    late final DocumentSnapshot<Map> userListDocument;
+  Future getPeopleInfo(DocumentSnapshot<Map?> snapshot) async {
     late final List userList;
     late final List restUserList;
     final futureList = <Future>[];
     late final List queryList;
     final peopleInfoList = <UserInfo>[];
 
-    userListDocument =
-        await _db.collection('information').doc('userList').get();
-    userList = userListDocument.data()!['names'];
-    restUserList = userListDocument.data()!['rest'];
+    userList = snapshot.data()!['names'];
+    restUserList = snapshot.data()!['rest'];
 
     void addFutureList(futureList, userList) {
       for (final user in userList) {

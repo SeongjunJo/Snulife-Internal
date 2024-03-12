@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import '../../../logics/common_instances.dart';
 
 class AppSnackBar {
-  static showFlushbar(BuildContext context, String message, bool isSuccess) {
+  static showFlushBar(
+      BuildContext context, String message, double height, bool isSuccess) {
     final image = isSuccess
         ? Image.asset("assets/images/icon_check.png",
             width: 34, height: 34, color: appColors.slBlue)
@@ -12,8 +13,7 @@ class AppSnackBar {
 
     Flushbar(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      margin:
-          EdgeInsets.symmetric(vertical: isSuccess ? 100 : 330, horizontal: 20),
+      margin: EdgeInsets.symmetric(vertical: height, horizontal: 20),
       backgroundColor: isSuccess ? appColors.subBlue2 : const Color(0xFFFDD3D3),
       borderRadius: BorderRadius.circular(12),
       duration: const Duration(seconds: 2),

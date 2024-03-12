@@ -174,7 +174,7 @@ class SetRestOrTeemMeetingPageState extends State<SetRestOrTeemMeetingPage> {
           if (!context.mounted) return;
           Navigator.pop(context);
           context.pop();
-          AppSnackBar.showFlushbar(context, "신청되었습니다.", true);
+          AppSnackBar.showFlushBar(context, "신청되었습니다.", 100, true);
         },
       ),
     );

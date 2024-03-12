@@ -213,6 +213,45 @@ class FirestoreWriter {
     return Future.wait(updateList);
   }
 
+  Future<List<String>> createMeetingTimeList(
+      String startDate, String nextSemester) async {
+    final academicCalendarHtml = await httpLogic.getAcademicCalendar();
+    final semesterDurationList =
+        HtmlUtil.getSemesterDuration(academicCalendarHtml);
+    final semesterDateTimeList =
+        StringUtil.getSemesterDateTime(semesterDurationList);
+
+    final currentYear = DateTime.now().year;
+    final DateTime startDateTime =
+        StringUtil.convertStringToDateTime(currentYear, startDate);
+    late final DateTime endDateTime;
+    DateTime meetingTime = startDateTime;
+    final List<String> meetingTimeList = [];
+
+    switch (nextSemester.split('-').last) {
+      case '1':
+        endDateTime = semesterDateTimeList[1]
+            .add(const Duration(days: 1)); // 1학기 종강일자는 회의일 가능
+      case 'S':
+        endDateTime = semesterDateTimeList[2]; // 2학기 개강일자는 회의일 불가능
+      case '2':
+        endDateTime = semesterDateTimeList[3]
+            .add(const Duration(days: 1)); // 2학기 종강일자는 회의일 가능
+      case 'W':
+        final int nextYear = currentYear + 1;
+        // 내년 1학기 개강일자는 올해 학사일정에 안 나와서 내년 3월 1일을 기준으로 함; 3월 2일 전까지 회의일 가능
+        endDateTime = DateTime(nextYear, 3, 2);
+    }
+
+    while (meetingTime.isBefore(endDateTime)) {
+      meetingTimeList
+          .add(StringUtil.convertDateTimeToString(meetingTime, true));
+      meetingTime = meetingTime.add(const Duration(days: 7));
+    }
+
+    return meetingTimeList;
+  }
+
   Future createNextMeeting(
       String currentSemester, String startDate, String time) async {
     final yearText = currentSemester.split('-').first;
@@ -232,7 +271,7 @@ class FirestoreWriter {
     }
 
     final futureList = await Future.wait([
-      _createMeetingTimeList(startDate, nextSemester),
+      createMeetingTimeList(startDate, nextSemester),
       firestoreReader.getUserList()
     ]);
     final List<String> meetingTimeList = futureList[0].cast<String>();
@@ -285,42 +324,82 @@ class FirestoreWriter {
 
     await batch.commit();
   }
-}
 
-Future<List<String>> _createMeetingTimeList(
-    String startDate, String nextSemester) async {
-  final academicCalendarHtml = await httpLogic.getAcademicCalendar();
-  final semesterDurationList =
-      HtmlUtil.getSemesterDuration(academicCalendarHtml);
-  final semesterDateTimeList =
-      StringUtil.getSemesterDateTime(semesterDurationList);
+  Future registerNewUser(
+    UserInfo newUser,
+    String currentSemester,
+    List peopleInfoList,
+  ) async {
+    final db = firebaseInstance.db;
+    final batch = db.batch();
+    final meetingDatesList = <String>[];
+    final today = StringUtil.convertDateTimeToString(DateTime.now(), true);
+    final youngestYear =
+        peopleInfoList.map((e) => e.year).reduce((a, b) => a > b ? a : b);
 
-  final currentYear = DateTime.now().year;
-  final DateTime startDateTime =
-      StringUtil.convertStringToDateTime(currentYear, startDate);
-  late final DateTime endDateTime;
-  DateTime meetingTime = startDateTime;
-  final List<String> meetingTimeList = [];
+    if (newUser.year > youngestYear) {
+      // 신입 기수 오면 기존 서기 해방
+      for (final user in peopleInfoList) {
+        batch.delete(db.collection('clerks').doc(user.name));
+      }
+    }
 
-  switch (nextSemester.split('-').last) {
-    case '1':
-      endDateTime = semesterDateTimeList[1]
-          .add(const Duration(days: 1)); // 1학기 종강일자는 회의일 가능
-    case 'S':
-      endDateTime = semesterDateTimeList[2]; // 2학기 개강일자는 회의일 불가능
-    case '2':
-      endDateTime = semesterDateTimeList[3]
-          .add(const Duration(days: 1)); // 2학기 종강일자는 회의일 가능
-    case 'W':
-      final int nextYear = currentYear + 1;
-      // 내년 1학기 개강일자는 올해 학사일정에 안 나와서 내년 3월 1일을 기준으로 함; 3월 2일 전까지 회의일 가능
-      endDateTime = DateTime(nextYear, 3, 2);
+    final userRef = await db
+        .collection('users')
+        .withConverter(
+          fromFirestore: UserInfo.fromFirestore,
+          toFirestore: (UserInfo userInfo, _) => userInfo.toFirestore(),
+        )
+        .where('name', isEqualTo: newUser.name)
+        .get();
+
+    final meetingDatesQuery = await firebaseInstance.db
+        .collection('attendances')
+        .doc(currentSemester)
+        .collection(firebaseInstance.userName!)
+        .where('attendance', isNull: false)
+        .get();
+
+    batch.set(userRef.docs.first.reference, newUser); // users 컬렉션에 유저 정보 등록
+
+    batch.update(db.collection('information').doc('userList'), {
+      'names': FieldValue.arrayUnion([newUser.name]), // userList 명단에 이름 등록
+    });
+
+    batch.set(db.collection('clerks').doc(newUser.name), {'count': 0}); // 서기 등록
+
+    for (final doc in meetingDatesQuery.docs) {
+      meetingDatesList.add(doc.id);
+    }
+    meetingDatesList.removeWhere(
+        (element) => int.parse(element) < int.parse(today)); // 신입 들어오기 전 날짜 제거
+    for (final date in meetingDatesList) {
+      batch.set(
+        db
+            .collection('attendances')
+            .doc(currentSemester)
+            .collection(newUser.name)
+            .doc(date),
+        {'attendance': '', 'isAuthorized': false},
+      ); // 출결 등록
+    }
+
+    batch.set(
+      db
+          .collection('attendances')
+          .doc(currentSemester)
+          .collection(newUser.name)
+          .doc('summary'),
+      {
+        'present': 0,
+        'absent': 0,
+        'late': 0,
+        'badAbsent': 0,
+        'badLate': 0,
+        'sum': 0,
+      },
+    ); // 출결 등록
+
+    await batch.commit();
   }
-
-  while (meetingTime.isBefore(endDateTime)) {
-    meetingTimeList.add(StringUtil.convertDateTimeToString(meetingTime, true));
-    meetingTime = meetingTime.add(const Duration(days: 7));
-  }
-
-  return meetingTimeList;
 }

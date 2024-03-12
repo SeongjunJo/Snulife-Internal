@@ -195,13 +195,13 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
       if (_isLate.value!) {
         if (int.parse(currentTime) >= int.parse(meetingTime)) {
           // 회의 시간 넘기면 지각 신청 불가
-          AppSnackBar.showFlushbar(
-              context, "회의 시작 이후에는 지각 신청을 할 수 없어요.", false);
+          AppSnackBar.showFlushBar(
+              context, "회의 시작 이후에는 지각 신청을 할 수 없어요.", 330, false);
           return;
         }
       } else {
         // 회의 날짜 넘기면 결석 신청 불가
-        AppSnackBar.showFlushbar(context, "결석 신청은 전날 자정까지만 가능해요.", false);
+        AppSnackBar.showFlushBar(context, "결석 신청은 전날 자정까지만 가능해요.", 330, false);
         return;
       }
     }
@@ -217,6 +217,6 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
     setState(() {});
     if (!mounted) return;
     context.pop();
-    AppSnackBar.showFlushbar(context, "신청되었습니다.", true);
+    AppSnackBar.showFlushBar(context, "신청되었습니다.", 100, true);
   }
 }
