@@ -10,10 +10,7 @@ import '../../../../widgets/commons/snackbar_widget.dart';
 import '../../../../widgets/screen_specified/my_attendance_widget.dart';
 
 class SetRestOrTeemMeetingPage extends StatefulWidget {
-  const SetRestOrTeemMeetingPage({
-    super.key,
-    required this.currentSemester,
-  });
+  const SetRestOrTeemMeetingPage({super.key, required this.currentSemester});
 
   final String currentSemester;
 
@@ -64,6 +61,8 @@ class SetRestOrTeemMeetingPageState extends State<SetRestOrTeemMeetingPage> {
 
           return Expanded(
             child: ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
               itemCount: allMeetingDates.length + 5,
               itemBuilder: (context, index) {
                 if (index == 0) {

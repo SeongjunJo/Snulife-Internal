@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../logics/common_instances.dart';
 
-class InfoTag extends StatefulWidget {
+class InfoTag extends StatelessWidget {
   const InfoTag({
     super.key,
     required this.info,
@@ -13,22 +13,17 @@ class InfoTag extends StatefulWidget {
   final bool isTurnedOn;
 
   @override
-  State<InfoTag> createState() => _InfoTagState();
-}
-
-class _InfoTagState extends State<InfoTag> {
-  @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(4),
-        color: widget.isTurnedOn ? appColors.subBlue2 : appColors.grey1,
+        color: isTurnedOn ? appColors.subBlue2 : appColors.grey1,
       ),
       child: Text(
-        widget.info,
+        info,
         style: appFonts.c2.copyWith(
-          color: widget.isTurnedOn ? appColors.slBlue : appColors.grey5,
+          color: isTurnedOn ? appColors.slBlue : appColors.grey5,
         ),
       ),
     );

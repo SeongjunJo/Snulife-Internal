@@ -63,8 +63,9 @@ class _SetNextMeetingState extends State<SetNextMeeting> {
           });
 
           return Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: ListView(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
               children: [
                 Text('다음 정규 회의 시작 일자를\n지정해주세요.', style: appFonts.h1),
                 const SizedBox(height: 20),
@@ -118,7 +119,7 @@ class _SetNextMeetingState extends State<SetNextMeeting> {
                     style: appFonts.c3.copyWith(color: appColors.grey6),
                   ),
                 ),
-                const Spacer(),
+                const SizedBox(height: 40),
                 Row(
                   children: [
                     AppExpandedButton(

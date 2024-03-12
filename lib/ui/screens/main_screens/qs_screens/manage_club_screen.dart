@@ -23,8 +23,9 @@ class _ManageClubPageState extends State<ManageClubPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       color: appColors.grey0,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: ListView(
+        // 신입 추가 bottom modal에서 keyboard로 인한 bottom overflow 방지
+        physics: const AlwaysScrollableScrollPhysics(),
         children: [
           const SizedBox(height: 16),
           Row(

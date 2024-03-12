@@ -402,4 +402,33 @@ class FirestoreWriter {
 
     await batch.commit();
   }
+
+  Future updatePeopleInfo(List<Map<String, dynamic>> updatedInfoList) async {
+    final db = firebaseInstance.db;
+    final batch = db.batch();
+
+    final userQuery = await db
+        .collection('users')
+        .withConverter(
+            fromFirestore: UserInfo.fromFirestore,
+            toFirestore: (UserInfo userInfo, _) => userInfo.toFirestore())
+        .get();
+
+    for (final userInfo in updatedInfoList) {
+      final index = userQuery.docs
+          .indexWhere((element) => element.data().name == userInfo['name']);
+      if (userInfo.containsKey('isRest') && userInfo['isRest'] == null) {
+        // 탈퇴
+        batch.delete(userQuery.docs[index].reference);
+        batch.update(db.collection('information').doc('userList'), {
+          'names': FieldValue.arrayRemove([userInfo['name']]),
+        });
+        batch.delete(db.collection('clerks').doc(userInfo['name']));
+      } else {
+        batch.update(userQuery.docs[index].reference, userInfo);
+      }
+    }
+
+    await batch.commit();
+  }
 }

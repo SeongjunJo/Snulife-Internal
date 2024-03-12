@@ -162,7 +162,7 @@ class UserInfo {
     required this.isAlum,
     required this.year,
     required this.promotionCount,
-    this.isRestUser = false,
+    required this.isRest,
   });
 
   final String name;
@@ -172,20 +172,22 @@ class UserInfo {
   final bool isAlum;
   final int year;
   final int promotionCount;
-  bool isRestUser;
+  final bool isRest;
 
   factory UserInfo.fromFirestore(
       DocumentSnapshot<Map<String, dynamic>> snapshot,
       SnapshotOptions? options) {
     final data = snapshot.data();
     return UserInfo(
+      // 신입 추가 직전의 상황 => firestore에 이름만 있음
       name: data!['name'],
-      team: data['team'],
-      position: data['position'],
-      isSenior: data['isSenior'],
-      isAlum: data['isAlum'],
-      year: data['year'],
-      promotionCount: data['promotionCount'],
+      team: data['team'] ?? '미정',
+      position: data['position'] ?? '팀원',
+      isSenior: data['isSenior'] ?? false,
+      isAlum: data['isAlum'] ?? false,
+      isRest: data['isRest'] ?? false,
+      year: data['year'] ?? 0,
+      promotionCount: data['promotionCount'] ?? 0,
     );
   }
 
@@ -196,6 +198,7 @@ class UserInfo {
       'position': position,
       'isSenior': isSenior,
       'isAlum': isAlum,
+      'isRest': isRest,
       'year': year,
       'promotionCount': promotionCount,
     };

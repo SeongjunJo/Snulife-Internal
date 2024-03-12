@@ -141,7 +141,7 @@ class HomePage extends StatelessWidget {
                       ),
                       primaryTabIcon: Padding(
                         padding: const EdgeInsets.only(
-                            top: 13, left: 0, right: 7, bottom: 13),
+                            top: 20, left: 0, right: 13, bottom: 20),
                         child: Image.asset("assets/images/icon_management.png",
                             width: 131, height: 112),
                       ),

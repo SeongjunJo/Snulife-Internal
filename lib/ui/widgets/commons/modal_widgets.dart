@@ -123,7 +123,7 @@ class _SelectOnlyBottomModalState extends State<SelectOnlyBottomModal> {
                   controller: _scrollController,
                   thumbColor: appColors.grey4,
                   thickness: 5,
-                  thumbVisibility: true,
+                  thumbVisibility: widget.canScroll,
                   radius: const Radius.circular(30),
                   child: Padding(
                     padding: EdgeInsets.symmetric(
@@ -147,6 +147,7 @@ class _SelectOnlyBottomModalState extends State<SelectOnlyBottomModal> {
               widget.hintText != null
                   ? Text(
                       widget.hintText!,
+                      textAlign: TextAlign.center,
                       style: appFonts.c2.copyWith(color: appColors.grey5),
                     )
                   : const SizedBox(height: 0),

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:snulife_internal/logics/common_instances.dart';
 import 'package:snulife_internal/ui/widgets/commons/button_widgets.dart';
+import 'package:snulife_internal/ui/widgets/commons/modal_widgets.dart';
 
 import '../../../../../logics/providers/firebase_states.dart';
 import '../../../../../logics/utils/map_util.dart';
@@ -18,116 +19,151 @@ class ManagePeoplePage extends StatefulWidget {
 }
 
 class _ManagePeoplePageState extends State<ManagePeoplePage> {
+  // 여기서 setState 쓰면 안 됨 => ValueNotifier로 변경
   late final List userList;
   late final List restUserList;
+  final updatedCount = ValueNotifier(0); // Change Notifier 안 쓰고 counter로 대체
+  final List<Map<String, dynamic>> updatedInfoList = [];
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
       stream: firebaseInstance.db
-          .collection('information')
-          .doc('userList')
+          .collection('users')
+          .withConverter(
+            fromFirestore: UserInfo.fromFirestore,
+            toFirestore: (UserInfo userInfo, _) => userInfo.toFirestore(),
+          )
           .snapshots(),
-      builder: (BuildContext context,
-          AsyncSnapshot<DocumentSnapshot> streamSnapshot) {
+      builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
         if (streamSnapshot.hasData) {
-          return FutureBuilder(
-            future: firestoreReader
-                .getPeopleInfo(streamSnapshot.data! as DocumentSnapshot<Map?>),
-            builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-              if (snapshot.hasData) {
-                final peopleInfoList = snapshot.data as List<UserInfo>;
+          debugPrint('${updatedInfoList.length}');
 
-                return ListView(
-                  shrinkWrap: true,
-                  children: [
-                    ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: peopleInfoList.length,
-                      itemBuilder: (context, index) => Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            peopleInfoList[index].name,
-                            style: appFonts.b1.copyWith(
-                              color: appColors.grey7,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              InfoTag(info: peopleInfoList[index].team),
-                              const SizedBox(width: 10),
-                              InfoTag(
-                                info: peopleInfoList[index].isAlum
-                                    ? '알럼나이'
-                                    : (peopleInfoList[index].isSenior
-                                        ? '시니어'
-                                        : '주니어'),
-                              ),
-                              const SizedBox(width: 10),
-                              InfoTag(info: peopleInfoList[index].position),
-                              const SizedBox(width: 10),
-                              InfoTag(
-                                info: peopleInfoList[index].isRestUser
-                                    ? '휴면'
-                                    : '활동',
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(height: 20),
-                    ),
-                    const SizedBox(height: 25),
-                    GestureDetector(
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          builder: (context) =>
-                              _BottomModal(peopleInfoList: peopleInfoList),
-                        );
-                      },
-                      child: DottedBorder(
-                        stackFit: StackFit.passthrough,
-                        padding: const EdgeInsets.all(0),
-                        color: appColors.grey5,
-                        borderType: BorderType.RRect,
-                        radius: const Radius.circular(12),
-                        dashPattern: const [6, 6],
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 18, vertical: 20),
-                          decoration:
-                              const BoxDecoration(color: Colors.transparent),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset('assets/images/icon_plus.png',
-                                  width: 24, height: 24),
-                              const SizedBox(width: 12),
-                              Text('신입 추가',
-                                  style: appFonts.t5
-                                      .copyWith(color: appColors.grey5)),
-                            ],
-                          ),
+          final List<UserInfo> peopleInfoList = streamSnapshot.data!.docs
+              .map((doc) => doc.data())
+              .toList(growable: false)
+              .cast<UserInfo>();
+
+          return ListView(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: peopleInfoList.length,
+                itemBuilder: (context, index) {
+                  ValueNotifier createInfoNotifier(content) =>
+                      ValueNotifier({'content': content, 'hasUpdated': false});
+
+                  final team = createInfoNotifier(peopleInfoList[index].team);
+                  final grade = createInfoNotifier(peopleInfoList[index].isAlum
+                      ? '알럼나이'
+                      : peopleInfoList[index].isSenior
+                          ? '시니어'
+                          : '주니어');
+                  final position =
+                      createInfoNotifier(peopleInfoList[index].position);
+                  final isRest = createInfoNotifier(
+                      peopleInfoList[index].isRest ? '휴면' : '활동');
+
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        peopleInfoList[index].name,
+                        style: appFonts.b1.copyWith(
+                          color: appColors.grey7,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
+                      Row(
+                        children: [
+                          buildInfoTag(peopleInfoList[index].name, 'team', team,
+                              ['개발팀', '디자인팀', '전략마케팅팀'], false),
+                          const SizedBox(width: 10),
+                          buildInfoTag(peopleInfoList[index].name, 'grade',
+                              grade, ['알럼나이', '시니어', '주니어'], false),
+                          const SizedBox(width: 10),
+                          buildInfoTag(peopleInfoList[index].name, 'position',
+                              position, ['대표', '부대표', '팀장', '팀원'], true),
+                          const SizedBox(width: 10),
+                          buildInfoTag(peopleInfoList[index].name, 'isRest',
+                              isRest, ['활동', '휴면', '탈퇴'], false),
+                        ],
+                      ),
+                    ],
+                  );
+                },
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 20),
+              ),
+              const SizedBox(height: 25),
+              GestureDetector(
+                onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (context) =>
+                        _FreshManBottomModal(peopleInfoList: peopleInfoList),
+                  );
+                },
+                child: DottedBorder(
+                  stackFit: StackFit.passthrough,
+                  padding: const EdgeInsets.all(0),
+                  color: appColors.grey5,
+                  borderType: BorderType.RRect,
+                  radius: const Radius.circular(12),
+                  dashPattern: const [6, 6],
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 18, vertical: 20),
+                    decoration: const BoxDecoration(color: Colors.transparent),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset('assets/images/icon_plus.png',
+                            width: 24, height: 24),
+                        const SizedBox(width: 12),
+                        Text('신입 추가',
+                            style:
+                                appFonts.t5.copyWith(color: appColors.grey5)),
+                      ],
                     ),
-                    const SizedBox(height: 25),
-                    AppExpandedButton(
-                      buttonText: '변경 확정',
-                      onPressed: () async {},
-                    ),
-                  ],
-                );
-              } else {
-                return const SizedBox();
-              }
-            },
+                  ),
+                ),
+              ),
+              const SizedBox(height: 25),
+              ValueListenableBuilder(
+                valueListenable: updatedCount,
+                builder: (context, value, _) => AppExpandedButton(
+                  buttonText: '변경 확정',
+                  onPressed: updatedCount.value != 0
+                      ? () {
+                          showDialog(
+                            useRootNavigator: false,
+                            context: context,
+                            builder: (context) => ConfirmDialog(
+                              title: '동아리원 관리 변경 내용을\n확정하시겠어요?',
+                              content: '변경 사항이 곧바로 반영되니\n꼭 확인 뒤에 확정해주세요.',
+                              onPressed: () async {
+                                await firestoreWriter
+                                    .updatePeopleInfo(updatedInfoList);
+
+                                if (!context.mounted) return;
+                                updatedCount.value = 0;
+                                updatedInfoList.clear();
+                                context.pop();
+                                AppSnackBar.showFlushBar(
+                                    context, '변경되었습니다.', 10, true);
+                              },
+                            ),
+                          );
+                        }
+                      : null,
+                ),
+              ),
+            ],
           );
         } else {
           return const SizedBox();
@@ -135,18 +171,107 @@ class _ManagePeoplePageState extends State<ManagePeoplePage> {
       },
     );
   }
+
+  ValueListenableBuilder buildInfoTag(
+      userName, key, ValueNotifier info, tabTexts, canScroll) {
+    final originInfo = info.value['content'];
+    String selectedOption = '';
+    bool hasUpdated = false;
+    int localUpdatedCount = 0;
+    final List<Function()> onTabsPressed = [];
+    for (final text in tabTexts) {
+      onTabsPressed.add(() => selectedOption = text);
+    }
+
+    return ValueListenableBuilder(
+      valueListenable: info,
+      builder: (context, value, _) {
+        return GestureDetector(
+          onTap: () {
+            showModalBottomSheet(
+              useRootNavigator: false,
+              context: context,
+              builder: (context) => SelectOnlyBottomModal(
+                height: 400,
+                canScroll: canScroll,
+                title: '변경 유형을 선택해주세요.',
+                hintText: '선택 후 변경 확정을 해야 변경사항이 반영돼요.',
+                tapTexts: tabTexts,
+                onTapsPressed: onTabsPressed,
+                onBtnPressed: () {
+                  context.pop();
+                  if (selectedOption.isNotEmpty) {
+                    hasUpdated = originInfo != selectedOption;
+                    info.value = {
+                      'content': selectedOption,
+                      'hasUpdated': hasUpdated,
+                    };
+                    final isGrade = key == 'grade'; // key와 type이 다를 때 처리
+                    final isRest = key == 'isRest';
+                    bool isAlum = false;
+                    bool isSenior = false;
+                    bool? isRestUser = false;
+                    switch (selectedOption) {
+                      case '알럼나이':
+                        isAlum = true;
+                        isSenior = false;
+                      case '시니어':
+                        isAlum = false;
+                        isSenior = true;
+                      case '탈퇴':
+                        isRestUser = null;
+                      case '휴면':
+                        isRestUser = true;
+                    }
+
+                    updatedInfoList.removeWhere((element) =>
+                        element['name'] == userName &&
+                        element.containsKey(isGrade ? 'isAlum' : key));
+                    if (hasUpdated) {
+                      localUpdatedCount++;
+                      updatedCount.value++;
+                      if (isGrade) {
+                        updatedInfoList.add({
+                          'name': userName,
+                          'isAlum': isAlum,
+                          'isSenior': isSenior,
+                        });
+                      } else if (isRest) {
+                        updatedInfoList
+                            .add({'name': userName, key: isRestUser});
+                      } else {
+                        updatedInfoList
+                            .add({'name': userName, key: selectedOption});
+                      }
+                    } else {
+                      updatedCount.value -= localUpdatedCount;
+                      localUpdatedCount = 0;
+                    }
+                  }
+                },
+              ),
+            );
+          },
+          child: InfoTag(
+            info: info.value['content'],
+            isTurnedOn: info.value['hasUpdated'],
+          ),
+        );
+      },
+    );
+  }
 }
 
-class _BottomModal extends StatefulWidget {
-  const _BottomModal({required this.peopleInfoList});
+class _FreshManBottomModal extends StatefulWidget {
+  const _FreshManBottomModal({required this.peopleInfoList});
 
   final List<UserInfo> peopleInfoList;
 
   @override
-  State<_BottomModal> createState() => _BottomModalState();
+  State<_FreshManBottomModal> createState() => _FreshManBottomModalState();
 }
 
-class _BottomModalState extends State<_BottomModal> {
+class _FreshManBottomModalState extends State<_FreshManBottomModal> {
   final textEditingController = TextEditingController();
   late final List<String> nameAndYear;
   int index = 0;
@@ -308,6 +433,7 @@ class _BottomModalState extends State<_BottomModal> {
                                 position: '팀원',
                                 isSenior: false,
                                 isAlum: false,
+                                isRest: false,
                                 promotionCount: 0,
                               );
 
