@@ -32,15 +32,15 @@ class StringUtil {
 
   static List<AttendanceStatus> adjustListWithDate(
     List<AttendanceStatus> list,
-    bool makeFuture, // 미래만 남길지, 과거만 남길지
+    bool? makeFuture, // 미래만 남길지, 과거만 남길지 (null이면 아무 작업 안 함)
   ) {
     final today = StringUtil.convertDateTimeToString(DateTime.now(), true);
     final List<AttendanceStatus> adjustedList =
         List.from(list); // 복사 안 하면 인자로 받는 list가 바뀜
-    if (makeFuture) {
+    if (makeFuture == true) {
       adjustedList
           .removeWhere((element) => int.parse(element.date) < int.parse(today));
-    } else {
+    } else if (makeFuture == false) {
       adjustedList.removeWhere(
           (element) => int.parse(element.date) >= int.parse(today));
     }

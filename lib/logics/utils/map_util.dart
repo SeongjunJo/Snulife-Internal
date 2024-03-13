@@ -22,6 +22,8 @@ class MapUtil {
     clerkList.removeWhere((element) => element.key == clerk); // 서기 2주 연속 금지
     Map<String, dynamic> newMap = Map.fromEntries(clerkList);
 
+    if (newMap.isEmpty) return '미정'; // 신입 서기가 1명인 경우
+
     int leastValue = newMap.values
         .reduce((value, element) => value < element ? value : element);
 
@@ -124,21 +126,29 @@ class MapUtil {
 }
 
 class AttendanceStatus {
+  final String dateWithYear;
   final String date;
   final String attendance;
   final bool isAuthorized;
 
   AttendanceStatus({
+    required this.dateWithYear,
     required this.date,
     required this.attendance,
     required this.isAuthorized,
   });
 
   factory AttendanceStatus.fromFirestore(
+      String semester,
       DocumentSnapshot<Map<String, dynamic>> snapshot,
       SnapshotOptions? options) {
+    final year = int.parse(semester.split('-').first);
+    final semesterText = semester.split('-').last;
     final data = snapshot.data();
+
     return AttendanceStatus(
+      dateWithYear: // 겨울학기 12월 -> 1월 넘어갈 때 sort 문제 해결
+          '${semesterText == 'W' && snapshot.id.substring(0, 2) == '12' ? year : year + 1} + ${snapshot.id}',
       date: snapshot.id,
       attendance: data!['attendance'],
       isAuthorized: data['isAuthorized'],

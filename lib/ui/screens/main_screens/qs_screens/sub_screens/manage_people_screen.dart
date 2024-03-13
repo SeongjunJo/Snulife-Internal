@@ -37,8 +37,6 @@ class _ManagePeoplePageState extends State<ManagePeoplePage> {
           .snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
         if (streamSnapshot.hasData) {
-          debugPrint('${updatedInfoList.length}');
-
           final List<UserInfo> peopleInfoList = streamSnapshot.data!.docs
               .map((doc) => doc.data())
               .toList(growable: false)
@@ -163,6 +161,7 @@ class _ManagePeoplePageState extends State<ManagePeoplePage> {
                       : null,
                 ),
               ),
+              const SizedBox(height: 25),
             ],
           );
         } else {

@@ -127,18 +127,18 @@ class FirestoreReader {
       for (var change in event.docChanges) {
         switch (change.type) {
           case DocumentChangeType.added: // 최초 리스너 등록 이후 added 발생 불가
-            attendanceStatus
-                .add(AttendanceStatus.fromFirestore(change.doc, null));
+            attendanceStatus.add(
+                AttendanceStatus.fromFirestore(semester, change.doc, null));
           case DocumentChangeType.modified:
             attendanceStatus
                 .removeWhere((element) => element.date == change.doc.id);
-            attendanceStatus
-                .add(AttendanceStatus.fromFirestore(change.doc, null));
+            attendanceStatus.add(
+                AttendanceStatus.fromFirestore(semester, change.doc, null));
           case DocumentChangeType.removed: // 문서 삭제 경우 발생 불가
             return;
         }
       }
-      attendanceStatus.sort((a, b) => a.date.compareTo(b.date));
+      attendanceStatus.sort((a, b) => a.dateWithYear.compareTo(b.dateWithYear));
       setState();
     });
   }
@@ -152,7 +152,8 @@ class FirestoreReader {
           .doc('summary')
           .get();
 
-  Future<List> getMyAttendanceHistory(String semester, String name) async {
+  Future<List> getMyAttendanceHistory(
+      String semester, String name, bool? makeFuture) async {
     List<AttendanceStatus> temp = [];
     List<AttendanceStatus> attendanceHistory;
 
@@ -163,10 +164,10 @@ class FirestoreReader {
         .where('attendance', isNull: false)
         .get(); // 컬렉션에서 summary 문서는 제외
     for (var doc in attendanceCollection.docs) {
-      temp.add(AttendanceStatus.fromFirestore(doc, null));
+      temp.add(AttendanceStatus.fromFirestore(semester, doc, null));
     }
-    attendanceHistory = StringUtil.adjustListWithDate(temp, false);
-    attendanceHistory.sort((a, b) => a.date.compareTo(b.date));
+    attendanceHistory = StringUtil.adjustListWithDate(temp, makeFuture);
+    attendanceHistory.sort((a, b) => a.dateWithYear.compareTo(b.dateWithYear));
 
     return attendanceHistory;
   }

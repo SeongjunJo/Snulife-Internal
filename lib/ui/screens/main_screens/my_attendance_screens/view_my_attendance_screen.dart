@@ -48,6 +48,9 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
 
     return Consumer<DropdownSelectionStatus>(
       builder: (BuildContext context, value, _) {
+        bool? makeFuture =
+            value.selectedSelection == widget.currentSemester ? false : null;
+
         semesters = widget.isQSSummary
             ? StringUtil.convertHalfToQuarters(widget.currentSemester)
             : semesters;
@@ -65,7 +68,7 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
             firestoreReader.getMyAttendanceSummary(
                 value.selectedSelection, widget.userInfo['name']),
             firestoreReader.getMyAttendanceHistory(
-                value.selectedSelection, widget.userInfo['name']),
+                value.selectedSelection, widget.userInfo['name'], makeFuture),
             getAttendanceSummary(),
           ]),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {

@@ -128,7 +128,7 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
                         child: MyAttendanceListItem(
                           week: (index + 1 > indexOffset)
                               ? index + 1 - indexOffset
-                              : currentSemesterWeek + index,
+                              : currentSemesterWeek - indexOffset + index + 1,
                           date: semesterStatus[index].date,
                           isSelected: _selectedIndexes.contains(index),
                           status: !isRestDate
