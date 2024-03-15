@@ -1,15 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:snulife_internal/logics/providers/select_semester_states.dart';
 import 'package:snulife_internal/logics/utils/string_util.dart';
 import 'package:snulife_internal/ui/widgets/commons/modal_widgets.dart';
 
 import '../../../../logics/common_instances.dart';
-import '../../../../router.dart';
 import '../../../widgets/commons/button_widgets.dart';
 import '../../../widgets/commons/shimmer.dart';
+import '../my_attendance_screens/view_my_attendance_screen.dart';
 
 class QSPage extends StatefulWidget {
   const QSPage({
@@ -162,13 +162,23 @@ class _QSPageState extends State<QSPage> {
                           final userInfo = await firestoreReader
                               .getUserInfo(widget.userList[index - 2]);
                           if (!context.mounted) return;
-                          context.pushNamed(
-                            AppRoutePath.personalAttendance,
-                            queryParameters: {
-                              'currentHalf': value.selectedSelection,
-                              'hasQSConfirmed': hasQSConfirmed.toString(),
-                            },
-                            extra: userInfo,
+                          Navigator.push(
+                            context,
+                            CupertinoPageRoute(
+                              builder: (context) => ChangeNotifierProvider(
+                                create: (context) => DropdownSelectionStatus(
+                                    currentSelection:
+                                        StringUtil.convertHalfToQuarters(
+                                  value.selectedSelection,
+                                ).last),
+                                child: ViewMyAttendancePage(
+                                  userInfo: userInfo,
+                                  isQSSummary: true, // 'QS 관리'에서 접근하면 무조건 true
+                                  currentSemester: value.selectedSelection,
+                                  hasQSConfirmed: hasQSConfirmed.toString(),
+                                ),
+                              ),
+                            ),
                           );
                         },
                         child: Container(

@@ -3,12 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:snulife_internal/logics/providers/firebase_states.dart';
-import 'package:snulife_internal/logics/providers/select_semester_states.dart';
-import 'package:snulife_internal/logics/utils/string_util.dart';
 import 'package:snulife_internal/ui/screens/main_screens/attendance_screens/attandance_screen.dart';
 import 'package:snulife_internal/ui/screens/main_screens/home_screen.dart';
 import 'package:snulife_internal/ui/screens/main_screens/my_attendance_screens/my_attandance_screen.dart';
-import 'package:snulife_internal/ui/screens/main_screens/my_attendance_screens/view_my_attendance_screen.dart';
 import 'package:snulife_internal/ui/screens/main_screens/qs_screens/management_screen.dart';
 import 'package:snulife_internal/ui/screens/setting_screens/profile_screen.dart';
 import 'package:snulife_internal/ui/screens/setting_screens/setting_screen.dart';
@@ -103,33 +100,6 @@ final appRouter = GoRouter(
                 builder: (context, value, _) =>
                     ManagementPage(currentSemester: value.currentSemester),
               ),
-              routes: [
-                GoRoute(
-                  name: AppRoutePath.personalAttendance,
-                  path: 'personalAttendance',
-                  pageBuilder: (context, state) {
-                    final userInfo = state.extra as Map;
-                    final lastQuarter = StringUtil.convertHalfToQuarters(
-                      state.uri.queryParameters['currentHalf']!,
-                    ).last;
-
-                    return CupertinoPage(
-                      child: ChangeNotifierProvider(
-                        create: (context) => DropdownSelectionStatus(
-                            currentSelection: lastQuarter),
-                        child: ViewMyAttendancePage(
-                          userInfo: userInfo,
-                          isQSSummary: true, // 'QS 관리'에서 접근하면 무조건 true
-                          currentSemester:
-                              state.uri.queryParameters['currentHalf']!,
-                          hasQSConfirmed:
-                              state.uri.queryParameters['hasQSConfirmed']!,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ],
             ),
           ],
         ),
