@@ -25,7 +25,7 @@ final GlobalKey<NavigatorState> _mainShellNavigatorKey =
 
 final appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: AppRoutePath.login,
+  initialLocation: AppRoutePath.home,
   routes: [
     GoRoute(
       name: AppRoutePath.login,
@@ -66,8 +66,10 @@ final appRouter = GoRouter(
           path: AppRoutePath.home,
           builder: (context, state) => Consumer<FirebaseStates>(
             builder: (context, value, _) => HomePage(
+              isLoading: value.isLoading,
+              isLoggedIn: value.loggedIn,
               isManager: value.isManager,
-              userInfo: value.userInfo!,
+              userInfo: value.userInfo,
               clerk: value.clerk,
             ),
           ),
@@ -90,7 +92,7 @@ final appRouter = GoRouter(
                 builder: (context, value, _) => MyAttendancePage(
                   currentSemester: value.currentSemester,
                   upcomingSemester: value.upcomingSemester,
-                  userInfo: value.userInfo!,
+                  userInfo: value.userInfo,
                 ),
               ),
             ),

@@ -8,6 +8,9 @@ class FirebaseStates extends ChangeNotifier {
     _init();
   }
 
+  bool _isLoading = true;
+  bool get isLoading => _isLoading;
+
   bool _loggedIn = false;
   bool get loggedIn => _loggedIn;
 
@@ -22,8 +25,8 @@ class FirebaseStates extends ChangeNotifier {
   late String? _upcomingSemester;
   String? get upcomingSemester => _upcomingSemester;
 
-  late Map? _userInfo; // 유저가 (부)대표인지 확인하는 과정에서 필요
-  Map? get userInfo => _userInfo; // 기왕 받는 김에 홈화면에 넘겨줌
+  Map _userInfo = {}; // 유저가 (부)대표인지 확인하는 과정에서 필요
+  Map get userInfo => _userInfo; // 기왕 받는 김에 홈화면에 넘겨줌
   String _clerk = '';
   String get clerk => _clerk;
 
@@ -33,16 +36,15 @@ class FirebaseStates extends ChangeNotifier {
   Future<void> _init() async {
     FirebaseAuth.instance.userChanges().listen((User? user) async {
       if (user != null) {
-        _loggedIn = true;
         await firebaseInstance.db // 유저가 (부)대표인지 확인
             .collection('users')
             .doc(firebaseInstance.userId)
             .get()
-            .then((value) => _userInfo = value.data());
-        _userInfo!['position'].contains('대표')
+            .then((value) => _userInfo = value.data()!);
+        _userInfo['position'].contains('대표')
             ? _isManager = true
             : _isManager = false;
-        _userInfo!['position'] == '팀장' ? _isLeader = true : _isLeader = false;
+        _userInfo['position'] == '팀장' ? _isLeader = true : _isLeader = false;
 
         final semesters =
             await firestoreReader.getCurrentAndUpcomingSemesters(); // 학기 fetch
@@ -57,12 +59,15 @@ class FirebaseStates extends ChangeNotifier {
                 _currentSemester, _thisWeekClerkDate)
             .listen((doc) {
           _clerk = doc.data()!['clerk'];
-          notifyListeners();
           if (_clerk.isEmpty) _clerk = '(미정)';
+          _loggedIn = true;
+          _isLoading = false;
+          notifyListeners();
         });
       } else {
         _loggedIn = false;
-        _userInfo = null;
+        _isLoading = false;
+        _userInfo = {};
         _clerk = '';
       }
       notifyListeners();

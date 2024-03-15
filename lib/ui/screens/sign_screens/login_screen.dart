@@ -1,8 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
-import 'package:snulife_internal/logics/providers/firebase_states.dart';
 import 'package:snulife_internal/router.dart';
 import 'package:snulife_internal/ui/widgets/commons/button_widgets.dart';
 
@@ -10,29 +8,14 @@ import '../../../logics/common_instances.dart';
 import '../../../logics/utils/firebase_util.dart';
 import '../../widgets/screen_specified/sign_widget.dart';
 
-class LogInPage extends StatelessWidget {
+class LogInPage extends StatefulWidget {
   const LogInPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Consumer<FirebaseStates>(
-      builder: (context, firebaseStates, child) => LogInScreen(
-        isLoggedIn: firebaseStates.loggedIn,
-      ),
-    );
-  }
+  State<LogInPage> createState() => _LogInPageState();
 }
 
-class LogInScreen extends StatefulWidget {
-  const LogInScreen({super.key, required this.isLoggedIn});
-
-  final bool isLoggedIn;
-
-  @override
-  State<LogInScreen> createState() => _LogInScreenState();
-}
-
-class _LogInScreenState extends State<LogInScreen> {
+class _LogInPageState extends State<LogInPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isBtnEnable = false;
@@ -88,12 +71,6 @@ class _LogInScreenState extends State<LogInScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.isLoggedIn) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.goNamed(AppRoutePath.home);
-      });
-    }
-
     _onPressed = _isBtnEnable ? () => _tryLogIn() : null;
 
     return Scaffold(
