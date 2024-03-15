@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:snulife_internal/ui/screens/main_screens/shimmer.dart';
+import 'package:snulife_internal/ui/widgets/commons/shimmer.dart';
 
 import '../../../logics/common_instances.dart';
 import '../../../router.dart';

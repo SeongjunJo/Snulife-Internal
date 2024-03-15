@@ -50,7 +50,14 @@ class CheckAttendancePage extends StatelessWidget {
             currentSemester, today),
         builder:
             (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-          if (snapshot.hasData) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Container(
+              color: appColors.grey0,
+              child: Center(
+                child: CircularProgressIndicator(color: appColors.slBlue),
+              ),
+            );
+          } else if (snapshot.hasData) {
             final attendanceStatus =
                 snapshot.data!.data() as Map<String, dynamic>;
             bool hasAttendanceConfirmed =

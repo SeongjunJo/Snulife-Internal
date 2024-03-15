@@ -7,7 +7,7 @@ import '../../../../logics/common_instances.dart';
 import '../../../../logics/utils/string_util.dart';
 import '../../../widgets/commons/button_widgets.dart';
 
-class ViewMyAttendancePage extends StatefulWidget {
+class ViewMyAttendancePage extends StatelessWidget {
   const ViewMyAttendancePage({
     super.key,
     required this.userInfo,
@@ -22,42 +22,34 @@ class ViewMyAttendancePage extends StatefulWidget {
   final String hasQSConfirmed;
 
   @override
-  State<ViewMyAttendancePage> createState() => _ViewMyAttendancePageState();
-}
-
-class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
-  @override
   Widget build(BuildContext context) {
-    final bool hasQSConfirmed = widget.hasQSConfirmed == 'true';
-    final bool isSenior = widget.userInfo['isSenior'];
-    final bool isAlum = widget.userInfo['isAlum'];
-    final int promotionCount = widget.userInfo['promotionCount'];
-    final String info = widget.userInfo['isAlum']
+    final bool qsConfirmed = hasQSConfirmed == 'true';
+    final bool isSenior = userInfo['isSenior'];
+    final bool isAlum = userInfo['isAlum'];
+    final int promotionCount = userInfo['promotionCount'];
+    final String info = userInfo['isAlum']
         ? '알럼나이'
-        : widget.userInfo['isSenior']
+        : userInfo['isSenior']
             ? '시니어'
             : '주니어';
     String promotion = info;
     bool canPromote = false;
-    List<String> semesters = widget.isQSSummary
+    List<String> semesters = isQSSummary
         ? []
-        : [
-            ..._getLastThreeSemesters(widget.currentSemester),
-            widget.currentSemester
-          ];
+        : [..._getLastThreeSemesters(currentSemester), currentSemester];
 
     return Consumer<DropdownSelectionStatus>(
       builder: (BuildContext context, value, _) {
         bool? makeFuture =
-            value.selectedSelection == widget.currentSemester ? false : null;
+            value.selectedSelection == currentSemester ? false : null;
 
-        semesters = widget.isQSSummary
-            ? StringUtil.convertHalfToQuarters(widget.currentSemester)
+        semesters = isQSSummary
+            ? StringUtil.convertHalfToQuarters(currentSemester)
             : semesters;
 
-        Future getAttendanceSummary() async => widget.isQSSummary
+        Future getAttendanceSummary() async => isQSSummary
             ? firestoreReader.getQSMapList(
-                [widget.userInfo['name']],
+                [userInfo['name']],
                 semesters.first,
                 semesters.last,
               )
@@ -66,9 +58,9 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
         return FutureBuilder(
           future: Future.wait([
             firestoreReader.getMyAttendanceSummary(
-                value.selectedSelection, widget.userInfo['name']),
+                value.selectedSelection, userInfo['name']),
             firestoreReader.getMyAttendanceHistory(
-                value.selectedSelection, widget.userInfo['name'], makeFuture),
+                value.selectedSelection, userInfo['name'], makeFuture),
             getAttendanceSummary(),
           ]),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -80,7 +72,7 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
               final String attendanceRate = qsSummary?['attendanceRate'] ?? '0';
               final bool isWorth = double.parse(attendanceRate) >= 75;
 
-              if (isWorth && !hasQSConfirmed) {
+              if (isWorth && !qsConfirmed) {
                 if (promotionCount == 1 && !isSenior) {
                   canPromote = true;
                   promotion = '시니어';
@@ -96,23 +88,23 @@ class _ViewMyAttendancePageState extends State<ViewMyAttendancePage> {
                 child: ListView(
                   children: [
                     const SizedBox(height: 24),
-                    Text(widget.userInfo['name'], style: appFonts.h1),
+                    Text(userInfo['name'], style: appFonts.h1),
                     const SizedBox(height: 10),
                     Row(
                       children: [
-                        InfoTag(info: widget.userInfo['position']),
+                        InfoTag(info: userInfo['position']),
                         const SizedBox(width: 8),
-                        InfoTag(info: widget.userInfo['team']),
+                        InfoTag(info: userInfo['team']),
                         const SizedBox(width: 8),
                         InfoTag(info: info),
                       ],
                     ),
                     const SizedBox(height: 32),
-                    widget.isQSSummary
+                    isQSSummary
                         ? Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('${widget.currentSemester} QS 요약',
+                              Text('$currentSemester QS 요약',
                                   style: appFonts.tm),
                               const SizedBox(height: 12),
                               _AttendanceSummaryContainer(

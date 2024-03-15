@@ -9,6 +9,7 @@ import 'package:snulife_internal/ui/widgets/commons/modal_widgets.dart';
 import '../../../../logics/common_instances.dart';
 import '../../../../router.dart';
 import '../../../widgets/commons/button_widgets.dart';
+import '../../../widgets/commons/shimmer.dart';
 
 class QSPage extends StatefulWidget {
   const QSPage({
@@ -45,7 +46,13 @@ class _QSPageState extends State<QSPage> {
                 .get(),
           ]),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-            if (snapshot.hasData) {
+            if (snapshot.connectionState == ConnectionState.waiting &&
+                !snapshot.hasData) {
+              return ShimmerLoadingAnimation(
+                isLoading: true,
+                child: qsShimmer(),
+              );
+            } else if (snapshot.hasData) {
               userQSMapList = snapshot.data[0];
               final hasQSConfirmed = snapshot.data[1]['hasQSConfirmed'];
               final totalMeeting = userQSMapList
@@ -62,7 +69,7 @@ class _QSPageState extends State<QSPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 color: appColors.grey0,
                 child: ListView.separated(
-                  itemCount: widget.userList.length + 6,
+                  itemCount: widget.userList.length + 4,
                   itemBuilder: (context, index) {
                     if (index == 0) {
                       return Column(
@@ -148,14 +155,7 @@ class _QSPageState extends State<QSPage> {
                             : null,
                       );
                     } else if (index == widget.userList.length + 3) {
-                      return const SizedBox();
-                    } else if (index == widget.userList.length + 4) {
-                      return AppExpandedButton(
-                        buttonText: '${value.selectedSelection} QS 파일 다운받기',
-                        onPressed: () {},
-                      );
-                    } else if (index == widget.userList.length + 5) {
-                      return const SizedBox(height: 12);
+                      return const SizedBox(height: 24);
                     } else {
                       return GestureDetector(
                         onTap: () async {
@@ -234,6 +234,67 @@ class _QSPageState extends State<QSPage> {
           },
         );
       },
+    );
+  }
+
+  ListView qsShimmer() {
+    return ListView(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      physics: const NeverScrollableScrollPhysics(),
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 24),
+            Container(
+              width: 161,
+              height: 30,
+              decoration: BoxDecoration(
+                color: appColors.grey1,
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  width: 175,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: appColors.grey1,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 28),
+        Container(
+          width: double.infinity,
+          height: 90,
+          decoration: BoxDecoration(
+            color: appColors.white,
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        const SizedBox(height: 32),
+        ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: 10,
+          itemBuilder: (context, index) => Container(
+            width: double.infinity,
+            height: 62,
+            decoration: BoxDecoration(
+              color: appColors.white,
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          separatorBuilder: (context, index) => const SizedBox(height: 12),
+        ),
+      ],
     );
   }
 }
