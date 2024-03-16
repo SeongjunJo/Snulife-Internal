@@ -9,7 +9,9 @@ import '../../../logics/utils/firebase_util.dart';
 import '../../widgets/screen_specified/sign_widget.dart';
 
 class LogInPage extends StatefulWidget {
-  const LogInPage({super.key});
+  const LogInPage({super.key, required this.isLoggedIn});
+
+  final bool isLoggedIn;
 
   @override
   State<LogInPage> createState() => _LogInPageState();
@@ -71,6 +73,12 @@ class _LogInPageState extends State<LogInPage> {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.isLoggedIn) {
+        context.goNamed(AppRoutePath.home);
+      }
+    });
+
     _onPressed = _isBtnEnable ? () => _tryLogIn() : null;
 
     return Scaffold(

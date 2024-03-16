@@ -4,13 +4,13 @@ import '../../../logics/common_instances.dart';
 
 class SettingRow extends StatelessWidget {
   final String title;
-  final Widget trailing;
+  final Widget? trailing;
   final void Function()? onTap;
 
   const SettingRow({
     super.key,
     required this.title,
-    required this.trailing,
+    this.trailing,
     this.onTap,
   });
 
@@ -24,7 +24,7 @@ class SettingRow extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(title, style: appFonts.t3),
-            trailing,
+            trailing ?? const SizedBox(),
           ],
         ),
       ),

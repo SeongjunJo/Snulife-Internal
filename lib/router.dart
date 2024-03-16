@@ -27,7 +27,9 @@ final appRouter = GoRouter(
     GoRoute(
       name: AppRoutePath.login,
       path: AppRoutePath.login,
-      builder: (context, state) => const LogInPage(),
+      builder: (context, state) => Consumer<FirebaseStates>(
+        builder: (context, value, _) => LogInPage(isLoggedIn: value.loggedIn),
+      ),
       routes: [
         ShellRoute(
           navigatorKey: _signShellNavigatorKey,

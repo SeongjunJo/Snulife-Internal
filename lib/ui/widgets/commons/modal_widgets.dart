@@ -44,7 +44,7 @@ class ConfirmDialog extends StatelessWidget {
               style: appFonts.b2.copyWith(color: appColors.grey5),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
+            if (content.isNotEmpty) const SizedBox(height: 24),
             Row(
               children: [
                 AppExpandedButton(
@@ -55,7 +55,7 @@ class ConfirmDialog extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 AppExpandedButton(
-                  buttonText: "확정",
+                  buttonText: "확인",
                   onPressed: onPressed,
                 ),
               ],

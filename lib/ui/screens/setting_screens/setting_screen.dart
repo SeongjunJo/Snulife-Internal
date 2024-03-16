@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:snulife_internal/router.dart';
+import 'package:snulife_internal/ui/widgets/commons/modal_widgets.dart';
 
 import '../../../logics/common_instances.dart';
 import '../../widgets/screen_specified/setting_widget.dart';
@@ -29,7 +31,23 @@ class _SettingPageState extends State<SettingPage> {
             trailing: const RightArrow(),
             onTap: () => context.pushNamed(AppRoutePath.profile),
           ),
-          const SettingRow(title: "계정 관리", trailing: RightArrow()),
+          SettingRow(
+            title: "로그아웃",
+            onTap: () => {
+              showDialog(
+                context: context,
+                builder: (context) => ConfirmDialog(
+                  title: '로그아웃 하시겠어요?',
+                  content: '',
+                  onPressed: () async {
+                    await FirebaseAuth.instance.signOut().then(
+                          (_) => context.pushNamed(AppRoutePath.profile),
+                        );
+                  },
+                ),
+              ),
+            },
+          ),
           const SizedBox(height: 14),
           Divider(height: 1, thickness: 1, color: appColors.grey3),
           const SizedBox(height: 14),
