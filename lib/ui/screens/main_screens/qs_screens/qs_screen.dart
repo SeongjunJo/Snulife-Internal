@@ -39,7 +39,10 @@ class _QSPageState extends State<QSPage> {
         return FutureBuilder(
           future: Future.wait([
             firestoreReader.getQSMapList(
-                widget.userList, semesters[0], semesters[1]),
+              widget.userList,
+              semesters[0],
+              semesters[1],
+            ),
             firebaseInstance.db
                 .collection('attendances')
                 .doc(lastSemester)

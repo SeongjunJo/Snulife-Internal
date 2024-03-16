@@ -134,9 +134,9 @@ class CheckAttendancePage extends StatelessWidget {
                 onPressed: !hasAttendanceConfirmed && value.hasUpdated
                     ? () {
                         firestoreWriter.saveAttendanceStatus(
-                          currentSemester,
-                          value.userAttendanceStatus,
-                          false,
+                          semester: currentSemester,
+                          userAttendanceStatus: value.userAttendanceStatus,
+                          isConfirm: false,
                         );
                         value.setHasUpdated(false);
                       }
@@ -150,28 +150,31 @@ class CheckAttendancePage extends StatelessWidget {
               AppExpandedButton(
                 buttonText: "확정",
                 // 확정을 안 했고, 출석 체크는 전부 했고, 저장도 한 경우만 확정 가능
-                onPressed: !hasAttendanceConfirmed &&
-                        !unCompleted &&
-                        !value.hasUpdated
-                    ? () => showDialog(
-                          context: context,
-                          builder: (context) => ConfirmDialog(
-                            title: "출석체크 내역을 확정하시겠어요?",
-                            content:
-                                "확정 이후에는 출결을 변경할 수 없어요.\n꼭 회의가 끝난 뒤 확정해주세요.",
-                            onPressed: () {
-                              firestoreWriter.saveAttendanceStatus(
-                                  currentSemester,
-                                  value.userAttendanceStatus,
-                                  true);
-                              firestoreWriter.confirmAttendanceStatus(
-                                  currentSemester, value.userAttendanceStatus);
-                              Navigator.pop(context);
-                            },
-                          ),
-                          useRootNavigator: false, // 뒤로 가기 버튼이 제대로 먹히게
-                        )
-                    : null,
+                onPressed:
+                    !hasAttendanceConfirmed && !unCompleted && !value.hasUpdated
+                        ? () => showDialog(
+                              context: context,
+                              builder: (context) => ConfirmDialog(
+                                title: "출석체크 내역을 확정하시겠어요?",
+                                content:
+                                    "확정 이후에는 출결을 변경할 수 없어요.\n꼭 회의가 끝난 뒤 확정해주세요.",
+                                onPressed: () {
+                                  firestoreWriter.saveAttendanceStatus(
+                                    semester: currentSemester,
+                                    userAttendanceStatus:
+                                        value.userAttendanceStatus,
+                                    isConfirm: true,
+                                  );
+                                  firestoreWriter.confirmAttendanceStatus(
+                                    currentSemester,
+                                    value.userAttendanceStatus,
+                                  );
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              useRootNavigator: false, // 뒤로 가기 버튼이 제대로 먹히게
+                            )
+                        : null,
               ),
             ],
           ),

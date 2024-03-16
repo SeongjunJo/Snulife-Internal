@@ -52,7 +52,11 @@ class _CheckAttendanceListItemState extends State<CheckAttendanceListItem> {
         isTagSelected = false;
       }
       context.read<CheckAttendanceState>().updateUserAttendanceStatus(
-          widget.name, initialStatus, isTagSelected, false);
+            name: widget.name,
+            status: initialStatus,
+            isAuthorized: isTagSelected,
+            hasUserModified: false,
+          );
     }
 
     return Container(
@@ -74,7 +78,11 @@ class _CheckAttendanceListItemState extends State<CheckAttendanceListItem> {
                       context
                           .read<CheckAttendanceState>()
                           .updateUserAttendanceStatus(
-                              widget.name, null, isTagSelected, true);
+                            name: widget.name,
+                            status: null,
+                            isAuthorized: isTagSelected,
+                            hasUserModified: true,
+                          );
                     });
                   }
                 : () {},
@@ -95,7 +103,11 @@ class _CheckAttendanceListItemState extends State<CheckAttendanceListItem> {
                       context
                           .read<CheckAttendanceState>()
                           .updateUserAttendanceStatus(
-                              widget.name, isSelected ? '출석' : '', true, true);
+                            name: widget.name,
+                            status: isSelected ? '출석' : '',
+                            isAuthorized: true,
+                            hasUserModified: true,
+                          );
                       index = isSelected ? 1 : null;
                       isTagSelected = false;
                     });
@@ -113,7 +125,11 @@ class _CheckAttendanceListItemState extends State<CheckAttendanceListItem> {
                       context
                           .read<CheckAttendanceState>()
                           .updateUserAttendanceStatus(
-                              widget.name, isSelected ? '지각' : '', false, true);
+                            name: widget.name,
+                            status: isSelected ? '지각' : '',
+                            isAuthorized: false,
+                            hasUserModified: true,
+                          );
                       index = isSelected ? 2 : null;
                       isTagSelected = false;
                     });
@@ -131,7 +147,11 @@ class _CheckAttendanceListItemState extends State<CheckAttendanceListItem> {
                       context
                           .read<CheckAttendanceState>()
                           .updateUserAttendanceStatus(
-                              widget.name, isSelected ? '결석' : '', false, true);
+                            name: widget.name,
+                            status: isSelected ? '결석' : '',
+                            isAuthorized: false,
+                            hasUserModified: true,
+                          );
                       index = isSelected ? 3 : null;
                       isTagSelected = false;
                     });

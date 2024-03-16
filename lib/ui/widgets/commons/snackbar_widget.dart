@@ -4,8 +4,12 @@ import 'package:flutter/material.dart';
 import '../../../logics/common_instances.dart';
 
 class AppSnackBar {
-  static showFlushBar(
-      BuildContext context, String message, double height, bool isSuccess) {
+  static showFlushBar({
+    required BuildContext context,
+    required String message,
+    required double height,
+    required bool isSuccess,
+  }) {
     final image = isSuccess
         ? Image.asset("assets/images/icon_check.png",
             width: 34, height: 34, color: appColors.slBlue)

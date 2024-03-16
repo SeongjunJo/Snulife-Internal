@@ -114,11 +114,11 @@ class FirestoreReader {
     return semesters; // 다음 학기가 db에 등록되어 있으면 2개 학기, 없으면 1개 학기
   }
 
-  getMyAttendanceStatusListener(
-    String semester,
-    Function setState,
-    List<AttendanceStatus> attendanceStatus,
-  ) {
+  getMyAttendanceStatusListener({
+    required String semester,
+    required Function setState,
+    required List<AttendanceStatus> attendanceStatus,
+  }) {
     return firebaseInstance.db
         .collection('attendances')
         .doc(semester)
@@ -146,7 +146,9 @@ class FirestoreReader {
   }
 
   Future<DocumentSnapshot<Map>> getMyAttendanceSummary(
-          String semester, String name) async =>
+    String semester,
+    String name,
+  ) async =>
       firebaseInstance.db
           .collection('attendances')
           .doc(semester)
@@ -155,7 +157,10 @@ class FirestoreReader {
           .get();
 
   Future<List> getMyAttendanceHistory(
-      String semester, String name, bool? makeFuture) async {
+    String semester,
+    String name,
+    bool? makeFuture,
+  ) async {
     List<AttendanceStatus> temp = [];
     List<AttendanceStatus> attendanceHistory;
 
@@ -175,7 +180,10 @@ class FirestoreReader {
   }
 
   Future<List<Map<String, String>>> getQSMapList(
-      List userList, String preSemester, String postSemester) async {
+    List userList,
+    String preSemester,
+    String postSemester,
+  ) async {
     final List<Map<String, String>> userQSMapList = [];
 
     for (final user in userList) {

@@ -58,9 +58,14 @@ class ViewMyAttendancePage extends StatelessWidget {
         return FutureBuilder(
           future: Future.wait([
             firestoreReader.getMyAttendanceSummary(
-                value.selectedSelection, userInfo['name']),
+              value.selectedSelection,
+              userInfo['name'],
+            ),
             firestoreReader.getMyAttendanceHistory(
-                value.selectedSelection, userInfo['name'], makeFuture),
+              value.selectedSelection,
+              userInfo['name'],
+              makeFuture,
+            ),
             getAttendanceSummary(),
           ]),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {

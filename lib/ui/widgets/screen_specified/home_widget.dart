@@ -28,8 +28,12 @@ class PrimaryTab extends StatelessWidget {
       case PrimaryTabName.management:
         return () => goRouter.pushNamed(AppRoutePath.management);
       case PrimaryTabName.receipt:
-        return () =>
-            AppSnackBar.showFlushBar(context, 'TBD (언젠가 넣을 예정)', 30, true);
+        return () => AppSnackBar.showFlushBar(
+              context: context,
+              message: 'TBD (언젠가 넣을 예정)',
+              height: 30,
+              isSuccess: true,
+            );
     }
   }
 
@@ -82,8 +86,12 @@ class SecondaryTab extends StatelessWidget {
   ) {
     switch (secondaryTabName) {
       case _:
-        return () =>
-            AppSnackBar.showFlushBar(context, 'TBD (언젠가 넣을 예정)', 30, true);
+        return () => AppSnackBar.showFlushBar(
+              context: context,
+              message: 'TBD (언젠가 넣을 예정)',
+              height: 30,
+              isSuccess: true,
+            );
       // TODO 기능 구현 예정
       // case SecondaryTabName.rentalLedger:
       //   return () => goRouter.pushNamed(AppRoutePath.rentalLedger);

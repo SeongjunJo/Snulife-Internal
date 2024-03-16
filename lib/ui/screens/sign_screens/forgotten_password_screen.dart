@@ -39,27 +39,7 @@ class _ForgottenPasswordPageState extends State<ForgottenPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-    GoRouter goRouter = GoRouter.of(context);
-    _onPressed = _isBtnEnable
-        ? () async {
-            try {
-              await FirebaseAuth.instance
-                  .sendPasswordResetEmail(email: _emailController.text);
-            } on FirebaseAuthException catch (e) {
-              _fieldStatus = switch (e.code) {
-                'invalid-email' => _fieldStatus =
-                    FirebaseAuthErrorTypes.invalidEmail,
-                'network-request-failed' => _fieldStatus =
-                    FirebaseAuthErrorTypes.networkRequestFailed,
-                _ => _fieldStatus = FirebaseAuthErrorTypes.unknownError,
-              };
-              setState(() {});
-              return;
-            }
-            setState(() => _fieldStatus = FirebaseAuthErrorTypes.none);
-            goRouter.pushReplacementNamed(AppRoutePath.confirmPasswordReset);
-          }
-        : null;
+    _onPressed = _getOnPressed();
 
     return Container(
       padding: const EdgeInsets.only(top: 45, left: 20, right: 20),
@@ -95,5 +75,29 @@ class _ForgottenPasswordPageState extends State<ForgottenPasswordPage> {
         ],
       ),
     );
+  }
+
+  void Function()? _getOnPressed() {
+    return _isBtnEnable
+        ? () async {
+            try {
+              await FirebaseAuth.instance
+                  .sendPasswordResetEmail(email: _emailController.text);
+            } on FirebaseAuthException catch (e) {
+              _fieldStatus = switch (e.code) {
+                'invalid-email' => _fieldStatus =
+                    FirebaseAuthErrorTypes.invalidEmail,
+                'network-request-failed' => _fieldStatus =
+                    FirebaseAuthErrorTypes.networkRequestFailed,
+                _ => _fieldStatus = FirebaseAuthErrorTypes.unknownError,
+              };
+              setState(() {});
+              return;
+            }
+            setState(() => _fieldStatus = FirebaseAuthErrorTypes.none);
+            if (!mounted) return;
+            context.pushReplacementNamed(AppRoutePath.confirmPasswordReset);
+          }
+        : null;
   }
 }

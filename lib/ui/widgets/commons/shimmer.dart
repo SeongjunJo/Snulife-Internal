@@ -32,9 +32,8 @@ class ShimmerLoadingAnimation extends StatelessWidget {
 }
 
 class Shimmer extends StatefulWidget {
-  static ShimmerState? of(BuildContext context) {
-    return context.findAncestorStateOfType<ShimmerState>();
-  }
+  static ShimmerState? of(BuildContext context) =>
+      context.findAncestorStateOfType<ShimmerState>();
 
   const Shimmer({
     super.key,
@@ -87,9 +86,7 @@ class ShimmerState extends State<Shimmer> with SingleTickerProviderStateMixin {
   Listenable get shimmerChanges => _shimmerController;
 
   @override
-  Widget build(BuildContext context) {
-    return widget.child;
-  }
+  Widget build(BuildContext context) => widget.child;
 }
 
 class _SlidingGradientTransform extends GradientTransform {

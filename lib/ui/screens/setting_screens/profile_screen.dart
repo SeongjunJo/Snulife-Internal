@@ -19,8 +19,12 @@ class ProfilePage extends StatelessWidget {
         children: [
           const SizedBox(height: 14),
           GestureDetector(
-            onTap: () =>
-                AppSnackBar.showFlushBar(context, "TBD (언젠가 넣을 예정)", 30, true),
+            onTap: () => AppSnackBar.showFlushBar(
+              context: context,
+              message: "TBD (언젠가 넣을 예정)",
+              height: 30,
+              isSuccess: true,
+            ),
             child: const SettingRow(title: "프로필 사진 변경", trailing: RightArrow()),
           ),
         ],

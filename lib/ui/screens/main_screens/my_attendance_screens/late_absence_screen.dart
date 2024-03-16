@@ -40,15 +40,18 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
   @override
   void initState() {
     super.initState();
-    _currentSemesterStatusListener = firestoreReader
-        .getMyAttendanceStatusListener(widget.currentSemester, () {
-      setState(() {});
-    }, _currentSemesterStatus);
+    _currentSemesterStatusListener =
+        firestoreReader.getMyAttendanceStatusListener(
+      semester: widget.currentSemester,
+      setState: () => setState(() {}),
+      attendanceStatus: _currentSemesterStatus,
+    );
     _upcomingSemesterStatusListener = widget.upcomingSemester != null
-        ? firestoreReader
-            .getMyAttendanceStatusListener(widget.upcomingSemester!, () {
-            setState(() {});
-          }, _upcomingSemesterStatus)
+        ? firestoreReader.getMyAttendanceStatusListener(
+            semester: widget.upcomingSemester!,
+            setState: () => setState(() {}),
+            attendanceStatus: _upcomingSemesterStatus,
+          )
         : null;
   }
 
@@ -212,7 +215,6 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
     );
   }
 
-  // 함수가 길고, 직접 넣으면 들여쓰기로 포맷팅이 과해져서 따로 뺌
   _onPressed(String meetingTime) async {
     final now = DateTime.now();
     final currentDate = StringUtil.convertDateTimeToString(now, true);
@@ -224,27 +226,47 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
         if (int.parse(currentTime) >= int.parse(meetingTime)) {
           // 회의 시간 넘기면 지각 신청 불가
           AppSnackBar.showFlushBar(
-              context, "회의 시작 이후에는 지각 신청을 할 수 없어요.", 330, false);
+            context: context,
+            message: "회의 시작 이후에는 지각 신청을 할 수 없어요.",
+            height: 330,
+            isSuccess: false,
+          );
           return;
         }
       } else {
         // 회의 날짜 넘기면 결석 신청 불가
-        AppSnackBar.showFlushBar(context, "결석 신청은 전날 자정까지만 가능해요.", 330, false);
+        AppSnackBar.showFlushBar(
+          context: context,
+          message: "결석 신청은 전날 자정까지만 가능해요.",
+          height: 330,
+          isSuccess: false,
+        );
         return;
       }
     }
 
     await firestoreWriter.writeMyLateAbsence(
-        widget.currentSemester, _lateAbsenceList, _isLate.value!);
+      semester: widget.currentSemester,
+      statusList: _lateAbsenceList,
+      isLate: _isLate.value!,
+    );
     widget.upcomingSemester != null
         ? await firestoreWriter.writeMyLateAbsence(
-            widget.upcomingSemester!, _lateAbsenceList, _isLate.value!)
+            semester: widget.upcomingSemester!,
+            statusList: _lateAbsenceList,
+            isLate: _isLate.value!,
+          )
         : null;
     _selectedIndexes.clear();
     _lateAbsenceList.clear();
     setState(() {});
     if (!mounted) return;
     context.pop();
-    AppSnackBar.showFlushBar(context, "신청되었습니다.", 100, true);
+    AppSnackBar.showFlushBar(
+      context: context,
+      message: "신청되었습니다.",
+      height: 100,
+      isSuccess: true,
+    );
   }
 }

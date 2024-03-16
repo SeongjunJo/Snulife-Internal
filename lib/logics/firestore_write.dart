@@ -8,8 +8,11 @@ import 'common_instances.dart';
 class FirestoreWriter {
   final _db = firebaseInstance.db;
 
-  Future<void> writeMyLateAbsence(
-      String semester, List<AttendanceStatus> statusList, bool isLate) async {
+  Future<void> writeMyLateAbsence({
+    required String semester,
+    required List<AttendanceStatus> statusList,
+    required bool isLate,
+  }) async {
     for (var status in statusList) {
       final myAttendanceDocumentRef = _db
           .collection('attendances')
@@ -38,15 +41,16 @@ class FirestoreWriter {
     }
   }
 
-  Future<void> writeConfirmedClerk(
+  Future<void> writeConfirmedClerk({
     // 이번 & 다음 서기 기록, 서기인 사람 count 증가
-    String currentSemester, // nextClerk 써야 하는데 다음주 id의 문서가 없으면 다음 학기 첫 문서에 씀
-    String? upcomingSemester,
-    String thisWeekClerkDate,
-    String clerk,
-    String nextClerk,
-    bool isTemporaryClerk,
-  ) async {
+    required String
+        currentSemester, // nextClerk 써야 하는데 다음주 id의 문서가 없으면 다음 학기 첫 문서에 씀
+    required String? upcomingSemester,
+    required String thisWeekClerkDate,
+    required String clerk,
+    required String nextClerk,
+    required bool isTemporaryClerk,
+  }) async {
     final year = int.parse(thisWeekClerkDate) >= 1225
         ? DateTime.now().year + 1 // 다음주가 내년인 경우 (12월 25일 ~ 12월 31일)
         : DateTime.now().year;
@@ -105,11 +109,11 @@ class FirestoreWriter {
     }
   }
 
-  saveAttendanceStatus(
-    String semester,
-    Map<String, List<dynamic>> userAttendanceStatus,
-    bool isConfirm,
-  ) {
+  saveAttendanceStatus({
+    required String semester,
+    required Map<String, List<dynamic>> userAttendanceStatus,
+    required bool isConfirm,
+  }) {
     final today = StringUtil.convertDateTimeToString(DateTime.now(), true);
     final presentList = [];
     final lateList = [];
@@ -149,7 +153,9 @@ class FirestoreWriter {
   }
 
   confirmAttendanceStatus(
-      String semester, Map<String, List<dynamic>> userAttendanceStatus) {
+    String semester,
+    Map<String, List<dynamic>> userAttendanceStatus,
+  ) {
     final today = StringUtil.convertDateTimeToString(DateTime.now(), true);
     late final String attendance;
     late final bool isAuthorized;
@@ -214,7 +220,9 @@ class FirestoreWriter {
   }
 
   Future<List<String>> createMeetingTimeList(
-      String startDate, String nextSemester) async {
+    String startDate,
+    String nextSemester,
+  ) async {
     final academicCalendarHtml = await httpLogic.getAcademicCalendar();
     final semesterDurationList =
         HtmlUtil.getSemesterDuration(academicCalendarHtml);
@@ -253,7 +261,10 @@ class FirestoreWriter {
   }
 
   Future createNextMeeting(
-      String currentSemester, String startDate, String time) async {
+    String currentSemester,
+    String startDate,
+    String time,
+  ) async {
     final yearText = currentSemester.split('-').first;
     final semesterText = currentSemester.split('-').last;
     late final String nextSemester;

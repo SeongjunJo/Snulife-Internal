@@ -151,8 +151,10 @@ class SetRestOrTeemMeetingPageState extends State<SetRestOrTeemMeetingPage> {
                                     () => _isRest.value = false,
                                   ],
                                   onBtnPressed: _isRest.value != null
-                                      ? () => _onPressed(_isRest.value!,
-                                          widget.currentSemester)
+                                      ? () => _onPressed(
+                                            _isRest.value!,
+                                            widget.currentSemester,
+                                          )
                                       : null);
                             },
                           );
@@ -192,7 +194,12 @@ class SetRestOrTeemMeetingPageState extends State<SetRestOrTeemMeetingPage> {
           if (!context.mounted) return;
           Navigator.pop(context);
           context.pop();
-          AppSnackBar.showFlushBar(context, "신청되었습니다.", 100, true);
+          AppSnackBar.showFlushBar(
+            context: context,
+            message: "신청되었습니다.",
+            height: 100,
+            isSuccess: true,
+          );
         },
       ),
     );

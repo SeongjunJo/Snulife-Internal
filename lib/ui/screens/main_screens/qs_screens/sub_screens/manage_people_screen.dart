@@ -86,32 +86,36 @@ class _ManagePeoplePageState extends State<ManagePeoplePage> {
                             Row(
                               children: [
                                 _buildInfoTag(
-                                    peopleInfoList[index].name,
-                                    'team',
-                                    team,
-                                    ['개발팀', '디자인팀', '전략마케팅팀'],
-                                    false),
+                                  userName: peopleInfoList[index].name,
+                                  key: 'team',
+                                  info: team,
+                                  tabTexts: ['개발팀', '디자인팀', '전략마케팅팀'],
+                                  canScroll: false,
+                                ),
                                 const SizedBox(width: 10),
                                 _buildInfoTag(
-                                    peopleInfoList[index].name,
-                                    'grade',
-                                    grade,
-                                    ['알럼나이', '시니어', '주니어'],
-                                    false),
+                                  userName: peopleInfoList[index].name,
+                                  key: 'grade',
+                                  info: grade,
+                                  tabTexts: ['알럼나이', '시니어', '주니어'],
+                                  canScroll: false,
+                                ),
                                 const SizedBox(width: 10),
                                 _buildInfoTag(
-                                    peopleInfoList[index].name,
-                                    'position',
-                                    position,
-                                    ['대표', '부대표', '팀장', '팀원'],
-                                    true),
+                                  userName: peopleInfoList[index].name,
+                                  key: 'position',
+                                  info: position,
+                                  tabTexts: ['대표', '부대표', '팀장', '팀원'],
+                                  canScroll: true,
+                                ),
                                 const SizedBox(width: 10),
                                 _buildInfoTag(
-                                    peopleInfoList[index].name,
-                                    'isRest',
-                                    isRest,
-                                    ['활동', '휴면', '탈퇴'],
-                                    false),
+                                  userName: peopleInfoList[index].name,
+                                  key: 'isRest',
+                                  info: isRest,
+                                  tabTexts: ['활동', '휴면', '탈퇴'],
+                                  canScroll: false,
+                                ),
                               ],
                             ),
                           ],
@@ -176,8 +180,13 @@ class _ManagePeoplePageState extends State<ManagePeoplePage> {
     );
   }
 
-  ValueListenableBuilder _buildInfoTag(
-      userName, key, ValueNotifier info, tabTexts, canScroll) {
+  ValueListenableBuilder _buildInfoTag({
+    required String userName,
+    required String key,
+    required ValueNotifier info,
+    required List<String> tabTexts,
+    required bool canScroll,
+  }) {
     final originInfo = info.value['content'];
     String selectedOption = '';
     bool hasUpdated = false;
@@ -291,7 +300,11 @@ class _ManagePeoplePageState extends State<ManagePeoplePage> {
                               updatedInfoList.clear();
                               context.pop();
                               AppSnackBar.showFlushBar(
-                                  context, '변경되었습니다.', 10, true);
+                                context: context,
+                                message: '변경되었습니다.',
+                                height: 10,
+                                isSuccess: true,
+                              );
                             },
                           ),
                         );
@@ -491,7 +504,11 @@ class _FreshManBottomModalState extends State<_FreshManBottomModal> {
                               if (!context.mounted) return;
                               context.pop();
                               AppSnackBar.showFlushBar(
-                                  context, '추가되었습니다.', 10, true);
+                                context: context,
+                                message: '추가되었습니다.',
+                                height: 10,
+                                isSuccess: true,
+                              );
                             },
                     ),
                   ],

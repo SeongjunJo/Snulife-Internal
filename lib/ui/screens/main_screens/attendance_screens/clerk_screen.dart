@@ -291,21 +291,21 @@ class _ClerkPageState extends State<ClerkPage> {
                           _clerkList[_selectedIndex].key,
                         );
                         firestoreWriter.writeConfirmedClerk(
-                          widget.currentSemester,
-                          widget.upcomingSemester,
-                          widget.thisWeekClerkDate,
-                          _clerkList[_selectedIndex].key,
-                          nextClerk,
-                          false,
+                          currentSemester: widget.currentSemester,
+                          upcomingSemester: widget.upcomingSemester,
+                          thisWeekClerkDate: widget.thisWeekClerkDate,
+                          clerk: _clerkList[_selectedIndex].key,
+                          nextClerk: nextClerk,
+                          isTemporaryClerk: false,
                         );
                       } else {
                         firestoreWriter.writeConfirmedClerk(
-                          widget.currentSemester,
-                          widget.upcomingSemester,
-                          widget.thisWeekClerkDate,
-                          _temporaryClerk!,
-                          widget.clerk,
-                          true,
+                          currentSemester: widget.currentSemester,
+                          upcomingSemester: widget.upcomingSemester,
+                          thisWeekClerkDate: widget.thisWeekClerkDate,
+                          clerk: _temporaryClerk!,
+                          nextClerk: widget.clerk,
+                          isTemporaryClerk: true,
                         );
                       }
                     }

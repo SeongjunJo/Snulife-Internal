@@ -49,6 +49,51 @@ class _LogInPageState extends State<LogInPage> {
     super.dispose();
   }
 
+  @override
+  Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.isLoggedIn) {
+        context.goNamed(AppRoutePath.home);
+      }
+    });
+
+    _onPressed = _isBtnEnable ? () => _tryLogIn() : null;
+
+    return Scaffold(
+      backgroundColor: appColors.white,
+      body: ListView(
+        padding: const EdgeInsets.only(top: 95, left: 20, right: 20),
+        children: [
+          Text("로그인 해주세요.", style: appFonts.h1),
+          const SizedBox(height: 60),
+          LoginTextFormField(
+            type: "이메일",
+            controller: _emailController,
+            fieldStatusMessage: _fieldStatus,
+          ),
+          const SizedBox(height: 34),
+          LoginTextFormField(
+            type: "비밀번호",
+            controller: _passwordController,
+            fieldStatusMessage: _fieldStatus,
+          ),
+          const SizedBox(height: 60),
+          AppExpandedButton(buttonText: '로그인', onPressed: _onPressed),
+          const SizedBox(height: 20),
+          GestureDetector(
+            onTap: () => context.pushNamed(AppRoutePath.forgottenPassword),
+            child: Center(
+              child: Text(
+                "비밀번호를 잊으셨나요?",
+                style: appFonts.b2.copyWith(color: appColors.grey5),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _tryLogIn() async {
     showDialog(
       useSafeArea: false,
@@ -102,50 +147,5 @@ class _LogInPageState extends State<LogInPage> {
       return;
     }
     setState(() => _fieldStatus = FirebaseAuthErrorTypes.none);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.isLoggedIn) {
-        context.goNamed(AppRoutePath.home);
-      }
-    });
-
-    _onPressed = _isBtnEnable ? () => _tryLogIn() : null;
-
-    return Scaffold(
-      backgroundColor: appColors.white,
-      body: ListView(
-        padding: const EdgeInsets.only(top: 95, left: 20, right: 20),
-        children: [
-          Text("로그인 해주세요.", style: appFonts.h1),
-          const SizedBox(height: 60),
-          LoginTextFormField(
-            type: "이메일",
-            controller: _emailController,
-            fieldStatusMessage: _fieldStatus,
-          ),
-          const SizedBox(height: 34),
-          LoginTextFormField(
-            type: "비밀번호",
-            controller: _passwordController,
-            fieldStatusMessage: _fieldStatus,
-          ),
-          const SizedBox(height: 60),
-          AppExpandedButton(buttonText: '로그인', onPressed: _onPressed),
-          const SizedBox(height: 20),
-          GestureDetector(
-            onTap: () => context.pushNamed(AppRoutePath.forgottenPassword),
-            child: Center(
-              child: Text(
-                "비밀번호를 잊으셨나요?",
-                style: appFonts.b2.copyWith(color: appColors.grey5),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

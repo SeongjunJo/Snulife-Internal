@@ -56,7 +56,12 @@ class _SetNextMeetingState extends State<SetNextMeeting> {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             showFlushBar && snapshot.connectionState == ConnectionState.done
                 ? {
-                    AppSnackBar.showFlushBar(context, '변경되었습니다.', 100, true),
+                    AppSnackBar.showFlushBar(
+                      context: context,
+                      message: '변경되었습니다.',
+                      height: 100,
+                      isSuccess: true,
+                    ),
                     showFlushBar = false
                   }
                 : null;
@@ -258,7 +263,10 @@ class _SetNextMeetingState extends State<SetNextMeeting> {
                   '${hour.toString().padLeft(2, '0')}${minute.toString().padLeft(2, '0')}';
 
               await firestoreWriter.createNextMeeting(
-                  widget.currentSemester, nextMeetingDate, nextMeetingTime);
+                widget.currentSemester,
+                nextMeetingDate,
+                nextMeetingTime,
+              );
 
               setState(() {
                 isLoading = false;
