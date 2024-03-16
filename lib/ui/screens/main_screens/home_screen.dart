@@ -186,16 +186,16 @@ class HomePage extends StatelessWidget {
           const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              SecondaryTab(name: "사무실 물품 장부"),
-              SecondaryTab(name: "최근 청소 기록"),
+              SecondaryTab(secondaryTabName: SecondaryTabName.rentalLedger),
+              SecondaryTab(secondaryTabName: SecondaryTabName.rentalRoom),
             ],
           ),
           const SizedBox(height: 14),
           const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              SecondaryTab(name: "Coming Soon"),
-              SecondaryTab(name: "Coming Soon"),
+              SecondaryTab(secondaryTabName: SecondaryTabName.cleaning),
+              SecondaryTab(secondaryTabName: SecondaryTabName.anonymous),
             ],
           ),
           const SizedBox(height: 58),

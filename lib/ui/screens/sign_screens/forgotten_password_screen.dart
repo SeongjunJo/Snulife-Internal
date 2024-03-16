@@ -81,11 +81,15 @@ class _ForgottenPasswordPageState extends State<ForgottenPasswordPage> {
           ),
           Column(
             children: [
-              AppExpandedButton(
-                buttonText: '확인',
-                onPressed: _onPressed,
+              Row(
+                children: [
+                  AppExpandedButton(
+                    buttonText: '확인',
+                    onPressed: _onPressed,
+                  ),
+                ],
               ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 24),
             ],
           ),
         ],

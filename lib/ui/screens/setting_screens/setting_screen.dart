@@ -36,13 +36,14 @@ class _SettingPageState extends State<SettingPage> {
             onTap: () => {
               showDialog(
                 context: context,
+                useRootNavigator: false,
                 builder: (context) => ConfirmDialog(
                   title: '로그아웃 하시겠어요?',
                   content: '',
                   onPressed: () async {
-                    await FirebaseAuth.instance.signOut().then(
-                          (_) => context.pushNamed(AppRoutePath.profile),
-                        );
+                    await FirebaseAuth.instance.signOut().then((_) {
+                      context.goNamed(AppRoutePath.login);
+                    });
                   },
                 ),
               ),

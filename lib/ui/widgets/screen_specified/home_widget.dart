@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:snulife_internal/router.dart';
+import 'package:snulife_internal/ui/widgets/commons/snackbar_widget.dart';
 
 import '../../../logics/common_instances.dart';
 
 class PrimaryTab extends StatelessWidget {
-  final PrimaryTabName primaryTabName;
-  final Widget primaryTabContent;
-  final Widget primaryTabIcon;
-
   const PrimaryTab({
     super.key,
     required this.primaryTabName,
@@ -16,15 +13,24 @@ class PrimaryTab extends StatelessWidget {
     required this.primaryTabIcon,
   });
 
-  void Function()? onTap(PrimaryTabName primaryTabName, GoRouter goRouter) {
-    switch (primaryTabName.name) {
-      case "출석":
+  final PrimaryTabName primaryTabName;
+  final Widget primaryTabContent;
+  final Widget primaryTabIcon;
+
+  void Function()? _onTap(
+    PrimaryTabName primaryTabName,
+    GoRouter goRouter,
+    BuildContext context,
+  ) {
+    switch (primaryTabName) {
+      case PrimaryTabName.attendance:
         return () => goRouter.pushNamed(AppRoutePath.attendance);
-      case "운영":
+      case PrimaryTabName.management:
         return () => goRouter.pushNamed(AppRoutePath.management);
-      case "지출 내역":
+      case PrimaryTabName.receipt:
+        return () =>
+            AppSnackBar.showFlushBar(context, 'TBD (언젠가 넣을 예정)', 30, true);
     }
-    return null;
   }
 
   @override
@@ -32,7 +38,7 @@ class PrimaryTab extends StatelessWidget {
     GoRouter goRouter = GoRouter.of(context);
 
     return GestureDetector(
-      onTap: onTap(primaryTabName, goRouter),
+      onTap: _onTap(primaryTabName, goRouter, context),
       child: Container(
         decoration: BoxDecoration(
           color: appColors.white,
@@ -62,34 +68,60 @@ class PrimaryTab extends StatelessWidget {
 }
 
 class SecondaryTab extends StatelessWidget {
-  final String name;
-
   const SecondaryTab({
     super.key,
-    required this.name,
+    required this.secondaryTabName,
   });
+
+  final SecondaryTabName secondaryTabName;
+
+  void Function()? _onTap(
+    SecondaryTabName secondaryTabName,
+    // GoRouter goRouter,
+    BuildContext context,
+  ) {
+    switch (secondaryTabName) {
+      case _:
+        return () =>
+            AppSnackBar.showFlushBar(context, 'TBD (언젠가 넣을 예정)', 30, true);
+      // TODO 기능 구현 예정
+      // case SecondaryTabName.rentalLedger:
+      //   return () => goRouter.pushNamed(AppRoutePath.rentalLedger);
+      // case SecondaryTabName.rentalRoom:
+      //   return () => goRouter.pushNamed(AppRoutePath.rentalRoom);
+      // case SecondaryTabName.cleaning:
+      //   return () => goRouter.pushNamed(AppRoutePath.cleaning);
+      // case SecondaryTabName.anonymous:
+      //   return () => goRouter.pushNamed(AppRoutePath.anonymous);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 180,
-      height: 180,
-      padding: const EdgeInsets.only(top: 15, left: 27, right: 27, bottom: 10),
-      decoration: BoxDecoration(
-        color: appColors.white,
-        borderRadius: BorderRadius.circular(22),
-      ),
-      child: Column(
-        children: [
-          Padding(
-            padding:
-                const EdgeInsets.only(top: 3, left: 7, right: 3, bottom: 3),
-            child: Image.asset("assets/images/icon_folder.png",
-                width: 100, height: 106),
-          ),
-          const SizedBox(height: 12),
-          Text(name, style: appFonts.t4.copyWith(color: appColors.grey5)),
-        ],
+    return GestureDetector(
+      onTap: _onTap(secondaryTabName, context),
+      child: Container(
+        width: 180,
+        height: 180,
+        padding:
+            const EdgeInsets.only(top: 15, left: 27, right: 27, bottom: 10),
+        decoration: BoxDecoration(
+          color: appColors.white,
+          borderRadius: BorderRadius.circular(22),
+        ),
+        child: Column(
+          children: [
+            Padding(
+              padding:
+                  const EdgeInsets.only(top: 3, left: 7, right: 3, bottom: 3),
+              child: Image.asset("assets/images/icon_folder.png",
+                  width: 100, height: 106),
+            ),
+            const SizedBox(height: 12),
+            Text(secondaryTabName.name,
+                style: appFonts.t4.copyWith(color: appColors.grey5)),
+          ],
+        ),
       ),
     );
   }
@@ -101,5 +133,15 @@ enum PrimaryTabName {
   receipt('지출 내역');
 
   const PrimaryTabName(this.name);
+  final String name;
+}
+
+enum SecondaryTabName {
+  rentalLedger('사무실 물품 장부'),
+  rentalRoom('사무실 이용 기록'),
+  anonymous('대나무숲'),
+  cleaning('최근 청소 기록');
+
+  const SecondaryTabName(this.name);
   final String name;
 }

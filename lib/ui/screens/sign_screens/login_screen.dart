@@ -23,6 +23,7 @@ class _LogInPageState extends State<LogInPage> {
   bool _isBtnEnable = false;
   FirebaseAuthErrorTypes _fieldStatus = FirebaseAuthErrorTypes.none;
   void Function()? _onPressed;
+  bool canPop = false;
 
   @override
   void initState() {
@@ -49,6 +50,34 @@ class _LogInPageState extends State<LogInPage> {
   }
 
   void _tryLogIn() async {
+    showDialog(
+      useSafeArea: false,
+      context: context,
+      builder: (context) => PopScope(
+        canPop: canPop,
+        onPopInvoked: (bool didPop) {
+          if (didPop) {
+            setState(() => canPop = false);
+          }
+        },
+        child: Scaffold(
+          body: Container(
+            color: appColors.white,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("로그인 중...",
+                      style: appFonts.h1.copyWith(color: appColors.subBlue1)),
+                  const SizedBox(height: 20),
+                  CircularProgressIndicator(color: appColors.subBlue1),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: _emailController.text,
@@ -63,9 +92,13 @@ class _LogInPageState extends State<LogInPage> {
             FirebaseAuthErrorTypes.invalidCredential,
         'network-request-failed' => _fieldStatus =
             FirebaseAuthErrorTypes.networkRequestFailed,
+        'too-many-requests' => _fieldStatus =
+            FirebaseAuthErrorTypes.tooManyRequests,
         _ => _fieldStatus = FirebaseAuthErrorTypes.unknownError,
       };
-      setState(() {});
+      if (!mounted) return;
+      setState(() => canPop = true);
+      context.pop();
       return;
     }
     setState(() => _fieldStatus = FirebaseAuthErrorTypes.none);
@@ -103,9 +136,7 @@ class _LogInPageState extends State<LogInPage> {
           AppExpandedButton(buttonText: '로그인', onPressed: _onPressed),
           const SizedBox(height: 20),
           GestureDetector(
-            onTap: () {
-              context.pushNamed(AppRoutePath.forgottenPassword);
-            },
+            onTap: () => context.pushNamed(AppRoutePath.forgottenPassword),
             child: Center(
               child: Text(
                 "비밀번호를 잊으셨나요?",

@@ -53,6 +53,8 @@ class LoginTextFormField extends StatelessWidget {
                   return '비활성화된 이메일입니다';
                 case FirebaseAuthErrorTypes.networkRequestFailed:
                   return '네트워크 연결을 확인해주세요';
+                case FirebaseAuthErrorTypes.tooManyRequests:
+                  return '잠시 후 다시 시도해주세요';
                 case FirebaseAuthErrorTypes.unknownError:
                   return '알 수 없는 오류가 발생했습니다';
                 case FirebaseAuthErrorTypes.none:
