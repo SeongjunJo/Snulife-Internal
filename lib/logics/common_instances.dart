@@ -7,7 +7,7 @@ import '../ui/styles/fonts.dart';
 import 'firestore_write.dart';
 import 'http_logic.dart';
 
-// make only one instance like singleton
+// make only one instance like singleton TODO DI with GetIt
 
 AppColors get appColors => AppColors();
 AppFonts get appFonts => AppFonts();

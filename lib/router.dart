@@ -65,6 +65,8 @@ final appRouter = GoRouter(
           path: AppRoutePath.home,
           builder: (context, state) => Consumer<FirebaseStates>(
             builder: (context, value, _) => HomePage(
+              isInternetConnected: value.isInternetConnected,
+              isReconnected: value.isReconnected,
               isLoading: value.isLoading,
               isLoggedIn: value.loggedIn,
               isManager: value.isManager,

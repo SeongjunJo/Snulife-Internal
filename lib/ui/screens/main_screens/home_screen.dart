@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:snulife_internal/ui/widgets/commons/shimmer.dart';
+import 'package:snulife_internal/ui/widgets/commons/snackbar_widget.dart';
 
 import '../../../logics/common_instances.dart';
 import '../../../router.dart';
 import '../../widgets/commons/button_widgets.dart';
 import '../../widgets/screen_specified/home_widget.dart';
 
+bool hasDisconnectedSnackBarPopped = false;
+bool hasReconnectedSnackBarPopped = false;
+
 class HomePage extends StatelessWidget {
   const HomePage({
     super.key,
+    required this.isInternetConnected,
+    required this.isReconnected,
     required this.isLoading,
     required this.isLoggedIn,
     required this.isManager,
@@ -17,6 +23,8 @@ class HomePage extends StatelessWidget {
     required this.clerk,
   });
 
+  final bool isInternetConnected;
+  final bool isReconnected;
   final bool isLoading;
   final bool isLoggedIn;
   final bool isManager;
@@ -25,6 +33,31 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!isInternetConnected && !hasDisconnectedSnackBarPopped) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        hasDisconnectedSnackBarPopped = true;
+        hasReconnectedSnackBarPopped = false;
+        AppSnackBar.showFlushBar(
+          context: context,
+          message: '네크워크 연결을 확인해주세요',
+          height: 30,
+          isSuccess: false,
+        );
+      });
+    }
+    if (isReconnected && !hasReconnectedSnackBarPopped) {
+      hasReconnectedSnackBarPopped = true;
+      hasDisconnectedSnackBarPopped = false;
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => AppSnackBar.showFlushBar(
+          context: context,
+          message: '네트워크가 연결되었습니다',
+          height: 30,
+          isSuccess: true,
+        ),
+      );
+    }
+
     if (isLoading) {
       return ShimmerLoadingAnimation(
         isLoading: true,
