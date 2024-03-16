@@ -82,98 +82,83 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
           return Container(
             color: appColors.grey0,
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: ListView(
+            child: Column(
               children: [
-                const SizedBox(height: 24),
-                Container(
-                  decoration: BoxDecoration(
-                    color: appColors.grey1,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 10,
-                  ),
-                  child: Text(
-                    "지각 신청은 회의 시작 전까지,\n결석 신청은 전날 자정까지 가능해요.",
-                    style: appFonts.c3.copyWith(color: appColors.grey6),
-                  ),
-                ),
-                const SizedBox(height: 16),
                 Expanded(
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: semesterStatus.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      bool isRestDate =
-                          meetingRestDates.contains(semesterStatus[index].date);
-
-                      return GestureDetector(
-                        onTap: (semesterStatus[index].attendance == "" &&
-                                !isRestDate)
-                            ? () {
-                                setState(() {
-                                  if (_selectedIndexes.contains(index)) {
-                                    _lateAbsenceList
-                                        .remove(semesterStatus[index]);
-                                    _selectedIndexes.remove(index);
-                                  } else {
-                                    _lateAbsenceList.add(semesterStatus[index]);
-                                    _selectedIndexes.add(index);
-                                  }
-                                });
-                              }
-                            : null, // 지각/결석 신청했거나 휴회일이면 선택 불가
-                        child: MyAttendanceListItem(
-                          week: (index + 1 > indexOffset)
-                              ? index + 1 - indexOffset
-                              : currentSemesterWeek - indexOffset + index + 1,
-                          date: semesterStatus[index].date,
-                          isSelected: _selectedIndexes.contains(index),
-                          status: !isRestDate
-                              ? semesterStatus[index].attendance
-                              : "휴회", // 지각/결석/휴회가 아니라면 (= 특수 상황 아니면) 빈 문자열이 넘어감
+                  child: ListView(
+                    children: [
+                      const SizedBox(height: 24),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: appColors.grey1,
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                      );
-                    },
-                    separatorBuilder: (BuildContext context, int index) {
-                      return const SizedBox(height: 8);
-                    },
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
+                        child: Text(
+                          "지각 신청은 회의 시작 전까지,\n결석 신청은 전날 자정까지 가능해요.",
+                          style: appFonts.c3.copyWith(color: appColors.grey6),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: semesterStatus.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          bool isRestDate = meetingRestDates
+                              .contains(semesterStatus[index].date);
+
+                          return GestureDetector(
+                            onTap: (semesterStatus[index].attendance == "" &&
+                                    !isRestDate)
+                                ? () {
+                                    setState(() {
+                                      if (_selectedIndexes.contains(index)) {
+                                        _lateAbsenceList
+                                            .remove(semesterStatus[index]);
+                                        _selectedIndexes.remove(index);
+                                      } else {
+                                        _lateAbsenceList
+                                            .add(semesterStatus[index]);
+                                        _selectedIndexes.add(index);
+                                      }
+                                    });
+                                  }
+                                : null, // 지각/결석 신청했거나 휴회일이면 선택 불가
+                            child: MyAttendanceListItem(
+                              week: (index + 1 > indexOffset)
+                                  ? index + 1 - indexOffset
+                                  : currentSemesterWeek -
+                                      indexOffset +
+                                      index +
+                                      1,
+                              date: semesterStatus[index].date,
+                              isSelected: _selectedIndexes.contains(index),
+                              status: !isRestDate
+                                  ? semesterStatus[index].attendance
+                                  : "휴회", // 지각/결석/휴회가 아니라면 (= 특수 상황 아니면) 빈 문자열이 넘어감
+                            ),
+                          );
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          return const SizedBox(height: 8);
+                        },
+                      ),
+                      if (semesterStatus.length > 8)
+                        Column(
+                          children: [
+                            const SizedBox(height: 24),
+                            _buildButton(context, meetingTime),
+                          ],
+                        ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 37),
-                AppExpandedButton(
-                  buttonText: "신청",
-                  onPressed: _selectedIndexes.isNotEmpty
-                      ? () {
-                          _isLate.value = null;
-                          showModalBottomSheet(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return ValueListenableBuilder<bool?>(
-                                valueListenable: _isLate,
-                                builder: (context, bool? value, _) {
-                                  return SelectOnlyBottomModal(
-                                      height: 312,
-                                      title: "지각/결석 여부를 선택해주세요.",
-                                      hintText: '신청 후에는 서기만 출결 변경이 가능해요.',
-                                      tapTexts: const ["결석", "지각"],
-                                      onTapsPressed: [
-                                        () => _isLate.value = false,
-                                        () => _isLate.value = true,
-                                      ],
-                                      onBtnPressed: _isLate.value != null
-                                          ? () => _onPressed(meetingTime)
-                                          : null);
-                                },
-                              );
-                            },
-                          );
-                        }
-                      : null,
-                ),
-                const SizedBox(height: 24),
+                if (semesterStatus.length <= 8)
+                  _buildButton(context, meetingTime),
               ],
             ),
           );
@@ -181,6 +166,49 @@ class _LateAbsencePageState extends State<LateAbsencePage> {
           return Container(color: appColors.grey0);
         }
       },
+    );
+  }
+
+  Column _buildButton(BuildContext context, String meetingTime) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            AppExpandedButton(
+              buttonText: "신청",
+              onPressed: _selectedIndexes.isNotEmpty
+                  ? () {
+                      _isLate.value = null;
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return ValueListenableBuilder<bool?>(
+                            valueListenable: _isLate,
+                            builder: (context, bool? value, _) {
+                              return SelectOnlyBottomModal(
+                                height: 312,
+                                title: "지각/결석 여부를 선택해주세요.",
+                                hintText: '신청 후에는 서기만 출결 변경이 가능해요.',
+                                tapTexts: const ["결석", "지각"],
+                                onTapsPressed: [
+                                  () => _isLate.value = false,
+                                  () => _isLate.value = true,
+                                ],
+                                onBtnPressed: _isLate.value != null
+                                    ? () => _onPressed(meetingTime)
+                                    : null,
+                              );
+                            },
+                          );
+                        },
+                      );
+                    }
+                  : null,
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+      ],
     );
   }
 

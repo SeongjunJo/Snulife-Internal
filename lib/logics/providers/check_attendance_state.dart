@@ -22,7 +22,7 @@ class CheckAttendanceState extends ChangeNotifier {
       String name, String? status, bool isAuthorized, bool hasUserModified) {
     if (status != null) _userAttendanceStatus[name]!.first = status;
     _userAttendanceStatus[name]!.last = isAuthorized;
-    hasUserModified ? _hasUpdated = true : null;
+    if (hasUserModified) _hasUpdated = true;
     notifyListeners();
   }
 

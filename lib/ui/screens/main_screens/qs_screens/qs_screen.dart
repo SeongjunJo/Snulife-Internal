@@ -128,6 +128,7 @@ class _QSPageState extends State<QSPage> {
                         ],
                       );
                     } else if (index == widget.userList.length + 2) {
+                      // 동아리원이 4명에서 5명으로 넘어가는 시점에서 sticky를 걸면 되는데, 그런 상황은 생기지 않음 (그래야만 함)
                       return AppExpandedButton(
                         buttonText: 'QS 확정하기',
                         onPressed: !hasQSConfirmed

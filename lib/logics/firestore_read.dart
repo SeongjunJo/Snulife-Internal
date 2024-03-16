@@ -8,12 +8,14 @@ import 'common_instances.dart';
 class FirestoreReader {
   final _db = firebaseInstance.db;
 
-  Future getUserList() async {
-    return memoizer.runOnce(() async {
-      final userListDocument =
-          await _db.collection('information').doc('userList').get();
-      return userListDocument.data()!['names'];
-    });
+  Future<List<String>> getUserList() async {
+    final userListDocument =
+        await _db.collection('information').doc('userList').get();
+    final List<String> userList =
+        userListDocument.data()!['names'].cast<String>();
+    userList.sort();
+
+    return userList;
   }
 
   Future getUserInfo(String name) async {
@@ -172,7 +174,7 @@ class FirestoreReader {
     return attendanceHistory;
   }
 
-  Future getQSMapList(
+  Future<List<Map<String, String>>> getQSMapList(
       List userList, String preSemester, String postSemester) async {
     final List<Map<String, String>> userQSMapList = [];
 

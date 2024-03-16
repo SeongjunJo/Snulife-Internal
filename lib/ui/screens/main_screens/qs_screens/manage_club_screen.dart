@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:snulife_internal/ui/screens/main_screens/qs_screens/sub_screens/manage_people_screen.dart';
 import 'package:snulife_internal/ui/screens/main_screens/qs_screens/sub_screens/set_next_meeting.dart';
 import 'package:snulife_internal/ui/screens/main_screens/qs_screens/sub_screens/set_rest_teem_meeting_screen.dart';
@@ -23,9 +24,7 @@ class _ManageClubPageState extends State<ManageClubPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       color: appColors.grey0,
-      child: ListView(
-        // 신입 추가 bottom modal에서 keyboard로 인한 bottom overflow 방지
-        physics: const AlwaysScrollableScrollPhysics(),
+      child: Column(
         children: [
           const SizedBox(height: 16),
           Row(
@@ -50,12 +49,15 @@ class _ManageClubPageState extends State<ManageClubPage> {
             ],
           ),
           const SizedBox(height: 24),
-          if (_tabTagIndex == 1)
-            SetRestOrTeemMeetingPage(currentSemester: widget.currentSemester)
-          else if (_tabTagIndex == 2)
-            SetNextMeeting(currentSemester: widget.currentSemester)
-          else
-            const ManagePeoplePage(),
+          Expanded(
+            child: _tabTagIndex == 1
+                ? SetRestOrTeemMeetingPage(
+                    currentSemester: widget.currentSemester,
+                  )
+                : _tabTagIndex == 2
+                    ? SetNextMeeting(currentSemester: widget.currentSemester)
+                    : const ManagePeoplePage(),
+          )
         ],
       ),
     );

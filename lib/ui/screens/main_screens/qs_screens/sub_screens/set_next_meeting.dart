@@ -62,79 +62,84 @@ class _SetNextMeetingState extends State<SetNextMeeting> {
                 : null;
           });
 
-          return Expanded(
-            child: ListView(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              children: [
-                Text('다음 정규 회의 시작 일자를\n지정해주세요.', style: appFonts.h1),
-                const SizedBox(height: 20),
-                Text(
-                  '현재 지정된 첫 회의일',
-                  style: appFonts.t5.copyWith(color: appColors.slBlue),
-                ),
-                const SizedBox(height: 12),
-                isLoading
-                    ? Center(
-                        child:
-                            CircularProgressIndicator(color: appColors.slBlue))
-                    : Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 19),
-                        decoration: BoxDecoration(
-                          color: appColors.white,
-                          borderRadius: BorderRadius.circular(10),
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('다음 정규 회의 시작 일자를\n지정해주세요.', style: appFonts.h1),
+                  const SizedBox(height: 20),
+                  Text(
+                    '현재 지정된 첫 회의일',
+                    style: appFonts.t5.copyWith(color: appColors.slBlue),
+                  ),
+                  const SizedBox(height: 12),
+                  isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                              color: appColors.slBlue))
+                      : Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 19),
+                          decoration: BoxDecoration(
+                            color: appColors.white,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '$year년 $month월 $date일 $day',
+                                style: appFonts.b1
+                                    .copyWith(fontWeight: FontWeight.w700),
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                '${isAM ? '오전' : '오후'} ${isAM ? hour : hour - 12}시 $minute분',
+                                style: appFonts.b1
+                                    .copyWith(fontWeight: FontWeight.w700),
+                              ),
+                            ],
+                          ),
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '$year년 $month월 $date일 $day',
-                              style: appFonts.b1
-                                  .copyWith(fontWeight: FontWeight.w700),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              '${isAM ? '오전' : '오후'} ${isAM ? hour : hour - 12}시 $minute분',
-                              style: appFonts.b1
-                                  .copyWith(fontWeight: FontWeight.w700),
-                            ),
-                          ],
-                        ),
-                      ),
-                const SizedBox(height: 20),
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: appColors.grey1,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 10,
-                  ),
-                  child: Text(
-                    "현재 분기의 마지막 회의 날에 다음 정규회의 일정을 지정해주세요.\n확정 후 변경할 수 없으니 신중히 지정해주세요.",
-                    style: appFonts.c3.copyWith(color: appColors.grey6),
-                  ),
-                ),
-                const SizedBox(height: 40),
-                Row(
-                  children: [
-                    AppExpandedButton(
-                      buttonText: '변경',
-                      onPressed: () => showCupertinoModalPopup(
-                        context: context,
-                        useRootNavigator: false,
-                        builder: (context) => buildCupertinoDatePicker(),
-                      ),
+                  const SizedBox(height: 20),
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: appColors.grey1,
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-              ],
-            ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
+                    child: Text(
+                      "현재 분기의 마지막 회의 날에 다음 정규회의 일정을 지정해주세요.\n확정 후 변경할 수 없으니 신중히 지정해주세요.",
+                      style: appFonts.c3.copyWith(color: appColors.grey6),
+                    ),
+                  ),
+                ],
+              ),
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      AppExpandedButton(
+                        buttonText: '변경',
+                        onPressed: () => showCupertinoModalPopup(
+                          context: context,
+                          useRootNavigator: false,
+                          builder: (context) => buildCupertinoDatePicker(),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                ],
+              )
+            ],
           );
         } else {
           return const SizedBox();

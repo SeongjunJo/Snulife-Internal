@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:snulife_internal/logics/utils/string_util.dart';
 
 import '../../../../../logics/common_instances.dart';
+import '../../../../../logics/utils/string_util.dart';
 import '../../../../widgets/commons/button_widgets.dart';
 import '../../../../widgets/commons/modal_widgets.dart';
 import '../../../../widgets/commons/snackbar_widget.dart';
@@ -59,93 +59,112 @@ class SetRestOrTeemMeetingPageState extends State<SetRestOrTeemMeetingPage> {
               .removeWhere((element) => int.parse(element) < int.parse(today));
           adjustedMeetingDateCount = allMeetingDates.length;
 
-          return Expanded(
-            child: ListView.separated(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: allMeetingDates.length + 5,
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  return Text('휴회/팀별 회의 일로 변경할\n정기 회의 일자를 선택해주세요.',
-                      style: appFonts.h1);
-                } else if (index == 1) {
-                  return const SizedBox(height: 16);
-                } else if (index == allMeetingDates.length + 2) {
-                  return const SizedBox(height: 29);
-                } else if (index == allMeetingDates.length + 4) {
-                  return const SizedBox(height: 16);
-                } else if (index == allMeetingDates.length + 3) {
-                  return AppExpandedButton(
-                    buttonText: '변경',
-                    onPressed: selectedIndexes.isNotEmpty
-                        ? () {
-                            _isRest.value = null;
-                            showModalBottomSheet(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return ValueListenableBuilder<bool?>(
-                                  valueListenable: _isRest,
-                                  builder: (context, bool? value, _) {
-                                    return SelectOnlyBottomModal(
-                                        height: 290,
-                                        title: '변경 유형을 선택해주세요.',
-                                        tapTexts: const ['휴회', '팀별 회의'],
-                                        onTapsPressed: [
-                                          () => _isRest.value = true,
-                                          () => _isRest.value = false,
-                                        ],
-                                        onBtnPressed: _isRest.value != null
-                                            ? () => _onPressed(_isRest.value!,
-                                                widget.currentSemester)
-                                            : null);
-                                  },
-                                );
-                              },
-                            );
-                          }
-                        : null,
-                  );
-                } else {
-                  final date = allMeetingDates[index - 2].toString();
-                  final bool isRestDate = meetingRestDates.contains(date);
-                  final bool isTeamMeetingDate =
-                      teamMeetingDates.contains(date);
-                  String status = '';
-                  if (isRestDate) status = '휴회';
-                  if (isTeamMeetingDate) status = '팀별 회의';
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: ListView(
+                  children: [
+                    Text('휴회/팀별 회의 일로 변경할\n정기 회의 일자를 선택해주세요.',
+                        style: appFonts.h1),
+                    const SizedBox(height: 16),
+                    ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: allMeetingDates.length,
+                      itemBuilder: (context, index) {
+                        final date = allMeetingDates[index].toString();
+                        final bool isRestDate = meetingRestDates.contains(date);
+                        final bool isTeamMeetingDate =
+                            teamMeetingDates.contains(date);
+                        String status = '';
+                        if (isRestDate) status = '휴회';
+                        if (isTeamMeetingDate) status = '팀별 회의';
 
-                  return GestureDetector(
-                    onTap: !(isRestDate || isTeamMeetingDate)
-                        ? () {
-                            setState(() {
-                              if (selectedIndexes.contains(index - 2)) {
-                                selectedIndexes.remove(index - 2);
-                                selectedDates.remove(date);
-                              } else {
-                                selectedIndexes.add(index - 2);
-                                selectedDates.add(date);
-                              }
-                            });
-                          }
-                        : null,
-                    child: MyAttendanceListItem(
-                      week: index + offset - 1,
-                      date: date,
-                      isSelected: selectedIndexes.contains(index - 2),
-                      status: status,
+                        return GestureDetector(
+                          onTap: !(isRestDate || isTeamMeetingDate)
+                              ? () {
+                                  setState(() {
+                                    if (selectedIndexes.contains(index)) {
+                                      selectedIndexes.remove(index);
+                                      selectedDates.remove(date);
+                                    } else {
+                                      selectedIndexes.add(index);
+                                      selectedDates.add(date);
+                                    }
+                                  });
+                                }
+                              : null,
+                          child: MyAttendanceListItem(
+                            week: index + offset - 1,
+                            date: date,
+                            isSelected: selectedIndexes.contains(index),
+                            status: status,
+                          ),
+                        );
+                      },
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 8),
                     ),
-                  );
-                }
-              },
-              separatorBuilder: (context, index) {
-                return const SizedBox(height: 8);
-              },
-            ),
+                    if (allMeetingDates.length > 7)
+                      Column(
+                        children: [
+                          const SizedBox(height: 24),
+                          _buildButton(context),
+                        ],
+                      ),
+                  ],
+                ),
+              ),
+              if (allMeetingDates.length <= 7) _buildButton(context),
+            ],
           );
         } else {
           return const SizedBox();
         }
       },
+    );
+  }
+
+  Column _buildButton(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            AppExpandedButton(
+              buttonText: '변경',
+              onPressed: selectedIndexes.isNotEmpty
+                  ? () {
+                      _isRest.value = null;
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return ValueListenableBuilder<bool?>(
+                            valueListenable: _isRest,
+                            builder: (context, bool? value, _) {
+                              return SelectOnlyBottomModal(
+                                  height: 290,
+                                  title: '변경 유형을 선택해주세요.',
+                                  tapTexts: const ['휴회', '팀별 회의'],
+                                  onTapsPressed: [
+                                    () => _isRest.value = true,
+                                    () => _isRest.value = false,
+                                  ],
+                                  onBtnPressed: _isRest.value != null
+                                      ? () => _onPressed(_isRest.value!,
+                                          widget.currentSemester)
+                                      : null);
+                            },
+                          );
+                        },
+                      );
+                    }
+                  : null,
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+      ],
     );
   }
 
