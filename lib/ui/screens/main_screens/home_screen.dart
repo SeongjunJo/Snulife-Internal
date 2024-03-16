@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:snulife_internal/ui/widgets/commons/shimmer.dart';
@@ -234,11 +235,38 @@ class HomePage extends StatelessWidget {
           const SizedBox(height: 58),
           Padding(
             padding: const EdgeInsets.all(8),
-            child: Center(
-              child: Text(
-                "SNULife Internal",
-                style: appFonts.t4.copyWith(color: appColors.grey3),
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "SNULife Internal",
+                  style: appFonts.t4.copyWith(color: appColors.grey4),
+                ),
+                const SizedBox(width: 8),
+                Container(width: 1, height: 16, color: appColors.grey4),
+                const SizedBox(width: 8),
+                GestureDetector(
+                  onTap: () => showDialog(
+                    context: context,
+                    builder: (context) => CupertinoAlertDialog(
+                      title: const Text("오픈소스 라이선스"),
+                      content: _buildOpenSourceContent(),
+                      actions: [
+                        CupertinoDialogAction(
+                          textStyle:
+                              appFonts.h3.copyWith(color: appColors.slBlue),
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text("확인"),
+                        ),
+                      ],
+                    ),
+                  ),
+                  child: Text(
+                    "오픈소스 라이선스",
+                    style: appFonts.t4.copyWith(color: appColors.grey4),
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 8),
@@ -372,4 +400,27 @@ class HomePage extends StatelessWidget {
       ],
     );
   }
+}
+
+Column _buildOpenSourceContent() {
+  return const Column(
+    children: [
+      SizedBox(height: 16),
+      Text("MIT | provider | dash-overflow.net"),
+      Text("MIT | flutter_launcher_icons | fluttercommunity.dev"),
+      Text("MIT | flutter_native_splash | jonhanson.net"),
+      Text("MIT | another_flushbar | hamidwakili.com"),
+      Text("MIT | internet_connection_checker | (unverified)"),
+      Text("MIT | dotted_border | (unverified)"),
+      Text("BSD-3-Clause | async | flutter.dev"),
+      Text("BSD-3-Clause | firebase_core | firebase.google.com"),
+      Text("BSD-3-Clause | firebase_auth | firebase.google.com"),
+      Text("BSD-3-Clause | cloud_firestore | firebase.google.com"),
+      Text("BSD-3-Clause | go_router | flutter.dev"),
+      Text("BSD-3-Clause | http | flutter.dev"),
+      Text("BSD-3-Clause | html | flutter.dev"),
+      Text("BSD-3-Clause | flutter_lints | flutter.dev"),
+      Text("OFL-1.1 license | Spoqa Han Sans Neo | Spoqa"),
+    ],
+  );
 }
