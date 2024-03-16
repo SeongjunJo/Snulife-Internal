@@ -32,15 +32,6 @@ class CheckAttendancePage extends StatelessWidget {
 
     final DateTime now = DateTime.now();
     final String today = StringUtil.convertDateTimeToString(now, true);
-    final attendanceListener = context.watch<CheckAttendanceState>();
-    bool unCompleted = false;
-
-    for (final user in attendanceListener.userAttendanceStatus.keys) {
-      if (attendanceListener.userAttendanceStatus[user]!.first == '') {
-        unCompleted = true;
-        break;
-      }
-    }
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -100,8 +91,6 @@ class CheckAttendancePage extends StatelessWidget {
                             const SizedBox(height: 32),
                             _buildButtons(
                               hasAttendanceConfirmed,
-                              attendanceListener,
-                              unCompleted,
                               context,
                             ),
                           ],
@@ -112,8 +101,6 @@ class CheckAttendancePage extends StatelessWidget {
                 if (canModify && userList.length <= 6)
                   _buildButtons(
                     hasAttendanceConfirmed,
-                    attendanceListener,
-                    unCompleted,
                     context,
                   ),
               ],
@@ -126,65 +113,71 @@ class CheckAttendancePage extends StatelessWidget {
     );
   }
 
-  Column _buildButtons(
-      bool hasAttendanceConfirmed,
-      CheckAttendanceState attendanceListener,
-      bool unCompleted,
-      BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            AppExpandedButton(
-              buttonText: "저장",
-              // 확정을 안 했고 수정 사항이 생길 때만 저장 가능
-              onPressed:
-                  !hasAttendanceConfirmed && attendanceListener.hasUpdated
-                      ? () {
-                          firestoreWriter.saveAttendanceStatus(
-                            currentSemester,
-                            attendanceListener.userAttendanceStatus,
-                            false,
-                          );
-                          attendanceListener.setHasUpdated(false);
-                        }
-                      : null,
-            ),
-          ],
-        ),
-        const SizedBox(height: 20),
-        Row(
-          children: [
-            AppExpandedButton(
-              buttonText: "확정",
-              // 확정을 안 했고, 출석 체크는 전부 했고, 저장도 한 경우만 확정 가능
-              onPressed: !hasAttendanceConfirmed &&
-                      !unCompleted &&
-                      !attendanceListener.hasUpdated
-                  ? () => showDialog(
-                        context: context,
-                        builder: (context) => ConfirmDialog(
-                          title: "출석체크 내역을 확정하시겠어요?",
-                          content: "확정 이후에는 출결을 변경할 수 없어요.\n꼭 회의가 끝난 뒤 확정해주세요.",
-                          onPressed: () {
-                            firestoreWriter.saveAttendanceStatus(
-                                currentSemester,
-                                attendanceListener.userAttendanceStatus,
-                                true);
-                            firestoreWriter.confirmAttendanceStatus(
-                                currentSemester,
-                                attendanceListener.userAttendanceStatus);
-                            Navigator.pop(context);
-                          },
-                        ),
-                        useRootNavigator: false, // 뒤로 가기 버튼이 제대로 먹히게
-                      )
-                  : null,
-            ),
-          ],
-        ),
-        const SizedBox(height: 24),
-      ],
-    );
+  Consumer _buildButtons(bool hasAttendanceConfirmed, BuildContext context) {
+    return Consumer<CheckAttendanceState>(builder: (context, value, _) {
+      bool unCompleted = false;
+
+      for (final user in value.userAttendanceStatus.keys) {
+        if (value.userAttendanceStatus[user]!.first == '') {
+          unCompleted = true;
+          break;
+        }
+      }
+
+      return Column(
+        children: [
+          Row(
+            children: [
+              AppExpandedButton(
+                buttonText: "저장",
+                // 확정을 안 했고 수정 사항이 생길 때만 저장 가능
+                onPressed: !hasAttendanceConfirmed && value.hasUpdated
+                    ? () {
+                        firestoreWriter.saveAttendanceStatus(
+                          currentSemester,
+                          value.userAttendanceStatus,
+                          false,
+                        );
+                        value.setHasUpdated(false);
+                      }
+                    : null,
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              AppExpandedButton(
+                buttonText: "확정",
+                // 확정을 안 했고, 출석 체크는 전부 했고, 저장도 한 경우만 확정 가능
+                onPressed: !hasAttendanceConfirmed &&
+                        !unCompleted &&
+                        !value.hasUpdated
+                    ? () => showDialog(
+                          context: context,
+                          builder: (context) => ConfirmDialog(
+                            title: "출석체크 내역을 확정하시겠어요?",
+                            content:
+                                "확정 이후에는 출결을 변경할 수 없어요.\n꼭 회의가 끝난 뒤 확정해주세요.",
+                            onPressed: () {
+                              firestoreWriter.saveAttendanceStatus(
+                                  currentSemester,
+                                  value.userAttendanceStatus,
+                                  true);
+                              firestoreWriter.confirmAttendanceStatus(
+                                  currentSemester, value.userAttendanceStatus);
+                              Navigator.pop(context);
+                            },
+                          ),
+                          useRootNavigator: false, // 뒤로 가기 버튼이 제대로 먹히게
+                        )
+                    : null,
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+        ],
+      );
+    });
   }
 }
