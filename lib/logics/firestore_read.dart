@@ -56,8 +56,8 @@ class FirestoreReader {
         .snapshots();
   }
 
-  Future checkHasMeetingStarted() async {
-    final now = DateTime.now();
+  Future checkMeetingStartsInFiveMin() async {
+    final now = DateTime.now().add(const Duration(minutes: 5));
     late final currentTime = StringUtil.convertDateTimeToString(now, false);
     late final DocumentSnapshot meetingTimeInfo;
 

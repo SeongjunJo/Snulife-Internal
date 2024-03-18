@@ -14,14 +14,14 @@ class CheckAttendancePage extends StatelessWidget {
     super.key,
     required this.isClerk,
     required this.doesLeaderCheck,
-    required this.hasMeetingStarted,
+    required this.doesMeetingStartInFiveMin,
     required this.currentSemester,
     required this.userList,
   });
 
   final bool isClerk;
   final bool doesLeaderCheck;
-  final bool hasMeetingStarted;
+  final bool doesMeetingStartInFiveMin;
   final String currentSemester;
   final List<dynamic> userList;
 
@@ -74,7 +74,7 @@ class CheckAttendancePage extends StatelessWidget {
                           return CheckAttendanceListItem(
                             canModify: canModify &&
                                 !hasAttendanceConfirmed &&
-                                hasMeetingStarted, // 회의 시작 후, 서기이면서 확정하지 않은 상태만 수정 가능
+                                doesMeetingStartInFiveMin, // 회의 시작 5분 전, 서기이면서 확정하지 않은 상태만 수정 가능
                             name: userList[index],
                             attendanceStatus: attendanceStatus,
                           );

@@ -41,6 +41,3 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
-
-# Firebase Option file (It's okay to show API keys to public, but want to ignore github warning)
-lib/logics/firebase_options.dart

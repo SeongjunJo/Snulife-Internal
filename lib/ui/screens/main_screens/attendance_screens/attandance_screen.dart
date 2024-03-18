@@ -36,7 +36,7 @@ class AttendancePage extends StatelessWidget {
         // 아래 3개 future는 오늘이 회의일 때만 필요하지만, 사람들은 대부분 회의인 날만 이 화면에 접속할 것이므로
         // 미리 다 받아서 Tab 전환 랜더링 시간을 줄임
         firestoreReader.getUserList(),
-        firestoreReader.checkHasMeetingStarted(),
+        firestoreReader.checkMeetingStartsInFiveMin(),
         _getTeamMeetingTime(),
       ]),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -44,7 +44,7 @@ class AttendancePage extends StatelessWidget {
           final isTodayMeeting = snapshot.data[0];
           final clerkMap = snapshot.data[1];
           final userList = snapshot.data[2];
-          final hasMeetingStarted = snapshot.data[3];
+          final doesMeetingStartInFiveMin = snapshot.data[3];
           final isTeamMeeting = snapshot.data[4].cast<String>().contains(today);
 
           return TabBarView(
@@ -60,7 +60,8 @@ class AttendancePage extends StatelessWidget {
                                   isClerk: isClerk,
                                   // 팀별 회의 때는 팀장들이 출석 체크
                                   doesLeaderCheck: isLeader && isTeamMeeting,
-                                  hasMeetingStarted: hasMeetingStarted,
+                                  doesMeetingStartInFiveMin:
+                                      doesMeetingStartInFiveMin,
                                   userList: userList,
                                   currentSemester: currentSemester,
                                 )),
